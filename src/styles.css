@@ -1,0 +1,136 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@import "@fontsource/eb-garamond/400.css";
+@import "@fontsource/eb-garamond/400-italic.css";
+@import "@fontsource/eb-garamond/500.css";
+@import "@fontsource/inter/300.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-cream: var(--cream);
+  --color-sand: var(--sand);
+  --color-clay: var(--clay);
+  --color-ember: var(--ember);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-primary: var(--ink);
+  --color-primary-foreground: #ffffff;
+  --color-card: #ffffff;
+  --color-card-foreground: var(--ink);
+  --color-popover: #ffffff;
+  --color-popover-foreground: var(--ink);
+  --color-secondary: var(--cream);
+  --color-secondary-foreground: var(--ink);
+  --color-accent: var(--sand);
+  --color-accent-foreground: var(--ink);
+  --color-destructive: oklch(0.55 0.22 27);
+  --color-destructive-foreground: #ffffff;
+  --color-input: var(--border);
+  --color-ring: var(--clay);
+  --color-ring-offset-background: var(--background);
+  --font-display: "EB Garamond", Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+}
+
+:root {
+  --background: #fdfaf5;
+  --foreground: #241a12;
+  --ink: #241a12;
+  --cream: #f8f1e7;
+  --sand: #eee0cd;
+  --clay: #8a4f27;
+  --ember: #c8712f;
+  --muted: #f5efe6;
+  --muted-foreground: #6d5c4c;
+  --border: rgba(36, 26, 18, 0.1);
+}
+
+@layer base {
+  * { border-color: var(--color-border); }
+  html { -webkit-font-smoothing: antialiased; }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-weight: 400;
+  }
+  h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 400; }
+  ::selection { background: var(--sand); color: var(--ink); }
+}
+
+@utility tracked {
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes drawer-in {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(48px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes steam {
+  0% { opacity: 0; transform: translateY(6px) scaleX(0.9); }
+  40% { opacity: 0.6; }
+  100% { opacity: 0; transform: translateY(-18px) scaleX(1.25); }
+}
+@keyframes lane-pulse {
+  0%, 100% { opacity: 0.25; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.35); }
+}
+
+@utility animate-marquee {
+  animation: marquee 34s linear infinite;
+}
+@utility animate-fade-up {
+  animation: fade-up 0.9s cubic-bezier(0.2, 1, 0.3, 1) both;
+}
+@utility animate-fade-in {
+  animation: fade-in 0.8s ease-out both;
+}
+@utility animate-drawer-in {
+  animation: drawer-in 0.45s cubic-bezier(0.2, 1, 0.3, 1) both;
+}
+@utility animate-overlay-in {
+  animation: overlay-in 0.3s ease-out both;
+}
+@utility animate-reveal-up {
+  animation: reveal-up 1s cubic-bezier(0.2, 1, 0.3, 1) both;
+}
+@utility animate-steam {
+  animation: steam 3.2s ease-out infinite;
+}
+@utility animate-lane-pulse {
+  animation: lane-pulse 1.8s ease-in-out infinite;
+}

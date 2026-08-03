@@ -1,0 +1,127 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { SiteLayout } from "@/components/SiteLayout";
+import { ProductCard } from "@/components/ProductCard";
+import { useCart, formatPrice } from "@/lib/cart-context";
+import { products } from "@/lib/products";
+
+export const Route = createFileRoute("/combos")({
+  head: () => ({
+    meta: [
+      { title: "Gift Boxes & Combos — Viśvam Harvest" },
+      {
+        name: "description",
+        content:
+          "Handcrafted luxury dry fruit gift boxes, festive celebration collections, and corporate hampers.",
+      },
+      { property: "og:title", content: "Gift Boxes & Combos — Viśvam Harvest" },
+      { property: "og:description", content: "Opulent gift boxes with vacuum-sealed premium nuts and dried fruits." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  component: Combos,
+});
+
+function Combos() {
+  const { add } = useCart();
+  const comboProducts = products.filter((p) => p.category === "combos");
+  const featuredBox = comboProducts[0] ?? products[0];
+
+  const bundleItems = [
+    products.find((p) => p.slug === "california-jumbo-almonds")!,
+    products.find((p) => p.slug === "king-w240-cashews")!,
+    products.find((p) => p.slug === "kashmiri-snow-walnuts")!,
+    products.find((p) => p.slug === "afghani-organic-anjeer")!,
+  ].filter(Boolean);
+
+  const bundleTotal = bundleItems.reduce((s, p) => s + p.price, 0);
+  const bundleDiscounted = Math.round(bundleTotal * 0.85 * 100) / 100;
+
+  return (
+    <SiteLayout>
+      <section className="border-b border-border bg-cream/60">
+        <div className="max-w-[1400px] mx-auto px-6 py-20 lg:py-28">
+          <p className="text-[10px] tracked text-muted-foreground mb-4 uppercase tracking-widest">— Curated Collections</p>
+          <h1 className="font-display italic text-6xl lg:text-8xl leading-none animate-fade-up">
+            Gift Boxes & Combos
+          </h1>
+          <p className="mt-6 text-sm text-muted-foreground max-w-lg leading-relaxed">
+            Elevate celebrations, corporate milestones, and daily wellness with handcrafted luxury dry fruit gift sets.
+          </p>
+        </div>
+      </section>
+
+      {/* Featured Luxury Gift Set */}
+      <section className="max-w-[1400px] mx-auto px-6 py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="bg-cream relative overflow-hidden aspect-[4/3] group border border-border/40">
+          <img
+            src={featuredBox.images[0]}
+            alt={featuredBox.name}
+            width={1408}
+            height={1008}
+            loading="lazy"
+            className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-[900ms]"
+          />
+          <div className="absolute top-5 left-5 flex flex-col gap-2">
+            <span className="bg-ink text-white text-[9px] tracked px-3 py-1 font-semibold uppercase">Save 15%</span>
+            <span className="bg-white/90 backdrop-blur-sm text-ink text-[9px] tracked px-3 py-1 font-semibold uppercase">Luxury Rigid Box</span>
+          </div>
+        </div>
+        <div className="flex flex-col justify-center py-6">
+          <p className="text-[10px] tracked text-muted-foreground mb-4 uppercase tracking-widest">— Featured Gift Set</p>
+          <h2 className="font-display italic text-4xl mb-4">{featuredBox.name}</h2>
+          <p className="text-sm text-muted-foreground mb-8 max-w-md leading-relaxed">
+            {featuredBox.description}
+          </p>
+          <div className="space-y-3 mb-8">
+            {bundleItems.map((p) => (
+              <div
+                key={p.slug}
+                className="flex justify-between text-[12.5px] border-b border-border pb-3"
+              >
+                <span>{p.name}</span>
+                <span className="text-muted-foreground tabular-nums">{formatPrice(p.price)}</span>
+              </div>
+            ))}
+          </div>
+          <div className="flex items-baseline gap-4 mb-8">
+            <span className="text-[10px] tracked uppercase font-semibold">Special Bundle Price</span>
+            <span className="font-display italic text-4xl text-ink">{formatPrice(bundleDiscounted)}</span>
+            <span className="text-[12px] text-muted-foreground line-through tabular-nums">
+              {formatPrice(bundleTotal)}
+            </span>
+          </div>
+          <button
+            onClick={() => bundleItems.forEach(add)}
+            className="self-start bg-ink text-white px-10 py-4 text-[11px] tracked font-semibold uppercase tracking-widest hover:bg-clay transition-colors"
+          >
+            Add Bundle to Bag
+          </button>
+        </div>
+      </section>
+
+      {/* All Gift Boxes */}
+      <section className="max-w-[1400px] mx-auto px-6 py-20 border-t border-border">
+        <h2 className="font-display italic text-4xl mb-12">All Luxury Gift Collections</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
+          {comboProducts.map((p) => (
+            <ProductCard key={p.slug} product={p} />
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-ink text-white py-20 text-center">
+        <p className="text-[10px] tracked text-white/60 mb-4 uppercase tracking-widest">— Custom Corporate Gifting</p>
+        <h2 className="font-display italic text-4xl md:text-5xl max-w-2xl mx-auto px-6 mb-8">
+          Personalized hampers with custom ribboning and brass foil branding.
+        </h2>
+        <Link
+          to="/story"
+          className="inline-block bg-white text-ink px-10 py-4 text-[11px] tracked font-semibold uppercase tracking-widest hover:bg-clay hover:text-white transition-colors"
+        >
+          Inquire for Corporate Orders
+        </Link>
+      </section>
+    </SiteLayout>
+  );
+}
