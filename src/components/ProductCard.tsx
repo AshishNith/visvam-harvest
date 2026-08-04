@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
 import { useCart, formatPrice } from "@/lib/cart-context";
 import type { Product } from "@/lib/products";
 
@@ -50,9 +51,10 @@ export function ProductCard({ product }: { product: Product }) {
               e.preventDefault();
               add(product);
             }}
-            className="text-[10px] tracked font-semibold hover:text-clay transition-colors"
+            className="group/btn inline-flex items-center gap-1.5 text-[10px] tracked font-medium uppercase text-white hover:text-clay border-b border-white hover:border-clay transition-all duration-300"
           >
-            Add to bag +
+            <span>Add to bag</span>
+            <ArrowRight size={11} className="group-hover/btn:translate-x-1 transition-transform duration-300 text-clay" />
           </button>
         </div>
       </Link>

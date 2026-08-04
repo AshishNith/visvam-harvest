@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import logo from "@/assets/visvam-logo.png";
+import { ArrowRight } from "lucide-react";
+import logoEmblem from "@/assets/Visvam Logo.png";
+import logoWordmark from "@/assets/Visvam Logo_Wordmark.png";
 
 const HARVEST_GUARANTEES = [
   { id: "100-natural", name: "100% Handpicked & Natural", detail: "Zero artificial preservatives, colorings or added oil" },
@@ -24,8 +26,9 @@ export function Footer() {
                 placeholder="Enter your email address"
                 className="flex-1 py-3 text-sm bg-transparent outline-none placeholder:text-muted-foreground"
               />
-              <button className="text-[10px] tracked font-semibold hover:text-clay transition uppercase">
-                Subscribe
+              <button className="group inline-flex items-center gap-2 text-[10.5px] tracked font-medium text-ink hover:text-clay transition uppercase">
+                <span>Subscribe</span>
+                <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-300 text-clay" />
               </button>
             </form>
           </div>
@@ -65,14 +68,22 @@ export function Footer() {
         </div>
 
         <div className="pt-10 border-t border-border flex flex-col md:flex-row justify-between items-center gap-6">
-          <Link to="/" className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3 group">
             <img
-              src={logo}
-              alt="Viśvam"
-              width={140}
-              height={56}
+              src={logoEmblem}
+              alt="Viśvam Emblem"
+              width={48}
+              height={48}
               loading="lazy"
-              className="h-10 w-auto object-contain"
+              className="h-9 w-auto object-contain transition-transform group-hover:scale-105"
+            />
+            <img
+              src={logoWordmark}
+              alt="Viśvam Harvest"
+              width={120}
+              height={40}
+              loading="lazy"
+              className="h-7 w-auto object-contain"
             />
           </Link>
           <div className="text-[9px] tracked text-muted-foreground text-center">

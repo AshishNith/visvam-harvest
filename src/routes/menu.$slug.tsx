@@ -4,7 +4,7 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { ProductCard } from "@/components/ProductCard";
 import { useCart, formatPrice } from "@/lib/cart-context";
 import { getProductBySlug, products, categories } from "@/lib/products";
-import { Check, ShieldCheck, MapPin, Award } from "lucide-react";
+import { Check, ShieldCheck, MapPin, Award, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/menu/$slug")({
   loader: ({ params }) => {
@@ -160,9 +160,10 @@ function MenuItemPage() {
 
           <button
             onClick={() => add(product)}
-            className="bg-ink text-white py-3 rounded-full text-[10.5px] tracked font-medium uppercase tracking-widest hover:bg-clay hover:scale-[1.01] transition-all duration-300 shadow-md mb-6"
+            className="group inline-flex items-center gap-3 text-ink text-[12px] font-medium tracked uppercase tracking-widest py-2.5 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 mb-6 self-start"
           >
-            Add to Harvest Bag — {formatPrice(product.price)}
+            <span>Add to Harvest Bag — {formatPrice(product.price)}</span>
+            <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
           </button>
 
           <ul className="space-y-2 border-t border-border/70 pt-5">

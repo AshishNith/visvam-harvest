@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { ProductCard } from "@/components/ProductCard";
 import { useCart, formatPrice } from "@/lib/cart-context";
@@ -93,9 +94,10 @@ function Combos() {
           </div>
           <button
             onClick={() => bundleItems.forEach(add)}
-            className="self-start bg-ink text-white px-10 py-4 text-[11px] tracked font-semibold uppercase tracking-widest hover:bg-clay transition-colors"
+            className="group inline-flex items-center gap-3 text-ink text-[12px] font-medium tracked uppercase tracking-widest py-2 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 self-start"
           >
-            Add Bundle to Bag
+            <span>Add Bundle to Bag</span>
+            <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
           </button>
         </div>
       </section>
@@ -117,9 +119,10 @@ function Combos() {
         </h2>
         <Link
           to="/story"
-          className="inline-block bg-white text-ink px-10 py-4 text-[11px] tracked font-semibold uppercase tracking-widest hover:bg-clay hover:text-white transition-colors"
+          className="group inline-flex items-center gap-3 text-white text-[12px] font-medium tracked uppercase tracking-widest py-2 border-b-2 border-white/80 hover:text-clay hover:border-clay transition-all duration-300"
         >
-          Inquire for Corporate Orders
+          <span>Inquire for Corporate Orders</span>
+          <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
         </Link>
       </section>
     </SiteLayout>

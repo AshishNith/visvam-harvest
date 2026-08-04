@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
+import { ArrowRight } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { ProductCard } from "@/components/ProductCard";
 import { useCart, formatPrice } from "@/lib/cart-context";
@@ -94,18 +95,20 @@ function Home() {
           <p className="text-white/85 text-sm max-w-md mb-10 animate-fade-up [animation-delay:300ms]">
             Single-origin California almonds, W240 cashews, organic Afghani figs, and Kashmiri snow walnuts delivered in nitrogen-sealed packaging.
           </p>
-          <div className="flex flex-wrap justify-center gap-3 animate-fade-up [animation-delay:500ms] mb-10">
+          <div className="flex flex-wrap justify-center gap-8 animate-fade-up [animation-delay:500ms] mb-10">
             <Link
               to="/nuts"
-              className="inline-block bg-white text-ink px-12 py-4 text-[11px] tracked font-semibold uppercase tracking-widest hover:bg-clay hover:text-white transition-colors duration-500"
+              className="group inline-flex items-center gap-3 text-white text-[12px] font-medium tracked uppercase tracking-widest py-2 border-b-2 border-white/80 hover:text-clay hover:border-clay transition-all duration-300"
             >
-              Shop All Harvest
+              <span>Shop All Harvest</span>
+              <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
             </Link>
             <Link
               to="/combos"
-              className="inline-block border border-white/60 text-white px-12 py-4 text-[11px] tracked font-semibold uppercase tracking-widest hover:bg-white hover:text-ink transition-colors duration-500"
+              className="group inline-flex items-center gap-3 text-white text-[12px] font-medium tracked uppercase tracking-widest py-2 border-b-2 border-white/50 hover:text-clay hover:border-clay transition-all duration-300"
             >
-              Gift Collections
+              <span>Gift Collections</span>
+              <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
             </Link>
           </div>
 
@@ -159,9 +162,10 @@ function Home() {
             </div>
             <Link
               to="/nuts"
-              className="text-[10.5px] tracked font-medium border-b border-ink pb-1 hover:text-clay hover:border-clay uppercase tracking-wider"
+              className="group inline-flex items-center gap-2 text-ink text-[11px] font-medium tracked uppercase tracking-widest py-1 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300"
             >
-              Explore Catalog
+              <span>Explore Catalog</span>
+              <ArrowRight size={13} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
@@ -198,8 +202,9 @@ function Home() {
                   </h3>
                   <p className="text-[11px] text-muted-foreground line-clamp-2">{c.description}</p>
                 </div>
-                <div className="flex justify-end items-center text-[10px] tracked text-clay font-semibold">
-                  Browse Collection →
+                <div className="inline-flex items-center gap-2 text-[10px] tracked text-clay font-semibold uppercase tracking-wider group-hover:translate-x-1 transition-all duration-300 self-end">
+                  <span>Browse Collection</span>
+                  <ArrowRight size={12} />
                 </div>
               </Link>
             );
@@ -229,9 +234,10 @@ function Home() {
           </p>
           <Link
             to="/story"
-            className="inline-block self-start border-b border-ink pb-1 text-[10.5px] tracked font-medium uppercase tracking-wider hover:text-clay hover:border-clay"
+            className="group inline-flex items-center gap-3 text-ink text-[11px] font-medium tracked uppercase tracking-widest py-1.5 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 self-start"
           >
-            Read Our Farm Story
+            <span>Read Our Farm Story</span>
+            <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
           </Link>
         </div>
       </section>
@@ -266,9 +272,10 @@ function Home() {
             </div>
             <button
               onClick={() => add(giftBox)}
-              className="bg-ink text-white px-10 py-4 text-[11px] tracked font-semibold uppercase tracking-widest hover:bg-clay transition-colors"
+              className="group inline-flex items-center gap-3 text-ink text-[11.5px] font-medium tracked uppercase tracking-widest py-2 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300"
             >
-              Add Gift Box to Bag
+              <span>Add Gift Box to Bag</span>
+              <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
             </button>
           </div>
         </div>

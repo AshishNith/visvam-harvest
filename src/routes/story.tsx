@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import cashews1 from "@/assets/cashews-1.png";
 
@@ -98,9 +99,10 @@ function Story() {
         </h2>
         <Link
           to="/nuts"
-          className="inline-block bg-white text-ink px-10 py-4 text-[11px] tracked font-semibold uppercase tracking-widest hover:bg-clay hover:text-white transition-colors"
+          className="group inline-flex items-center gap-3 text-white text-[12px] font-medium tracked uppercase tracking-widest py-2 border-b-2 border-white/80 hover:text-clay hover:border-clay transition-all duration-300"
         >
-          Explore Harvest Catalog
+          <span>Explore Harvest Catalog</span>
+          <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
         </Link>
       </section>
     </SiteLayout>

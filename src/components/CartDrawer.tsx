@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { X, Minus, Plus, ShoppingBag, Truck } from "lucide-react";
+import { X, Minus, Plus, ShoppingBag, Truck, ArrowRight } from "lucide-react";
 import { useCart, formatPrice } from "@/lib/cart-context";
 import { products } from "@/lib/products";
 
@@ -177,9 +177,10 @@ export function CartDrawer() {
           </div>
           <button
             disabled={items.length === 0}
-            className="w-full bg-ink text-white py-4 text-[11px] tracked font-semibold uppercase tracking-widest hover:bg-clay transition-colors disabled:opacity-40"
+            className="group w-full inline-flex items-center justify-center gap-3 text-ink text-[11.5px] font-semibold tracked uppercase tracking-widest py-3 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 disabled:opacity-40"
           >
-            Proceed to Secure Checkout
+            <span>Proceed to Secure Checkout</span>
+            <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
           </button>
           <p className="text-[9.5px] text-muted-foreground text-center tracking-wide">
             Nitrogen-flushed packaging · 100% Quality Guaranteed

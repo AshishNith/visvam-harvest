@@ -59,7 +59,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const subtotal = items.reduce((s, i) => s + i.product.price * i.qty, 0);
   const count = items.reduce((s, i) => s + i.qty, 0);
-  const prepMinutes = items.reduce((m, i) => Math.max(m, i.product.prepMinutes), 0);
+  const prepMinutes = items.reduce((m, i) => Math.max(m, i.product.prepMinutes || 0), 0);
 
   return (
     <Ctx.Provider
