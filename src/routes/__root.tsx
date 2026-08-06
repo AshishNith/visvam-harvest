@@ -72,6 +72,8 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
+import { RoutePendingLoader } from "../components/PageLoader";
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
@@ -101,6 +103,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   }),
   shellComponent: RootShell,
   component: RootComponent,
+  pendingComponent: RoutePendingLoader,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
