@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import visvamLogo from "@/assets/visvam-logo-dark.png";
 
 export function PageLoader() {
   const [progress, setProgress] = useState(0);
@@ -6,12 +7,12 @@ export function PageLoader() {
   const [shouldRender, setShouldRender] = useState(true);
 
   useEffect(() => {
-    const timer1 = setTimeout(() => setProgress(35), 80);
-    const timer2 = setTimeout(() => setProgress(70), 220);
-    const timer3 = setTimeout(() => setProgress(100), 450);
+    const timer1 = setTimeout(() => setProgress(35), 100);
+    const timer2 = setTimeout(() => setProgress(70), 300);
+    const timer3 = setTimeout(() => setProgress(100), 600);
 
-    const fadeTimer = setTimeout(() => setIsVisible(false), 700);
-    const removeTimer = setTimeout(() => setShouldRender(false), 1200);
+    const fadeTimer = setTimeout(() => setIsVisible(false), 950);
+    const removeTimer = setTimeout(() => setShouldRender(false), 1450);
 
     return () => {
       clearTimeout(timer1);
@@ -26,36 +27,24 @@ export function PageLoader() {
 
   return (
     <div
-      className={`fixed inset-0 z-[100] bg-[#FDFAF5] flex flex-col justify-between p-8 sm:p-16 transition-opacity duration-700 ease-out ${
-        isVisible ? "opacity-100" : "opacity-0 pointer-events-none"
+      className={`fixed inset-0 z-[100] bg-[#FAF5EE] flex flex-col items-center justify-center transition-all duration-700 ease-in-out ${
+        isVisible ? "opacity-100 scale-100" : "opacity-0 scale-105 pointer-events-none"
       }`}
     >
-      {/* Top Header Label */}
-      <div className="flex justify-between items-center text-[10px] font-mono tracking-widest text-clay uppercase">
-        <span>VIŚVAM HARVEST</span>
-        <span>COLD LOCK ORCHARDS</span>
-      </div>
-
-      {/* Center Brand Title */}
-      <div className="text-center my-auto space-y-4">
-        <h1 className="font-display italic text-5xl sm:text-7xl lg:text-8xl text-ink tracking-tight">
-          Viśvam Harvest
-        </h1>
-        <p className="text-[11px] font-sans tracking-[0.25em] text-muted-foreground uppercase font-medium">
-          SINGLE-ORIGIN &bull; COLD-STORED &bull; NATURAL OILS
-        </p>
-      </div>
-
-      {/* Bottom Progress Bar & Counter */}
-      <div className="space-y-4 max-w-md mx-auto w-full">
-        <div className="flex justify-between items-baseline text-[11px] font-mono text-ink">
-          <span className="text-muted-foreground uppercase text-[9.5px] tracking-widest">Harvest Loading</span>
-          <span className="tabular-nums font-semibold">{String(progress).padStart(2, "0")}%</span>
+      {/* Animated Image Logo Only */}
+      <div className="relative flex flex-col items-center justify-center space-y-8">
+        <div className="w-32 sm:w-44 aspect-square flex items-center justify-center">
+          <img
+            src={visvamLogo}
+            alt="Viśvam Logo"
+            className="w-full h-full object-contain drop-shadow-sm transition-all duration-1000 ease-out animate-reveal-up scale-100 hover:scale-105"
+          />
         </div>
-        {/* Razor thin 1.5px progress track */}
-        <div className="w-full h-[1.5px] bg-ink/10 overflow-hidden relative">
+
+        {/* Minimal Progress Line Under Logo */}
+        <div className="w-36 sm:w-48 h-[2px] bg-sand/60 overflow-hidden relative rounded-full">
           <div
-            className="h-full bg-clay transition-all duration-500 ease-out"
+            className="h-full bg-clay transition-all duration-500 ease-out rounded-full"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -66,7 +55,7 @@ export function PageLoader() {
 
 export function RoutePendingLoader() {
   return (
-    <div className="fixed top-0 left-0 right-0 z-[100] h-[2.5px] bg-ink/10 overflow-hidden">
+    <div className="fixed top-0 left-0 right-0 z-[100] h-[3px] bg-sand/50 overflow-hidden">
       <div className="h-full bg-clay animate-pulse w-full origin-left transition-all duration-300" />
     </div>
   );
