@@ -52,7 +52,7 @@ function MenuItemPage() {
 
   return (
     <SiteLayout>
-      <div className="max-w-[1200px] mx-auto px-6 pt-6">
+      <div className="max-w-[1200px] mx-auto px-6 pt-24">
         <nav className="text-[10px] tracked text-muted-foreground flex gap-2 items-center">
           <Link to="/" className="hover:text-clay">Home</Link>
           <span>/</span>

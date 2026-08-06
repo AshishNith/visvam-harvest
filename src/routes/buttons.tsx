@@ -206,7 +206,7 @@ function ButtonShowcase() {
   return (
     <SiteLayout>
       {/* Header Banner */}
-      <section className="border-b border-border bg-cream/60 py-16">
+      <section className="border-b border-border bg-cream/60 pt-28 pb-16">
         <div className="max-w-[1400px] mx-auto px-6 text-center">
           <span className="text-[10px] tracked text-muted-foreground uppercase tracking-widest bg-white px-3 py-1 border border-border rounded-full">
             Client Design Review Showcase

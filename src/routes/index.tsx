@@ -3,27 +3,28 @@ import { useState, useEffect } from "react";
 import { ArrowRight } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { ProductCard } from "@/components/ProductCard";
+import { ScrollStackCategories } from "@/components/ScrollStackCategories";
 import { useCart, formatPrice } from "@/lib/cart-context";
 import { products, categories } from "@/lib/products";
-import almondsHero from "@/assets/almonds-1.png";
 import cashewsHero from "@/assets/cashews-1.png";
-import walnutsHero from "@/assets/walnuts-1.png";
+import heroVideo from "@/assets/Dry_fruit_craftsmanship_montage_202608061931.mp4";
 
 const HERO_SLIDES = [
   {
-    image: almondsHero,
-    alt: "California Jumbo Almonds presented in a handcrafted ceramic bowl",
-    caption: "California Jumbo Almonds",
+    line1: "HANDPICKED FOR",
+    line2: "ROYAL CRUNCH",
   },
   {
-    image: cashewsHero,
-    alt: "King W240 Whole Cashews in a carved dark walnut wood bowl",
-    caption: "King W240 Whole Cashews",
+    line1: "HARVESTED AT",
+    line2: "PEAK OIL MATURITY",
   },
   {
-    image: walnutsHero,
-    alt: "Kashmiri Extra-Light Walnuts in a rustic brass dish",
-    caption: "Kashmiri Extra-Light Walnuts",
+    line1: "SINGLE ORIGIN",
+    line2: "KASHMIRI SNOW WALNUTS",
+  },
+  {
+    line1: "COLD CHAIN LOCKED",
+    line2: "FOR PEAK FRESHNESS",
   },
 ];
 
@@ -57,81 +58,48 @@ function Home() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-    }, 5000);
+    }, 4500);
     return () => clearInterval(timer);
   }, []);
 
   return (
     <SiteLayout>
-      {/* Hero Slideshow */}
-      <section className="relative h-[88vh] overflow-hidden bg-cream">
-        {HERO_SLIDES.map((slide, index) => {
-          const isActive = index === currentSlide;
-          return (
-            <div
-              key={slide.caption}
-              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                isActive ? "opacity-100 z-0" : "opacity-0 -z-10 pointer-events-none"
-              }`}
-            >
-              <img
-                src={slide.image}
-                alt={slide.alt}
-                width={1920}
-                height={1280}
-                className={`w-full h-full object-cover transform transition-transform duration-[6000ms] ease-out ${
-                  isActive ? "scale-110" : "scale-100"
-                }`}
-              />
-            </div>
-          );
-        })}
-        <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/30 to-transparent pointer-events-none" />
+      {/* Hero Video Background */}
+      <section className="relative min-h-screen lg:h-screen overflow-hidden bg-cream">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src={heroVideo} type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-b from-ink/65 via-ink/20 to-ink/75 pointer-events-none" />
 
-        <div className="absolute inset-0 flex flex-col items-center justify-end pb-16 text-center px-6 z-10">
-          <h1 className="font-display italic text-white text-5xl md:text-7xl lg:text-[92px] font-normal leading-[0.95] mb-8 animate-fade-up max-w-4xl">
-            Harvested for oil maturity.<br />Handpicked for royal crunch.
-          </h1>
-          <p className="text-white/85 text-sm max-w-md mb-10 animate-fade-up [animation-delay:300ms]">
-            Single-origin California almonds, W240 cashews, organic Afghani figs, and Kashmiri snow walnuts delivered in nitrogen-sealed packaging.
-          </p>
-          <div className="flex flex-wrap justify-center gap-8 animate-fade-up [animation-delay:500ms] mb-10">
-            <Link
-              to="/nuts"
-              className="group inline-flex items-center gap-3 text-white text-[12px] font-medium tracked uppercase tracking-widest py-2 border-b-2 border-white/80 hover:text-clay hover:border-clay transition-all duration-300"
-            >
-              <span>Shop All Harvest</span>
-              <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
-            </Link>
-            <Link
-              to="/combos"
-              className="group inline-flex items-center gap-3 text-white text-[12px] font-medium tracked uppercase tracking-widest py-2 border-b-2 border-white/50 hover:text-clay hover:border-clay transition-all duration-300"
-            >
-              <span>Gift Collections</span>
-              <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
-            </Link>
-          </div>
-
-          {/* Slide Indicators */}
-          <div className="flex items-center justify-center gap-3 z-20">
-            {HERO_SLIDES.map((slide, index) => (
-              <button
-                key={slide.caption}
-                onClick={() => setCurrentSlide(index)}
-                aria-label={`Go to slide ${index + 1}: ${slide.caption}`}
-                className={`h-1.5 rounded-full transition-all duration-500 ${
-                  index === currentSlide
-                    ? "w-8 bg-white"
-                    : "w-2 bg-white/40 hover:bg-white/70"
+        {/* Clean Centered Dynamic Sentence - Reference Stacked Uppercase Layout */}
+        <div className="absolute inset-0 flex items-center justify-center text-center px-6 z-10 pointer-events-none">
+          {HERO_SLIDES.map((slide, index) => {
+            const isActive = index === currentSlide;
+            return (
+              <h1
+                key={slide.line1}
+                className={`font-display text-white uppercase text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-normal leading-[0.95] tracking-tight max-w-2xl transition-all duration-1000 ease-in-out absolute flex flex-col items-center justify-center ${
+                  isActive
+                    ? "opacity-100 translate-y-0 scale-100"
+                    : "opacity-0 translate-y-6 scale-95 pointer-events-none"
                 }`}
-              />
-            ))}
-          </div>
+              >
+                <span>{slide.line1}</span>
+                <span>{slide.line2}</span>
+              </h1>
+            );
+          })}
         </div>
       </section>
 
       {/* 4 Harvest Pillars */}
-      <section className="border-b border-border py-16 bg-background">
+      <section className="py-16 bg-background">
         <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-10">
           {[
             ["01", "Single-Origin Orchards", "Direct farm sourcing from California, Kashmir & Kandahar."],
@@ -157,7 +125,6 @@ function Home() {
         <div className="max-w-[1400px] mx-auto px-6">
           <div className="flex justify-between items-end mb-14">
             <div>
-              <p className="text-[10px] tracked text-muted-foreground mb-3 uppercase tracking-widest">— Most Cherished Harvest</p>
               <h2 className="font-display italic text-4xl md:text-5xl">The Orchard Bestsellers</h2>
             </div>
             <Link
@@ -176,43 +143,10 @@ function Home() {
         </div>
       </section>
 
-      {/* Menu Category Grid */}
-      <section className="max-w-[1400px] mx-auto px-6 py-24">
-        <div className="flex justify-between items-end mb-14">
-          <h2 className="font-display italic text-4xl md:text-5xl">The Harvest Categories</h2>
-          <p className="text-[10.5px] tracked text-muted-foreground max-w-xs hidden md:block">
-            Four specialized lines — nuts, dried fruits, exotic seeds, and handcrafted gift hampers.
-          </p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-border border border-border">
-          {categories.map((c) => {
-            const count = products.filter((p) => p.category === c.slug).length;
-            return (
-              <Link
-                key={c.slug}
-                to={`/${c.slug}` as "/nuts"}
-                className="bg-background aspect-[4/5] p-10 flex flex-col justify-between group relative overflow-hidden hover:bg-cream transition-colors duration-500"
-              >
-                <span className="text-[10px] tracked text-muted-foreground uppercase">
-                  {c.index} / {count} selections
-                </span>
-                <div>
-                  <h3 className="font-display italic text-3xl md:text-4xl group-hover:translate-x-2 transition-transform duration-500 mb-2">
-                    {c.label}
-                  </h3>
-                  <p className="text-[11px] text-muted-foreground line-clamp-2">{c.description}</p>
-                </div>
-                <div className="inline-flex items-center gap-2 text-[10px] tracked text-clay font-semibold uppercase tracking-wider group-hover:translate-x-1 transition-all duration-300 self-end">
-                  <span>Browse Collection</span>
-                  <ArrowRight size={12} />
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
+      {/* Interactive Scroll Stack Category Section */}
+      <ScrollStackCategories />
 
-      {/* Editorial Split */}
+      {/* Editorial Split - Commented out per client request
       <section className="grid grid-cols-1 lg:grid-cols-2 bg-sand/40">
         <div className="relative aspect-[4/5] lg:aspect-auto lg:min-h-[640px]">
           <img
@@ -241,11 +175,12 @@ function Home() {
           </Link>
         </div>
       </section>
+      */}
 
-      {/* Featured Gift Box */}
+      {/* Featured Gift Box - Commented out per client request
       <section className="py-24 bg-background">
         <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div className="bg-cream aspect-[5/4] relative overflow-hidden group border border-border/40">
+          <div className="bg-cream aspect-[5/4] relative overflow-hidden group">
             <img
               src={giftBox.images[0]}
               alt={giftBox.name}
@@ -280,12 +215,12 @@ function Home() {
           </div>
         </div>
       </section>
+      */}
 
       {/* Customer Testimonials */}
-      <section className="bg-cream py-24 border-t border-border">
+      <section className="bg-cream py-24">
         <div className="max-w-[1400px] mx-auto px-6">
           <div className="text-center mb-14">
-            <p className="text-[10px] tracked text-muted-foreground mb-4 uppercase tracking-widest">— Customer Experiences</p>
             <div className="flex items-baseline justify-center gap-3 mb-3">
               <span className="font-display italic text-6xl">4.9</span>
               <span className="text-sm text-muted-foreground">/ 5</span>
@@ -313,7 +248,7 @@ function Home() {
                 body: "Ordered 25 Royal Heritage boxes for our Diwali executive gifts. The packaging, ribboning, and quality exceeded all expectations.",
               },
             ].map((r) => (
-              <article key={r.initials} className="bg-background p-8 border border-border">
+              <article key={r.initials} className="bg-background p-8 rounded-sm shadow-xs">
                 <div className="flex items-center gap-4 mb-5">
                   <div className="size-10 rounded-full bg-sand grid place-items-center text-[11px] font-semibold">
                     {r.initials}

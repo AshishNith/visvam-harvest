@@ -24,9 +24,8 @@ export const Route = createFileRoute("/story")({
 function Story() {
   return (
     <SiteLayout>
-      <section className="border-b border-border bg-cream/30">
-        <div className="max-w-[1400px] mx-auto px-6 py-24 lg:py-36 text-center">
-          <p className="text-[10px] tracked text-muted-foreground mb-6 uppercase tracking-widest">— Farm-to-Table Heritage</p>
+      <section className="bg-cream/30">
+        <div className="max-w-[1400px] mx-auto px-6 pt-32 pb-24 lg:pt-44 lg:pb-36 text-center">
           <h1 className="font-display italic text-5xl md:text-7xl lg:text-[96px] leading-[0.95] max-w-5xl mx-auto animate-fade-up">
             Nurtured by Sun.<br />Graded by Hand.
           </h1>
@@ -76,14 +75,14 @@ function Story() {
       </section>
 
       <section className="bg-background py-24">
-        <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-px bg-border border border-border">
+        <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
             ["100%", "Single-origin orchards"],
             ["50%+", "Natural oil in Mamra almonds"],
             ["0%", "Added preservatives or oil"],
             ["4°C", "Constant cold-chain storage"],
           ].map(([k, v]) => (
-            <div key={k} className="bg-background p-10 text-center">
+            <div key={k} className="bg-cream/40 p-10 text-center rounded-sm">
               <p className="font-display italic text-5xl mb-3 text-ink">{k}</p>
               <p className="text-[10.5px] tracked text-muted-foreground uppercase max-w-[20ch] mx-auto">
                 {v}

@@ -15,11 +15,14 @@ import { Route as ChaiRouteImport } from './routes/chai'
 import { Route as CombosRouteImport } from './routes/combos'
 import { Route as DriedFruitsRouteImport } from './routes/dried-fruits'
 import { Route as ExoticSeedsRouteImport } from './routes/exotic-seeds'
+import { Route as GiftingRouteImport } from './routes/gifting'
+import { Route as GourmetRouteImport } from './routes/gourmet'
 import { Route as NutsRouteImport } from './routes/nuts'
 import { Route as PlatesRouteImport } from './routes/plates'
 import { Route as SnacksRouteImport } from './routes/snacks'
 import { Route as StoryRouteImport } from './routes/story'
 import { Route as SweetsRouteImport } from './routes/sweets'
+import { Route as TempRouteImport } from './routes/temp'
 import { Route as MenuSlugRouteImport } from './routes/menu.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -52,6 +55,16 @@ const ExoticSeedsRoute = ExoticSeedsRouteImport.update({
   path: '/exotic-seeds',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GiftingRoute = GiftingRouteImport.update({
+  id: '/gifting',
+  path: '/gifting',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GourmetRoute = GourmetRouteImport.update({
+  id: '/gourmet',
+  path: '/gourmet',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NutsRoute = NutsRouteImport.update({
   id: '/nuts',
   path: '/nuts',
@@ -77,6 +90,11 @@ const SweetsRoute = SweetsRouteImport.update({
   path: '/sweets',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TempRoute = TempRouteImport.update({
+  id: '/temp',
+  path: '/temp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MenuSlugRoute = MenuSlugRouteImport.update({
   id: '/menu/$slug',
   path: '/menu/$slug',
@@ -90,11 +108,14 @@ export interface FileRoutesByFullPath {
   '/combos': typeof CombosRoute
   '/dried-fruits': typeof DriedFruitsRoute
   '/exotic-seeds': typeof ExoticSeedsRoute
+  '/gifting': typeof GiftingRoute
+  '/gourmet': typeof GourmetRoute
   '/nuts': typeof NutsRoute
   '/plates': typeof PlatesRoute
   '/snacks': typeof SnacksRoute
   '/story': typeof StoryRoute
   '/sweets': typeof SweetsRoute
+  '/temp': typeof TempRoute
   '/menu/$slug': typeof MenuSlugRoute
 }
 export interface FileRoutesByTo {
@@ -104,11 +125,14 @@ export interface FileRoutesByTo {
   '/combos': typeof CombosRoute
   '/dried-fruits': typeof DriedFruitsRoute
   '/exotic-seeds': typeof ExoticSeedsRoute
+  '/gifting': typeof GiftingRoute
+  '/gourmet': typeof GourmetRoute
   '/nuts': typeof NutsRoute
   '/plates': typeof PlatesRoute
   '/snacks': typeof SnacksRoute
   '/story': typeof StoryRoute
   '/sweets': typeof SweetsRoute
+  '/temp': typeof TempRoute
   '/menu/$slug': typeof MenuSlugRoute
 }
 export interface FileRoutesById {
@@ -119,11 +143,14 @@ export interface FileRoutesById {
   '/combos': typeof CombosRoute
   '/dried-fruits': typeof DriedFruitsRoute
   '/exotic-seeds': typeof ExoticSeedsRoute
+  '/gifting': typeof GiftingRoute
+  '/gourmet': typeof GourmetRoute
   '/nuts': typeof NutsRoute
   '/plates': typeof PlatesRoute
   '/snacks': typeof SnacksRoute
   '/story': typeof StoryRoute
   '/sweets': typeof SweetsRoute
+  '/temp': typeof TempRoute
   '/menu/$slug': typeof MenuSlugRoute
 }
 export interface FileRouteTypes {
@@ -135,11 +162,14 @@ export interface FileRouteTypes {
     | '/combos'
     | '/dried-fruits'
     | '/exotic-seeds'
+    | '/gifting'
+    | '/gourmet'
     | '/nuts'
     | '/plates'
     | '/snacks'
     | '/story'
     | '/sweets'
+    | '/temp'
     | '/menu/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -149,11 +179,14 @@ export interface FileRouteTypes {
     | '/combos'
     | '/dried-fruits'
     | '/exotic-seeds'
+    | '/gifting'
+    | '/gourmet'
     | '/nuts'
     | '/plates'
     | '/snacks'
     | '/story'
     | '/sweets'
+    | '/temp'
     | '/menu/$slug'
   id:
     | '__root__'
@@ -163,11 +196,14 @@ export interface FileRouteTypes {
     | '/combos'
     | '/dried-fruits'
     | '/exotic-seeds'
+    | '/gifting'
+    | '/gourmet'
     | '/nuts'
     | '/plates'
     | '/snacks'
     | '/story'
     | '/sweets'
+    | '/temp'
     | '/menu/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -178,11 +214,14 @@ export interface RootRouteChildren {
   CombosRoute: typeof CombosRoute
   DriedFruitsRoute: typeof DriedFruitsRoute
   ExoticSeedsRoute: typeof ExoticSeedsRoute
+  GiftingRoute: typeof GiftingRoute
+  GourmetRoute: typeof GourmetRoute
   NutsRoute: typeof NutsRoute
   PlatesRoute: typeof PlatesRoute
   SnacksRoute: typeof SnacksRoute
   StoryRoute: typeof StoryRoute
   SweetsRoute: typeof SweetsRoute
+  TempRoute: typeof TempRoute
   MenuSlugRoute: typeof MenuSlugRoute
 }
 
@@ -230,6 +269,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExoticSeedsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/gifting': {
+      id: '/gifting'
+      path: '/gifting'
+      fullPath: '/gifting'
+      preLoaderRoute: typeof GiftingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gourmet': {
+      id: '/gourmet'
+      path: '/gourmet'
+      fullPath: '/gourmet'
+      preLoaderRoute: typeof GourmetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/nuts': {
       id: '/nuts'
       path: '/nuts'
@@ -265,6 +318,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SweetsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/temp': {
+      id: '/temp'
+      path: '/temp'
+      fullPath: '/temp'
+      preLoaderRoute: typeof TempRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/menu/$slug': {
       id: '/menu/$slug'
       path: '/menu/$slug'
@@ -282,11 +342,14 @@ const rootRouteChildren: RootRouteChildren = {
   CombosRoute: CombosRoute,
   DriedFruitsRoute: DriedFruitsRoute,
   ExoticSeedsRoute: ExoticSeedsRoute,
+  GiftingRoute: GiftingRoute,
+  GourmetRoute: GourmetRoute,
   NutsRoute: NutsRoute,
   PlatesRoute: PlatesRoute,
   SnacksRoute: SnacksRoute,
   StoryRoute: StoryRoute,
   SweetsRoute: SweetsRoute,
+  TempRoute: TempRoute,
   MenuSlugRoute: MenuSlugRoute,
 }
 export const routeTree = rootRouteImport

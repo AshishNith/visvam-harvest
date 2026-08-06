@@ -25,7 +25,7 @@ export const Route = createFileRoute("/combos")({
 
 function Combos() {
   const { add } = useCart();
-  const comboProducts = products.filter((p) => p.category === "combos");
+  const comboProducts = products.filter((p) => p.category === "gifting");
   const featuredBox = comboProducts[0] ?? products[0];
 
   const bundleItems = [
@@ -40,9 +40,8 @@ function Combos() {
 
   return (
     <SiteLayout>
-      <section className="border-b border-border bg-cream/60">
+      <section className="bg-cream/60">
         <div className="max-w-[1400px] mx-auto px-6 py-20 lg:py-28">
-          <p className="text-[10px] tracked text-muted-foreground mb-4 uppercase tracking-widest">— Curated Collections</p>
           <h1 className="font-display italic text-6xl lg:text-8xl leading-none animate-fade-up">
             Gift Boxes & Combos
           </h1>
@@ -69,7 +68,6 @@ function Combos() {
           </div>
         </div>
         <div className="flex flex-col justify-center py-6">
-          <p className="text-[10px] tracked text-muted-foreground mb-4 uppercase tracking-widest">— Featured Gift Set</p>
           <h2 className="font-display italic text-4xl mb-4">{featuredBox.name}</h2>
           <p className="text-sm text-muted-foreground mb-8 max-w-md leading-relaxed">
             {featuredBox.description}
@@ -113,7 +111,6 @@ function Combos() {
       </section>
 
       <section className="bg-ink text-white py-20 text-center">
-        <p className="text-[10px] tracked text-white/60 mb-4 uppercase tracking-widest">— Custom Corporate Gifting</p>
         <h2 className="font-display italic text-4xl md:text-5xl max-w-2xl mx-auto px-6 mb-8">
           Personalized hampers with custom ribboning and brass foil branding.
         </h2>

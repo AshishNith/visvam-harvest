@@ -2,13 +2,21 @@
 @source "../src";
 @import "tw-animate-css";
 
-@import "@fontsource/eb-garamond/400.css";
-@import "@fontsource/eb-garamond/400-italic.css";
-@import "@fontsource/eb-garamond/500.css";
-@import "@fontsource/inter/300.css";
-@import "@fontsource/inter/400.css";
-@import "@fontsource/inter/500.css";
-@import "@fontsource/inter/600.css";
+@font-face {
+  font-family: "Athena";
+  src: url("./assets/fonts/Athena-Regular.ttf") format("truetype");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Tenor Sans";
+  src: url("./assets/fonts/TenorSans-Regular.ttf") format("truetype");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 @custom-variant dark (&:is(.dark *));
 
@@ -38,8 +46,10 @@
   --color-input: var(--border);
   --color-ring: var(--clay);
   --color-ring-offset-background: var(--background);
-  --font-display: "EB Garamond", Georgia, serif;
-  --font-sans: "Inter", system-ui, sans-serif;
+  --font-primary: "Athena", "EB Garamond", serif;
+  --font-display: "Athena", "EB Garamond", serif;
+  --font-secondary: "Tenor Sans", "Inter", system-ui, sans-serif;
+  --font-sans: "Tenor Sans", "Inter", system-ui, sans-serif;
   --radius-sm: 0px;
   --radius-md: 0px;
   --radius-lg: 0px;

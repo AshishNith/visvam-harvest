@@ -2,5 +2,5 @@ import { createFileRoute } from "@tanstack/react-router";
 import { CategoryPage } from "@/components/CategoryPage";
 
 export const Route = createFileRoute("/snacks")({
-  component: () => <CategoryPage category="exotic-seeds" />,
+  component: () => <CategoryPage category="gourmet" />,
 });

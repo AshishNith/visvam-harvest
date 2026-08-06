@@ -11,7 +11,7 @@ const HARVEST_GUARANTEES = [
 
 export function Footer() {
   return (
-    <footer className="bg-cream pt-24 pb-12 border-t border-border">
+    <footer className="bg-cream pt-24 pb-12">
       <div className="max-w-[1400px] mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 mb-20">
           <div className="max-w-md">
@@ -37,10 +37,9 @@ export function Footer() {
             <div className="space-y-4">
               <h6 className="text-[10px] tracked font-semibold uppercase">Shop Harvest</h6>
               <ul className="space-y-2.5 text-[11px]">
-                <li><Link to="/nuts" className="hover:text-clay transition">Nuts & Kernels</Link></li>
-                <li><Link to="/dried-fruits" className="hover:text-clay transition">Dried Fruits & Dates</Link></li>
-                <li><Link to="/exotic-seeds" className="hover:text-clay transition">Exotic Seeds & Mixes</Link></li>
-                <li><Link to="/combos" className="hover:text-clay transition">Gift Boxes & Combos</Link></li>
+                <li><Link to="/gourmet" className="hover:text-clay transition">Gourmet</Link></li>
+                <li><Link to="/nuts" className="hover:text-clay transition">Nuts</Link></li>
+                <li><Link to="/gifting" className="hover:text-clay transition">Gifting</Link></li>
               </ul>
             </div>
             <div className="space-y-4">
@@ -67,7 +66,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="pt-10 border-t border-border flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
           <Link to="/" className="flex items-center gap-3 group">
             <img
               src={logoEmblem}

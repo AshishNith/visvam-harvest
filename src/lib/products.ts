@@ -12,7 +12,7 @@ import pistachios2 from "@/assets/pistachios-2.png";
 import pistachios3 from "@/assets/pistachios-3.png";
 import mamra1 from "@/assets/mamra-1.png";
 
-export type Category = "nuts" | "dried-fruits" | "exotic-seeds" | "combos";
+export type Category = "gourmet" | "nuts" | "gifting";
 
 export type Product = {
   slug: string;
@@ -120,7 +120,7 @@ export const products: Product[] = [
     name: "Afghani Organic Dried Figs (Anjeer)",
     tagline: "Sun-Dried Garlands · Soft Honey Core · Zero Sugar Added",
     price: 19.2,
-    category: "dried-fruits",
+    category: "gourmet",
     badge: "High Fiber",
     images: [
       "https://images.unsplash.com/photo-1601039641847-7857b994d704?auto=format&fit=crop&w=1000&q=80",
@@ -140,7 +140,7 @@ export const products: Product[] = [
     name: "Royal Medjool King Dates (Khajoor)",
     tagline: "Large Soft Medjool · Rich Caramel Bite · Mineral Rich",
     price: 17.5,
-    category: "dried-fruits",
+    category: "gourmet",
     badge: "Organic",
     images: [
       "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=1000&q=80",
@@ -160,7 +160,7 @@ export const products: Product[] = [
     name: "Long Green Seedless Kishmish",
     tagline: "Shade-Dried Long Berries · Sweet & Tangy · Iron Rich",
     price: 11.4,
-    category: "dried-fruits",
+    category: "gourmet",
     badge: "Juicy",
     images: [
       "https://images.unsplash.com/photo-1595855759920-86582396756a?auto=format&fit=crop&w=1000&q=80",
@@ -178,7 +178,7 @@ export const products: Product[] = [
     name: "Wild Cranberry & Blueberry Mix",
     tagline: "Whole Ruby Cranberries · Wild Blueberries · Low Sugar",
     price: 16.0,
-    category: "dried-fruits",
+    category: "gourmet",
     badge: "Immunity",
     images: [
       "https://images.unsplash.com/photo-1596591606975-97ee5cef3a1e?auto=format&fit=crop&w=1000&q=80",
@@ -197,7 +197,7 @@ export const products: Product[] = [
     name: "Raw Queensland Macadamia Nuts",
     tagline: "Whole Creamy Style 1 · Cold-Shelled · Keto Friendly",
     price: 24.5,
-    category: "exotic-seeds",
+    category: "gourmet",
     badge: "Exotic",
     images: [
       "https://images.unsplash.com/photo-1508061252966-17387f8b52d9?auto=format&fit=crop&w=1000&q=80",
@@ -215,7 +215,7 @@ export const products: Product[] = [
     name: "7-in-1 Roasted Superseeds Wellness Mix",
     tagline: "Pumpkin, Sunflower, Flax, Chia, Sesame, Watermelon & Hemp",
     price: 12.8,
-    category: "exotic-seeds",
+    category: "gourmet",
     badge: "Daily Wellness",
     images: [
       "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1000&q=80",
@@ -234,7 +234,7 @@ export const products: Product[] = [
     name: "Royal Heritage 4-in-1 Dry Fruit Gift Box",
     tagline: "Jumbo Almonds · W240 Cashews · Light Walnuts · Pista",
     price: 49.0,
-    category: "combos",
+    category: "gifting",
     badge: "Festive Favorite",
     images: [
       "https://images.unsplash.com/photo-1513201099705-a9746e1e201f?auto=format&fit=crop&w=1000&q=80",
@@ -254,7 +254,7 @@ export const products: Product[] = [
     name: "Festive Nut & Berry Celebration Collection",
     tagline: "Mamra Almonds · Medjool Dates · Wild Berries · Anjeer",
     price: 56.0,
-    category: "combos",
+    category: "gifting",
     badge: "Luxury Edition",
     images: [
       "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=1000&q=80",
@@ -278,8 +278,7 @@ export const getProductBySlug = (slug: string) =>
   products.find((p) => p.slug === slug);
 
 export const categories: { slug: Category; label: string; index: string; description: string }[] = [
-  { slug: "nuts", label: "Nuts & Kernels", index: "01", description: "Jumbo Almonds, W240 Cashews, Kashmiri Walnuts & Pistachios" },
-  { slug: "dried-fruits", label: "Dried Fruits & Dates", index: "02", description: "Organic Figs, Royal Medjool Dates, Long Kishmish & Berries" },
-  { slug: "exotic-seeds", label: "Exotic Seeds & Mixes", index: "03", description: "Queensland Macadamia Nuts & 7-in-1 Superseeds Mix" },
-  { slug: "combos", label: "Gift Boxes & Combos", index: "04", description: "Handcrafted Luxury Gift Boxes & Festive Collections" },
+  { slug: "gourmet", label: "Gourmet", index: "01", description: "Organic Figs, Medjool Dates, Kishmish, Berries & Superseeds" },
+  { slug: "nuts", label: "Nuts", index: "02", description: "California Jumbo Almonds, W240 Cashews, Kashmiri Walnuts & Pistachios" },
+  { slug: "gifting", label: "Gifting", index: "03", description: "Handcrafted Luxury Presentation Gift Boxes & Royal Hampers" },
 ];

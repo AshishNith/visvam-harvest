@@ -3,43 +3,34 @@ import { ProductCard } from "./ProductCard";
 import { getProductsByCategory, type Category } from "@/lib/products";
 
 const META: Record<Category, { index: string; title: string; intro: string }> = {
-  nuts: {
+  gourmet: {
     index: "01",
-    title: "Nuts & Kernels",
+    title: "Gourmet Selection",
     intro:
-      "Handpicked California Jumbo Almonds, W240 Whole Cashews, Kashmiri Extra-Light Walnuts, and Roasted Pistachios. Cold-stored at 4°C to lock in natural oils and orchard crunch.",
+      "Organic Kandahar Dried Figs (Anjeer), Royal Medjool King Dates, Long Green Kishmish, Wild Berry Mixes, Queensland Macadamia Nuts, and 7-in-1 Roasted Superseeds. Sun-dried naturally with zero added sugar or preservatives.",
   },
-  "dried-fruits": {
+  nuts: {
     index: "02",
-    title: "Dried Fruits & Dates",
+    title: "Nuts",
     intro:
-      "Organic Kandahar Dried Figs (Anjeer), Royal Medjool King Dates, Long Green Kishmish, and Wild Berry Mixes. Sun and shade-dried naturally with zero added sugar or preservatives.",
+      "Handpicked California Jumbo Almonds, W240 Whole Cashews, Kashmiri Extra-Light Walnuts, Roasted Pistachios, and Royal Iranian Mamra Almonds. Cold-stored at 4°C to lock in natural oils and orchard crunch.",
   },
-  "exotic-seeds": {
+  gifting: {
     index: "03",
-    title: "Exotic Seeds & Mixes",
+    title: "Gifting",
     intro:
-      "Raw Queensland Macadamia Nuts and 7-in-1 Roasted Superseeds Wellness Mix. Rich in monounsaturated healthy fats, plant protein, magnesium, and dietary fiber.",
-  },
-  combos: {
-    index: "04",
-    title: "Gift Boxes & Combos",
-    intro:
-      "Handcrafted luxury presentation boxes and celebratory dry fruit hampers featuring vacuum-sealed compartments of our finest single-origin nuts and dried fruits.",
+      "Handcrafted luxury presentation boxes and celebratory dry fruit hampers featuring vacuum-sealed compartments of our finest single-origin nuts and gourmet selections.",
   },
 };
 
 export function CategoryPage({ category }: { category: Category }) {
   const products = getProductsByCategory(category);
-  const meta = META[category] ?? META.nuts;
+  const meta = META[category] ?? META.gourmet;
   return (
     <SiteLayout>
-      <section className="border-b border-border bg-cream/60">
-        <div className="max-w-[1400px] mx-auto px-6 py-20 lg:py-28 grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-12 items-end">
+      <section className="bg-cream/60 pt-28 pb-20 lg:pt-36 lg:pb-28">
+        <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-12 items-end">
           <div className="animate-fade-up">
-            <p className="text-[10px] tracked text-muted-foreground mb-4 uppercase tracking-widest">
-              {meta.index} — Harvest Selection
-            </p>
             <h1 className="font-display italic text-6xl lg:text-8xl leading-none">
               {meta.title}
             </h1>
@@ -51,7 +42,7 @@ export function CategoryPage({ category }: { category: Category }) {
       </section>
 
       <section className="max-w-[1400px] mx-auto px-6 py-20">
-        <div className="flex justify-between items-center mb-12 pb-5 border-b border-border">
+        <div className="flex justify-between items-center mb-12 pb-5">
           <p className="text-[10.5px] tracked font-semibold uppercase">
             {products.length} Selection{products.length > 1 ? "s" : ""}
           </p>

@@ -10,7 +10,7 @@ export function ProductCard({ product }: { product: Product }) {
       <Link
         to="/menu/$slug"
         params={{ slug: product.slug }}
-        className="block relative aspect-[3/4] mb-5 overflow-hidden bg-cream border border-border/40"
+        className="block relative aspect-[3/4] mb-5 overflow-hidden bg-cream/70"
       >
         {product.badge && (
           <div className="absolute top-3 left-3 z-10">
@@ -18,7 +18,7 @@ export function ProductCard({ product }: { product: Product }) {
               className={`text-[9px] tracked px-2.5 py-1 font-semibold uppercase ${
                 product.isNew || product.badge === "Superfood" || product.badge === "Organic"
                   ? "bg-ink text-white"
-                  : "bg-white/90 backdrop-blur-sm text-ink border border-border"
+                  : "bg-white/90 backdrop-blur-sm text-ink"
               }`}
             >
               {product.badge}
@@ -51,7 +51,7 @@ export function ProductCard({ product }: { product: Product }) {
               e.preventDefault();
               add(product);
             }}
-            className="group/btn inline-flex items-center gap-1.5 text-[10px] tracked font-medium uppercase text-white hover:text-clay border-b border-white hover:border-clay transition-all duration-300"
+            className="group/btn inline-flex items-center gap-1.5 text-[10px] tracked font-medium uppercase text-white hover:text-clay transition-all duration-300"
           >
             <span>Add to bag</span>
             <ArrowRight size={11} className="group-hover/btn:translate-x-1 transition-transform duration-300 text-clay" />
@@ -67,7 +67,7 @@ export function ProductCard({ product }: { product: Product }) {
           </h4>
           <p className="text-[10.5px] text-muted-foreground tracked mt-1 line-clamp-1">{product.tagline}</p>
         </div>
-        <div className="pt-2 flex justify-between items-baseline border-t border-border/30 mt-2">
+        <div className="pt-2 flex justify-between items-baseline mt-2">
           <span className="text-sm font-semibold tabular-nums">{formatPrice(product.price)}</span>
           <span className="text-[9px] tracked text-muted-foreground">{product.serving}</span>
         </div>

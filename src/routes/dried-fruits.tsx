@@ -16,5 +16,5 @@ export const Route = createFileRoute("/dried-fruits")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: () => <CategoryPage category="dried-fruits" />,
+  component: () => <CategoryPage category="gourmet" />,
 });
