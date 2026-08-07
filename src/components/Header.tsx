@@ -53,10 +53,10 @@ export function Header() {
             : "bg-transparent shadow-none border-none py-0"
         }`}
       >
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 grid grid-cols-[auto_1fr_auto] lg:grid-cols-[1fr_auto_1fr] items-center h-20 gap-4 lg:gap-6">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 flex items-center justify-between lg:grid lg:grid-cols-[1fr_auto_1fr] h-20 gap-4 lg:gap-6">
           
-          {/* Left Mobile Menu Toggle + Desktop Left Nav */}
-          <div className="flex items-center gap-3">
+          {/* Left Mobile Menu Toggle + Mobile Logo + Desktop Left Nav */}
+          <div className="flex items-center gap-3 sm:gap-4">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className={`lg:hidden p-2 hover:text-clay transition-colors rounded-xs ${textColorClass}`}
@@ -64,6 +64,25 @@ export function Header() {
             >
               {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
+
+            {/* Mobile Logo (Left-aligned) */}
+            <Link to="/" className="lg:hidden flex items-center py-2">
+              {isScrolled ? (
+                <img
+                  src={logoEmblem}
+                  alt="Viśvam — Royal Dry Fruits & Nuts"
+                  className="h-8 sm:h-9 w-auto object-contain transition-all duration-300"
+                />
+              ) : (
+                <img
+                  src={logoWordmark}
+                  alt="Viśvam — Royal Dry Fruits & Nuts"
+                  className={`h-7 sm:h-8 w-auto object-contain transition-all duration-300 ${
+                    isHomePage ? "brightness-0 invert drop-shadow-md" : ""
+                  }`}
+                />
+              )}
+            </Link>
 
             {/* Desktop Left Nav */}
             <nav className={`hidden lg:flex items-center gap-8 text-[10.5px] font-medium tracked ${textColorClass}`}>
@@ -123,8 +142,8 @@ export function Header() {
             </nav>
           </div>
 
-          {/* Center Brand Logo: Wordmark logo when not scrolled, Image emblem logo when scrolled */}
-          <Link to="/" className="flex flex-col items-center justify-center group py-2 text-center">
+          {/* Desktop Center Brand Logo */}
+          <Link to="/" className="hidden lg:flex flex-col items-center justify-center group py-2 text-center">
             {isScrolled ? (
               <img
                 src={logoEmblem}
