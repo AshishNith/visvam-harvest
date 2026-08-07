@@ -1,8 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import gourmetHero from "@/assets/gourmet-hero.png";
-import nutsHero from "@/assets/nuts-hero.png";
-import giftingHero from "@/assets/gifting-hero.png";
+import gourmetHero from "@/Categorized_Photos/05_Dates_Khajoor/DSC00525.JPG";
+import nutsHero from "@/Categorized_Photos/01_Almonds_Badam/DSC00414.JPG";
+import giftingHero from "@/Categorized_Photos/08_Assorted_Mix_and_Gift_Platters/DSC00762.JPG";
 
 type CategoryItem = {
   id: string;
