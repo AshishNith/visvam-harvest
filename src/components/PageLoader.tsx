@@ -1,24 +1,33 @@
 import { useEffect, useState } from "react";
-import visvamLogo from "@/assets/visvam-logo-dark.png";
+import logoEmblem from "@/assets/Visvam Logo.png";
+import logoWordmark from "@/assets/Visvam Logo_Wordmark.png";
 
 export function PageLoader() {
   const [progress, setProgress] = useState(0);
-  const [isVisible, setIsVisible] = useState(true);
+  const [isSlidingUp, setIsSlidingUp] = useState(false);
   const [shouldRender, setShouldRender] = useState(true);
 
   useEffect(() => {
-    const timer1 = setTimeout(() => setProgress(35), 100);
-    const timer2 = setTimeout(() => setProgress(70), 300);
-    const timer3 = setTimeout(() => setProgress(100), 600);
+    const timer1 = setTimeout(() => setProgress(35), 80);
+    const timer2 = setTimeout(() => setProgress(70), 220);
+    const timer3 = setTimeout(() => setProgress(100), 450);
 
-    const fadeTimer = setTimeout(() => setIsVisible(false), 950);
-    const removeTimer = setTimeout(() => setShouldRender(false), 1450);
+    const slideTimer = setTimeout(() => {
+      setIsSlidingUp(true);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("preloaderDone"));
+      }
+    }, 700);
+
+    const removeTimer = setTimeout(() => {
+      setShouldRender(false);
+    }, 1500);
 
     return () => {
       clearTimeout(timer1);
       clearTimeout(timer2);
       clearTimeout(timer3);
-      clearTimeout(fadeTimer);
+      clearTimeout(slideTimer);
       clearTimeout(removeTimer);
     };
   }, []);
@@ -27,24 +36,33 @@ export function PageLoader() {
 
   return (
     <div
-      className={`fixed inset-0 z-[100] bg-[#FAF5EE] flex flex-col items-center justify-center transition-all duration-700 ease-in-out ${
-        isVisible ? "opacity-100 scale-100" : "opacity-0 scale-105 pointer-events-none"
+      className={`fixed inset-0 z-[100] bg-[#FAF5EE] flex flex-col items-center justify-center transition-transform duration-800 ease-[cubic-bezier(0.76,0,0.24,1)] ${
+        isSlidingUp ? "-translate-y-full pointer-events-none" : "translate-y-0"
       }`}
     >
-      {/* Animated Image Logo Only */}
-      <div className="relative flex flex-col items-center justify-center space-y-8">
-        <div className="w-32 sm:w-44 aspect-square flex items-center justify-center">
+      <div className="relative flex flex-col items-center justify-center space-y-6 max-w-xs px-4">
+        {/* Emblem Logo with smooth scale & reveal animation */}
+        <div className="w-20 sm:w-28 aspect-square flex items-center justify-center animate-reveal-up">
           <img
-            src={visvamLogo}
-            alt="Viśvam Logo"
-            className="w-full h-full object-contain drop-shadow-sm transition-all duration-1000 ease-out animate-reveal-up scale-100 hover:scale-105"
+            src={logoEmblem}
+            alt="Viśvam Emblem"
+            className="w-full h-full object-contain drop-shadow-xs transition-transform duration-700 hover:scale-105"
           />
         </div>
 
-        {/* Minimal Progress Line Under Logo */}
-        <div className="w-36 sm:w-48 h-[2px] bg-sand/60 overflow-hidden relative rounded-full">
+        {/* Wordmark Logo with delayed fade-up slide animation */}
+        <div className="animate-fade-up [animation-delay:200ms]">
+          <img
+            src={logoWordmark}
+            alt="Viśvam Wordmark"
+            className="h-6 sm:h-8 w-auto object-contain opacity-90"
+          />
+        </div>
+
+        {/* Minimal 1.5px warm clay progress track */}
+        <div className="w-32 sm:w-44 h-[1.5px] bg-sand/60 overflow-hidden relative rounded-full mt-2">
           <div
-            className="h-full bg-clay transition-all duration-500 ease-out rounded-full"
+            className="h-full bg-clay transition-all duration-300 ease-out rounded-full"
             style={{ width: `${progress}%` }}
           />
         </div>

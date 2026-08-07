@@ -13,16 +13,21 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ButtonsRouteImport } from './routes/buttons'
 import { Route as ChaiRouteImport } from './routes/chai'
 import { Route as CombosRouteImport } from './routes/combos'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DriedFruitsRouteImport } from './routes/dried-fruits'
 import { Route as ExoticSeedsRouteImport } from './routes/exotic-seeds'
 import { Route as GiftingRouteImport } from './routes/gifting'
 import { Route as GourmetRouteImport } from './routes/gourmet'
 import { Route as NutsRouteImport } from './routes/nuts'
 import { Route as PlatesRouteImport } from './routes/plates'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ReturnsRouteImport } from './routes/returns'
+import { Route as ShippingRouteImport } from './routes/shipping'
 import { Route as SnacksRouteImport } from './routes/snacks'
 import { Route as StoryRouteImport } from './routes/story'
 import { Route as SweetsRouteImport } from './routes/sweets'
 import { Route as TempRouteImport } from './routes/temp'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as MenuSlugRouteImport } from './routes/menu.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -43,6 +48,11 @@ const ChaiRoute = ChaiRouteImport.update({
 const CombosRoute = CombosRouteImport.update({
   id: '/combos',
   path: '/combos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DriedFruitsRoute = DriedFruitsRouteImport.update({
@@ -75,6 +85,21 @@ const PlatesRoute = PlatesRouteImport.update({
   path: '/plates',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReturnsRoute = ReturnsRouteImport.update({
+  id: '/returns',
+  path: '/returns',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShippingRoute = ShippingRouteImport.update({
+  id: '/shipping',
+  path: '/shipping',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SnacksRoute = SnacksRouteImport.update({
   id: '/snacks',
   path: '/snacks',
@@ -95,6 +120,11 @@ const TempRoute = TempRouteImport.update({
   path: '/temp',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MenuSlugRoute = MenuSlugRouteImport.update({
   id: '/menu/$slug',
   path: '/menu/$slug',
@@ -106,16 +136,21 @@ export interface FileRoutesByFullPath {
   '/buttons': typeof ButtonsRoute
   '/chai': typeof ChaiRoute
   '/combos': typeof CombosRoute
+  '/contact': typeof ContactRoute
   '/dried-fruits': typeof DriedFruitsRoute
   '/exotic-seeds': typeof ExoticSeedsRoute
   '/gifting': typeof GiftingRoute
   '/gourmet': typeof GourmetRoute
   '/nuts': typeof NutsRoute
   '/plates': typeof PlatesRoute
+  '/privacy': typeof PrivacyRoute
+  '/returns': typeof ReturnsRoute
+  '/shipping': typeof ShippingRoute
   '/snacks': typeof SnacksRoute
   '/story': typeof StoryRoute
   '/sweets': typeof SweetsRoute
   '/temp': typeof TempRoute
+  '/terms': typeof TermsRoute
   '/menu/$slug': typeof MenuSlugRoute
 }
 export interface FileRoutesByTo {
@@ -123,16 +158,21 @@ export interface FileRoutesByTo {
   '/buttons': typeof ButtonsRoute
   '/chai': typeof ChaiRoute
   '/combos': typeof CombosRoute
+  '/contact': typeof ContactRoute
   '/dried-fruits': typeof DriedFruitsRoute
   '/exotic-seeds': typeof ExoticSeedsRoute
   '/gifting': typeof GiftingRoute
   '/gourmet': typeof GourmetRoute
   '/nuts': typeof NutsRoute
   '/plates': typeof PlatesRoute
+  '/privacy': typeof PrivacyRoute
+  '/returns': typeof ReturnsRoute
+  '/shipping': typeof ShippingRoute
   '/snacks': typeof SnacksRoute
   '/story': typeof StoryRoute
   '/sweets': typeof SweetsRoute
   '/temp': typeof TempRoute
+  '/terms': typeof TermsRoute
   '/menu/$slug': typeof MenuSlugRoute
 }
 export interface FileRoutesById {
@@ -141,16 +181,21 @@ export interface FileRoutesById {
   '/buttons': typeof ButtonsRoute
   '/chai': typeof ChaiRoute
   '/combos': typeof CombosRoute
+  '/contact': typeof ContactRoute
   '/dried-fruits': typeof DriedFruitsRoute
   '/exotic-seeds': typeof ExoticSeedsRoute
   '/gifting': typeof GiftingRoute
   '/gourmet': typeof GourmetRoute
   '/nuts': typeof NutsRoute
   '/plates': typeof PlatesRoute
+  '/privacy': typeof PrivacyRoute
+  '/returns': typeof ReturnsRoute
+  '/shipping': typeof ShippingRoute
   '/snacks': typeof SnacksRoute
   '/story': typeof StoryRoute
   '/sweets': typeof SweetsRoute
   '/temp': typeof TempRoute
+  '/terms': typeof TermsRoute
   '/menu/$slug': typeof MenuSlugRoute
 }
 export interface FileRouteTypes {
@@ -160,16 +205,21 @@ export interface FileRouteTypes {
     | '/buttons'
     | '/chai'
     | '/combos'
+    | '/contact'
     | '/dried-fruits'
     | '/exotic-seeds'
     | '/gifting'
     | '/gourmet'
     | '/nuts'
     | '/plates'
+    | '/privacy'
+    | '/returns'
+    | '/shipping'
     | '/snacks'
     | '/story'
     | '/sweets'
     | '/temp'
+    | '/terms'
     | '/menu/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -177,16 +227,21 @@ export interface FileRouteTypes {
     | '/buttons'
     | '/chai'
     | '/combos'
+    | '/contact'
     | '/dried-fruits'
     | '/exotic-seeds'
     | '/gifting'
     | '/gourmet'
     | '/nuts'
     | '/plates'
+    | '/privacy'
+    | '/returns'
+    | '/shipping'
     | '/snacks'
     | '/story'
     | '/sweets'
     | '/temp'
+    | '/terms'
     | '/menu/$slug'
   id:
     | '__root__'
@@ -194,16 +249,21 @@ export interface FileRouteTypes {
     | '/buttons'
     | '/chai'
     | '/combos'
+    | '/contact'
     | '/dried-fruits'
     | '/exotic-seeds'
     | '/gifting'
     | '/gourmet'
     | '/nuts'
     | '/plates'
+    | '/privacy'
+    | '/returns'
+    | '/shipping'
     | '/snacks'
     | '/story'
     | '/sweets'
     | '/temp'
+    | '/terms'
     | '/menu/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -212,16 +272,21 @@ export interface RootRouteChildren {
   ButtonsRoute: typeof ButtonsRoute
   ChaiRoute: typeof ChaiRoute
   CombosRoute: typeof CombosRoute
+  ContactRoute: typeof ContactRoute
   DriedFruitsRoute: typeof DriedFruitsRoute
   ExoticSeedsRoute: typeof ExoticSeedsRoute
   GiftingRoute: typeof GiftingRoute
   GourmetRoute: typeof GourmetRoute
   NutsRoute: typeof NutsRoute
   PlatesRoute: typeof PlatesRoute
+  PrivacyRoute: typeof PrivacyRoute
+  ReturnsRoute: typeof ReturnsRoute
+  ShippingRoute: typeof ShippingRoute
   SnacksRoute: typeof SnacksRoute
   StoryRoute: typeof StoryRoute
   SweetsRoute: typeof SweetsRoute
   TempRoute: typeof TempRoute
+  TermsRoute: typeof TermsRoute
   MenuSlugRoute: typeof MenuSlugRoute
 }
 
@@ -253,6 +318,13 @@ declare module '@tanstack/react-router' {
       path: '/combos'
       fullPath: '/combos'
       preLoaderRoute: typeof CombosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dried-fruits': {
@@ -297,6 +369,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlatesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/returns': {
+      id: '/returns'
+      path: '/returns'
+      fullPath: '/returns'
+      preLoaderRoute: typeof ReturnsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shipping': {
+      id: '/shipping'
+      path: '/shipping'
+      fullPath: '/shipping'
+      preLoaderRoute: typeof ShippingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/snacks': {
       id: '/snacks'
       path: '/snacks'
@@ -325,6 +418,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TempRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/menu/$slug': {
       id: '/menu/$slug'
       path: '/menu/$slug'
@@ -340,16 +440,21 @@ const rootRouteChildren: RootRouteChildren = {
   ButtonsRoute: ButtonsRoute,
   ChaiRoute: ChaiRoute,
   CombosRoute: CombosRoute,
+  ContactRoute: ContactRoute,
   DriedFruitsRoute: DriedFruitsRoute,
   ExoticSeedsRoute: ExoticSeedsRoute,
   GiftingRoute: GiftingRoute,
   GourmetRoute: GourmetRoute,
   NutsRoute: NutsRoute,
   PlatesRoute: PlatesRoute,
+  PrivacyRoute: PrivacyRoute,
+  ReturnsRoute: ReturnsRoute,
+  ShippingRoute: ShippingRoute,
   SnacksRoute: SnacksRoute,
   StoryRoute: StoryRoute,
   SweetsRoute: SweetsRoute,
   TempRoute: TempRoute,
+  TermsRoute: TermsRoute,
   MenuSlugRoute: MenuSlugRoute,
 }
 export const routeTree = rootRouteImport

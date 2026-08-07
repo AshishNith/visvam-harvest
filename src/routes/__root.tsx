@@ -14,25 +14,39 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CartProvider } from "../lib/cart-context";
 
+import { SiteLayout } from "../components/SiteLayout";
+
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <p className="text-[10px] tracked text-muted-foreground uppercase">Error 404</p>
-        <h1 className="mt-6 font-display italic text-5xl">Page not found</h1>
-        <p className="mt-4 text-sm text-muted-foreground">
-          The dry fruit collection or page you are looking for doesn't exist.
-        </p>
-        <div className="mt-8">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center bg-ink px-8 py-3.5 text-[11px] tracked text-white uppercase tracking-widest hover:bg-clay transition-colors"
-          >
-            Back to Harvest Home
-          </Link>
+    <SiteLayout>
+      <div className="flex min-h-[70vh] items-center justify-center bg-background px-6 py-24">
+        <div className="max-w-lg text-center space-y-6">
+          <p className="text-[11px] font-mono text-clay tracking-widest uppercase font-semibold">
+            ERROR 404 &bull; COLLECTION NOT FOUND
+          </p>
+          <h1 className="font-display italic text-5xl sm:text-6xl text-ink">
+            Harvest Path Lost
+          </h1>
+          <p className="text-sm text-muted-foreground leading-relaxed max-w-md mx-auto">
+            The dry fruit selection or page you are looking for has been relocated or is unavailable in our current harvest.
+          </p>
+          <div className="pt-4 flex flex-wrap justify-center gap-4">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 bg-ink text-white px-8 py-3.5 text-[11px] font-medium tracked uppercase tracking-widest hover:bg-clay transition-colors"
+            >
+              <span>Back to Harvest Home</span>
+            </Link>
+            <Link
+              to="/nuts"
+              className="inline-flex items-center gap-2 border border-ink text-ink px-8 py-3.5 text-[11px] font-medium tracked uppercase tracking-widest hover:bg-ink hover:text-white transition-colors"
+            >
+              <span>Explore Nuts Catalog</span>
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
+    </SiteLayout>
   );
 }
 

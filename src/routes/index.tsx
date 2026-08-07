@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ArrowRight } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { ProductCard } from "@/components/ProductCard";
@@ -51,6 +51,7 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const bestsellers = products.filter((p) => p.bestseller).slice(0, 6);
   const { add } = useCart();
   const giftBox = products.find((p) => p.slug === "royal-heritage-gift-box") ?? products[0];
@@ -59,7 +60,21 @@ function Home() {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
     }, 4500);
-    return () => clearInterval(timer);
+
+    const handlePreloaderDone = () => {
+      if (videoRef.current) {
+        videoRef.current.play().catch(() => {});
+      }
+    };
+
+    window.addEventListener("preloaderDone", handlePreloaderDone);
+    // If preloader already finished
+    handlePreloaderDone();
+
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener("preloaderDone", handlePreloaderDone);
+    };
   }, []);
 
   return (
@@ -67,7 +82,8 @@ function Home() {
       {/* Hero Video Background */}
       <section className="relative min-h-screen lg:h-screen overflow-hidden bg-cream">
         <video
-          autoPlay
+          ref={videoRef}
+          preload="auto"
           loop
           muted
           playsInline

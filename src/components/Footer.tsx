@@ -55,12 +55,13 @@ export function Footer() {
               </ul>
             </div>
             <div className="space-y-4">
-              <h6 className="text-[10px] tracked font-semibold uppercase">Information</h6>
+              <h6 className="text-[10px] tracked font-semibold uppercase">Legal & Support</h6>
               <ul className="space-y-2.5 text-[11px]">
-                <li><Link to="/story" className="hover:text-clay transition">Our Farm Story</Link></li>
-                <li><a className="hover:text-clay transition" href="#">Nutritional Guide</a></li>
-                <li><a className="hover:text-clay transition" href="#">Corporate Gifting</a></li>
-                <li><a className="hover:text-clay transition" href="#">Quality & Storage</a></li>
+                <li><Link to="/privacy" className="hover:text-clay transition">Privacy Policy</Link></li>
+                <li><Link to="/terms" className="hover:text-clay transition">Terms & Conditions</Link></li>
+                <li><Link to="/returns" className="hover:text-clay transition">Return & Refund Policy</Link></li>
+                <li><Link to="/shipping" className="hover:text-clay transition">Shipping & Delivery</Link></li>
+                <li><Link to="/contact" className="hover:text-clay transition">Contact Concierge</Link></li>
               </ul>
             </div>
           </div>
@@ -89,9 +90,9 @@ export function Footer() {
             © 2026 Viśvam Harvest — Cold-stored, single-origin nuts and organic dried fruits.
           </div>
           <div className="flex items-center gap-6 text-[10px] tracked">
-            <a href="#" className="hover:text-clay transition">Instagram</a>
-            <a href="#" className="hover:text-clay transition">LinkedIn</a>
-            <a href="#" className="hover:text-clay transition">Contact Us</a>
+            <Link to="/privacy" className="hover:text-clay transition">Privacy</Link>
+            <Link to="/terms" className="hover:text-clay transition">Terms</Link>
+            <Link to="/contact" className="hover:text-clay transition">Contact Us</Link>
           </div>
         </div>
       </div>
