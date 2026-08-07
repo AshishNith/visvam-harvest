@@ -98,27 +98,7 @@ function Home() {
         </div>
       </section>
 
-      {/* 4 Harvest Pillars */}
-      <section className="py-16 bg-background">
-        <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-10">
-          {[
-            ["01", "Single-Origin Orchards", "Direct farm sourcing from California, Kashmir & Kandahar."],
-            ["02", "Cold-Chain Locked", "Stored at 4°C to preserve natural oils and fresh aroma."],
-            ["03", "Zero Preservatives", "100% natural, non-GMO, zero artificial glazing or added oil."],
-            ["04", "Nitrogen Flushed", "Airtight sealed pouches for peak crunch upon delivery."],
-          ].map(([index, title, body]) => (
-            <div key={index} className="space-y-3.5 group">
-              <p className="font-display italic text-3xl text-clay group-hover:translate-x-1 transition-transform duration-500">
-                {index}
-              </p>
-              <h5 className="text-[10px] tracked font-semibold uppercase">{title}</h5>
-              <p className="text-[11px] text-muted-foreground leading-relaxed max-w-[26ch]">
-                {body}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
+
 
       {/* Bestsellers */}
       <section className="py-24 bg-cream/50">
