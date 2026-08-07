@@ -79,6 +79,26 @@
   }
   h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 400; }
   ::selection { background: var(--sand); color: var(--ink); }
+
+  /* Luxury Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #FDFAF5;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(138, 79, 39, 0.4);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(138, 79, 39, 0.8);
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(138, 79, 39, 0.4) #FDFAF5;
+  }
 }
 
 @utility tracked {
