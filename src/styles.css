@@ -80,24 +80,24 @@
   h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 400; }
   ::selection { background: var(--sand); color: var(--ink); }
 
-  /* Luxury Custom Scrollbar */
+  /* Luxury Custom Scrollbar (Transparent Track) */
   ::-webkit-scrollbar {
-    width: 7px;
-    height: 7px;
+    width: 6px;
+    height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #FDFAF5;
+    background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: rgba(138, 79, 39, 0.4);
+    background: rgba(138, 79, 39, 0.45);
     border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(138, 79, 39, 0.8);
+    background: rgba(138, 79, 39, 0.85);
   }
   * {
     scrollbar-width: thin;
-    scrollbar-color: rgba(138, 79, 39, 0.4) #FDFAF5;
+    scrollbar-color: rgba(138, 79, 39, 0.45) transparent;
   }
 }
 
