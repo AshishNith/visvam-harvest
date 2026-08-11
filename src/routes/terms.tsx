@@ -4,10 +4,10 @@ import { SiteLayout } from "@/components/SiteLayout";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Terms & Conditions — Viśvam Harvest" },
+      { title: "Terms & Conditions — Viśvam" },
       {
         name: "description",
-        content: "Review the Terms & Conditions governing orders and website usage at Viśvam Harvest.",
+        content: "Review the Terms & Conditions governing orders and website usage at Viśvam.",
       },
     ],
   }),
@@ -35,7 +35,7 @@ function TermsAndConditions() {
             <section className="space-y-4">
               <h2 className="font-display italic text-2xl text-ink">1. Acceptance of Terms</h2>
               <p className="text-muted-foreground">
-                By accessing or purchasing from Viśvam Harvest, you agree to comply with and be bound by these Terms & Conditions. If you do not agree with any part of these terms, please do not use our services.
+                By accessing or purchasing from Viśvam, you agree to comply with and be bound by these Terms & Conditions. If you do not agree with any part of these terms, please do not use our services.
               </p>
             </section>
 
@@ -56,7 +56,7 @@ function TermsAndConditions() {
             <section className="space-y-4">
               <h2 className="font-display italic text-2xl text-ink">4. Intellectual Property</h2>
               <p className="text-muted-foreground">
-                All content on this website, including logos, wordmarks, custom photography, brand copy, and editorial designs, is the exclusive intellectual property of Viśvam Harvest and protected by applicable copyright and trademark laws.
+                All content on this website, including logos, wordmarks, custom photography, brand copy, and editorial designs, is the exclusive intellectual property of Viśvam and protected by applicable copyright and trademark laws.
               </p>
             </section>
 

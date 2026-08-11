@@ -4,10 +4,10 @@ import { SiteLayout } from "@/components/SiteLayout";
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacy Policy — Viśvam Harvest" },
+      { title: "Privacy Policy — Viśvam" },
       {
         name: "description",
-        content: "Learn how Viśvam Harvest protects your personal data, order details, and privacy.",
+        content: "Learn how Viśvam protects your personal data, order details, and privacy.",
       },
     ],
   }),
@@ -35,7 +35,7 @@ function PrivacyPolicy() {
             <section className="space-y-4">
               <h2 className="font-display italic text-2xl text-ink">1. Information We Collect</h2>
               <p className="text-muted-foreground">
-                At Viśvam Harvest, we respect your privacy. When you visit our website, place an order for our single-origin dry fruits, or subscribe to our Harvest Circle, we collect necessary personal information including your full name, shipping address, contact phone number, email address, and payment transaction tokens.
+                At Viśvam, we respect your privacy. When you visit our website, place an order for our single-origin dry fruits, or subscribe to our Harvest Circle, we collect necessary personal information including your full name, shipping address, contact phone number, email address, and payment transaction tokens.
               </p>
             </section>
 

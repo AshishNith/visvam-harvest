@@ -8,13 +8,13 @@ import { products } from "@/lib/products";
 export const Route = createFileRoute("/combos")({
   head: () => ({
     meta: [
-      { title: "Gift Boxes & Combos — Viśvam Harvest" },
+      { title: "Gift Boxes & Combos — Viśvam" },
       {
         name: "description",
         content:
           "Handcrafted luxury dry fruit gift boxes, festive celebration collections, and corporate hampers.",
       },
-      { property: "og:title", content: "Gift Boxes & Combos — Viśvam Harvest" },
+      { property: "og:title", content: "Gift Boxes & Combos — Viśvam" },
       { property: "og:description", content: "Opulent gift boxes with vacuum-sealed premium nuts and dried fruits." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -25,16 +25,36 @@ export const Route = createFileRoute("/combos")({
 
 function Combos() {
   const { add } = useCart();
-  const comboProducts = products.filter((p) => p.category === "gifting");
-  const featuredBox = comboProducts[0] ?? products[0];
+  const [comboProducts, setComboProducts] = useState<Product[]>([]);
+  const [bundleItems, setBundleItems] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const bundleItems = [
-    products.find((p) => p.slug === "california-jumbo-almonds")!,
-    products.find((p) => p.slug === "king-w240-cashews")!,
-    products.find((p) => p.slug === "kashmiri-snow-walnuts")!,
-    products.find((p) => p.slug === "afghani-organic-anjeer")!,
-  ].filter(Boolean);
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
+    
+    Promise.all([
+      fetchProductsFromBackend({ category: "gifting" }),
+      fetchProductsFromBackend({ limit: 20 }),
+    ]).then(([giftingData, allData]) => {
+      if (!isMounted) return;
+      if (giftingData) setComboProducts(giftingData);
+      if (allData) {
+        const bundleSlugs = [
+          "california-jumbo-almonds",
+          "king-w240-cashews",
+          "kashmiri-snow-walnuts",
+          "afghani-organic-anjeer",
+        ];
+        setBundleItems(allData.filter((p) => bundleSlugs.includes(p.slug)));
+      }
+      setLoading(false);
+    });
 
+    return () => { isMounted = false; };
+  }, []);
+
+  const featuredBox = comboProducts[0];
   const bundleTotal = bundleItems.reduce((s, p) => s + p.price, 0);
   const bundleDiscounted = Math.round(bundleTotal * 0.85 * 100) / 100;
 
@@ -52,10 +72,11 @@ function Combos() {
       </section>
 
       {/* Featured Luxury Gift Set */}
-      <section className="max-w-[1400px] mx-auto px-6 py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <div className="bg-cream relative overflow-hidden aspect-[4/3] group border border-border/40">
-          <img
-            src={featuredBox.images[0]}
+      {featuredBox && (
+        <section className="max-w-[1400px] mx-auto px-6 py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="bg-cream relative overflow-hidden aspect-[4/3] group border border-border/40">
+            <img
+              src={featuredBox.images[0]}
             alt={featuredBox.name}
             width={1408}
             height={1008}
@@ -99,6 +120,7 @@ function Combos() {
           </button>
         </div>
       </section>
+      )}
 
       {/* All Gift Boxes */}
       <section className="max-w-[1400px] mx-auto px-6 py-20 border-t border-border">

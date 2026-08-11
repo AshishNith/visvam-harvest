@@ -4,6 +4,7 @@ import { Footer } from "./Footer";
 import { CartDrawer } from "./CartDrawer";
 import { PageLoader } from "./PageLoader";
 import { ScrollProgress } from "./ScrollProgress";
+import { Toaster } from "@/components/ui/sonner";
 
 export function SiteLayout({ children }: { children: ReactNode }) {
   return (
@@ -14,6 +15,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <Footer />
       <CartDrawer />
       <ScrollProgress />
+      <Toaster position="bottom-center" />
     </div>
   );
 }

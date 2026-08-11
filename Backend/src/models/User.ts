@@ -1,11 +1,13 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface IUser extends Document {
-  firebaseUid: string;
+  firebaseUid?: string;
   email: string;
   name: string;
   role: "user" | "admin";
+  password?: string;
   phone?: string;
+  avatar?: string;
   address?: {
     street?: string;
     city?: string;
@@ -21,8 +23,8 @@ const UserSchema = new Schema<IUser>(
   {
     firebaseUid: {
       type: String,
-      required: true,
       unique: true,
+      sparse: true,
       index: true,
     },
     email: {
@@ -44,9 +46,17 @@ const UserSchema = new Schema<IUser>(
       default: "user",
       index: true,
     },
+    password: {
+      type: String,
+      select: false, // Never returned in queries by default
+    },
     phone: {
       type: String,
       trim: true,
+    },
+    avatar: {
+      type: String,
+      default: "",
     },
     address: {
       street: String,

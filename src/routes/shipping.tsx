@@ -4,10 +4,10 @@ import { SiteLayout } from "@/components/SiteLayout";
 export const Route = createFileRoute("/shipping")({
   head: () => ({
     meta: [
-      { title: "Shipping & Delivery Policy — Viśvam Harvest" },
+      { title: "Shipping & Delivery Policy — Viśvam" },
       {
         name: "description",
-        content: "Discover Viśvam Harvest's cold-chain shipping logistics and express delivery timelines.",
+        content: "Discover Viśvam's cold-chain shipping logistics and express delivery timelines.",
       },
     ],
   }),
@@ -35,7 +35,7 @@ function ShippingPolicy() {
             <section className="space-y-4">
               <h2 className="font-display italic text-2xl text-ink">1. Cold-Chain Preserved Packaging</h2>
               <p className="text-muted-foreground">
-                Every order dispatched from Viśvam Harvest is nitrogen-flushed and vacuum-sealed in food-grade airtight pouches to lock in natural oils, aroma, and orchard-fresh crunch throughout transit.
+                Every order dispatched from Viśvam is nitrogen-flushed and vacuum-sealed in food-grade airtight pouches to lock in natural oils, aroma, and orchard-fresh crunch throughout transit.
               </p>
             </section>
 

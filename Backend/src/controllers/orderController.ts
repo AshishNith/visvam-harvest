@@ -1,12 +1,16 @@
-import { Response } from "express";
+import { Request, Response } from "express";
+import mongoose from "mongoose";
 import { Order } from "../models/Order.js";
+import { Product } from "../models/Product.js";
+import { User } from "../models/User.js";
 import { AuthenticatedRequest } from "../middleware/authMiddleware.js";
 
 // @desc    Create new order
 // @route   POST /api/v1/orders
 // @access  Public / Protected
-export const createOrder = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const createOrder = async (req: Request, res: Response): Promise<void> => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const {
       orderItems,
       pickupLane,
@@ -14,26 +18,59 @@ export const createOrder = async (req: AuthenticatedRequest, res: Response): Pro
       shippingAddress,
       paymentMethod,
       guestEmail,
-    } = req.body;
+    } = authReq.body;
 
-    if (!orderItems || orderItems.length === 0) {
+    if (!orderItems || !Array.isArray(orderItems) || orderItems.length === 0) {
       res.status(400).json({ success: false, message: "No items in order" });
       return;
     }
 
-    const itemsPrice = orderItems.reduce((acc: number, item: any) => acc + item.price * item.qty, 0);
+    // Sanitize order items and resolve Mongoose ObjectId for product field safely
+    const sanitizedOrderItems = [];
+    for (const item of orderItems) {
+      let productObjId: mongoose.Types.ObjectId | undefined = undefined;
+
+      if (item.product && mongoose.Types.ObjectId.isValid(String(item.product))) {
+        productObjId = new mongoose.Types.ObjectId(String(item.product));
+      } else if (item.slug) {
+        const dbProd = await Product.findOne({ slug: item.slug });
+        if (dbProd) {
+          productObjId = dbProd._id as mongoose.Types.ObjectId;
+        }
+      }
+
+      sanitizedOrderItems.push({
+        product: productObjId,
+        slug: item.slug || item.product || "product",
+        name: item.name || "Viśvam Harvest Item",
+        qty: Math.max(1, Number(item.qty) || 1),
+        price: Number(item.price) || 0,
+        image: typeof item.image === "string" ? item.image : (Array.isArray(item.images) ? item.images[0] : "") || "",
+      });
+    }
+
+    const itemsPrice = sanitizedOrderItems.reduce((acc: number, item: any) => acc + item.price * item.qty, 0);
     const taxPrice = Number((itemsPrice * 0.05).toFixed(2));
-    const shippingPrice = itemsPrice >= 50 ? 0 : 5;
+    const shippingPrice = itemsPrice >= 999 ? 0 : 79;
     const totalPrice = Number((itemsPrice + taxPrice + shippingPrice).toFixed(2));
 
     const order = await Order.create({
-      user: req.user?._id,
-      guestEmail: req.user ? undefined : guestEmail,
-      orderItems,
+      user: authReq.user?._id,
+      guestEmail: authReq.user?.email || guestEmail || shippingAddress?.email || "",
+      orderItems: sanitizedOrderItems,
       pickupLane: pickupLane || "riverside",
       pickupSlot: pickupSlot || "ASAP",
-      shippingAddress,
-      paymentMethod: paymentMethod || "Card / Pickup",
+      shippingAddress: {
+        fullName: shippingAddress?.fullName || authReq.user?.name || "Customer",
+        address: shippingAddress?.street || shippingAddress?.address || "",
+        city: shippingAddress?.city || "",
+        state: shippingAddress?.state || "",
+        postalCode: shippingAddress?.pincode || shippingAddress?.postalCode || "",
+        phone: shippingAddress?.phone || authReq.user?.phone || "",
+        email: shippingAddress?.email || authReq.user?.email || guestEmail || "",
+        country: shippingAddress?.country || "India",
+      },
+      paymentMethod: paymentMethod || "Cash on Delivery",
       itemsPrice,
       taxPrice,
       shippingPrice,
@@ -41,26 +78,67 @@ export const createOrder = async (req: AuthenticatedRequest, res: Response): Pro
       status: "Pending",
     });
 
+    // Auto-update user profile phone and saved address in MongoDB
+    if (authReq.user) {
+      try {
+        const userDoc = await User.findById(authReq.user._id);
+        if (userDoc) {
+          if (shippingAddress?.phone) userDoc.phone = shippingAddress.phone;
+          userDoc.address = {
+            street: shippingAddress?.street || shippingAddress?.address || userDoc.address?.street || "",
+            city: shippingAddress?.city || userDoc.address?.city || "",
+            state: shippingAddress?.state || userDoc.address?.state || "",
+            zipCode: shippingAddress?.pincode || shippingAddress?.postalCode || userDoc.address?.zipCode || "",
+            country: shippingAddress?.country || userDoc.address?.country || "India",
+          };
+          await userDoc.save();
+        }
+      } catch (err) {
+        console.warn("Could not auto-update user saved address:", err);
+      }
+    }
+
     res.status(201).json({
       success: true,
+      message: "Order placed successfully!",
       data: order,
     });
   } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error("Order creation error:", error);
+    res.status(500).json({ success: false, message: error.message || "Failed to place order" });
   }
 };
 
 // @desc    Get order history for current user
 // @route   GET /api/v1/orders/my-orders
 // @access  Protected
-export const getMyOrders = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const getMyOrders = async (req: Request, res: Response): Promise<void> => {
   try {
-    if (!req.user) {
+    const authReq = req as AuthenticatedRequest;
+    if (!authReq.user) {
       res.status(401).json({ success: false, message: "User not authenticated" });
       return;
     }
 
-    const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 }).lean();
+    const userId = authReq.user._id;
+    const userEmail = authReq.user.email ? authReq.user.email.toLowerCase().trim() : "";
+    const userPhone = authReq.user.phone ? authReq.user.phone.replace(/[^0-9]/g, "") : "";
+
+    // Comprehensive query matching user ID, guestEmail, shipping address email, or phone number
+    const orConditions: any[] = [{ user: userId }];
+
+    if (userEmail) {
+      const emailRegex = new RegExp(`^${userEmail.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}$`, "i");
+      orConditions.push({ guestEmail: emailRegex });
+      orConditions.push({ "shippingAddress.email": emailRegex });
+    }
+
+    if (userPhone && userPhone.length >= 7) {
+      const lastDigits = userPhone.slice(-10);
+      orConditions.push({ "shippingAddress.phone": new RegExp(lastDigits) });
+    }
+
+    const orders = await Order.find({ $or: orConditions }).sort({ createdAt: -1 }).lean();
 
     res.status(200).json({
       success: true,
@@ -75,9 +153,10 @@ export const getMyOrders = async (req: AuthenticatedRequest, res: Response): Pro
 // @desc    Get order by ID
 // @route   GET /api/v1/orders/:id
 // @access  Protected
-export const getOrderById = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const getOrderById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const authReq = req as AuthenticatedRequest;
+    const { id } = authReq.params;
     const order = await Order.findById(id).populate("user", "name email").lean();
 
     if (!order) {
@@ -87,10 +166,10 @@ export const getOrderById = async (req: AuthenticatedRequest, res: Response): Pr
 
     // Verify ownership or admin privileges
     if (
-      req.user &&
+      authReq.user &&
       order.user &&
-      order.user._id.toString() !== req.user._id.toString() &&
-      req.user.role !== "admin"
+      order.user._id.toString() !== authReq.user._id.toString() &&
+      authReq.user.role !== "admin"
     ) {
       res.status(403).json({ success: false, message: "Not authorized to view this order" });
       return;
@@ -108,7 +187,7 @@ export const getOrderById = async (req: AuthenticatedRequest, res: Response): Pr
 // @desc    Get all orders (Admin)
 // @route   GET /api/v1/orders
 // @access  Admin
-export const getAllOrders = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const getAllOrders = async (req: Request, res: Response): Promise<void> => {
   try {
     const orders = await Order.find().populate("user", "name email").sort({ createdAt: -1 }).lean();
     res.status(200).json({
@@ -124,7 +203,7 @@ export const getAllOrders = async (req: AuthenticatedRequest, res: Response): Pr
 // @desc    Update order status (Admin)
 // @route   PUT /api/v1/orders/:id/status
 // @access  Admin
-export const updateOrderStatus = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const updateOrderStatus = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const { status, isPaid } = req.body;
@@ -150,5 +229,33 @@ export const updateOrderStatus = async (req: AuthenticatedRequest, res: Response
     });
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Track order by ID (Public)
+// @route   GET /api/v1/orders/track/:orderId
+// @access  Public
+export const trackOrderById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { orderId } = req.params;
+    let order = null;
+
+    if (orderId && orderId.length === 24) {
+      order = await Order.findById(orderId).select("status pickupLane pickupSlot totalPrice createdAt orderItems isPaid").lean();
+    } else if (orderId) {
+      order = await Order.findOne({ _id: orderId }).select("status pickupLane pickupSlot totalPrice createdAt orderItems isPaid").lean();
+    }
+
+    if (!order) {
+      res.status(404).json({ success: false, message: "Order not found with the provided Tracking ID." });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      data: order,
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message || "Failed to track order" });
   }
 };

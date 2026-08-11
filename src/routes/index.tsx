@@ -5,7 +5,8 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { ProductCard } from "@/components/ProductCard";
 import { ScrollStackCategories } from "@/components/ScrollStackCategories";
 import { useCart, formatPrice } from "@/lib/cart-context";
-import { products, categories } from "@/lib/products";
+import { fetchProductsFromBackend } from "@/lib/api";
+import { products, categories, type Product } from "@/lib/products";
 import cashewsHero from "@/assets/cashews-1.png";
 import heroVideo from "@/assets/Dry_fruit_craftsmanship_montage_202608061931.mp4";
 
@@ -31,13 +32,13 @@ const HERO_SLIDES = [
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Viśvam Harvest — Premium Dry Fruits & Handpicked Nuts" },
+      { title: "Viśvam — Premium Dry Fruits & Handpicked Nuts" },
       {
         name: "description",
         content:
-          "Viśvam Harvest offers single-origin California Jumbo Almonds, W240 Whole Cashews, Kashmiri Extra-Light Walnuts, Organic Figs, and Medjool Dates delivered in nitrogen-sealed fresh packaging.",
+          "Viśvam offers single-origin California Jumbo Almonds, W240 Whole Cashews, Kashmiri Extra-Light Walnuts, Organic Figs, and Medjool Dates delivered in nitrogen-sealed fresh packaging.",
       },
-      { property: "og:title", content: "Viśvam Harvest — Premium Dry Fruits & Handpicked Nuts" },
+      { property: "og:title", content: "Viśvam — Premium Dry Fruits & Handpicked Nuts" },
       {
         property: "og:description",
         content: "Cold-stored, single-origin dry fruits and royal gift hampers.",
@@ -51,12 +52,24 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [bestsellers, setBestsellers] = useState<Product[]>([]);
+  const [giftBox, setGiftBox] = useState<Product | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const bestsellers = products.filter((p) => p.bestseller).slice(0, 6);
   const { add } = useCart();
-  const giftBox = products.find((p) => p.slug === "royal-heritage-gift-box") ?? products[0];
 
   useEffect(() => {
+    fetchProductsFromBackend({ bestseller: true, limit: 6 }).then((data) => {
+      if (data && data.length > 0) {
+        setBestsellers(data);
+      }
+    });
+
+    fetchProductsFromBackend({ category: "gifting", limit: 1 }).then((data) => {
+      if (data && data.length > 0) {
+        setGiftBox(data[0]);
+      }
+    });
+
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
     }, 4500);

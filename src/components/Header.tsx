@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { Search, User, MapPin, Menu, X, ChevronDown, Sparkles, ArrowRight, ShoppingBag } from "lucide-react";
 import { useCart, formatPrice } from "@/lib/cart-context";
+import { useAuth } from "@/lib/auth-context";
 import { SearchModal } from "./SearchModal";
 import { UserAccountModal } from "./UserAccountModal";
 import logoWordmark from "@/assets/Visvam Logo_Wordmark.png";
@@ -22,6 +23,7 @@ export function Header() {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
   const { count, openCart } = useCart();
+  const { user, isAuthenticated } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
@@ -195,16 +197,31 @@ export function Header() {
               <Search size={18} strokeWidth={1.4} />
             </button>
 
-            {/* User Account / Sign In Button */}
+            {/* User Account / Profile Button */}
             <button
               onClick={() => setIsAccountOpen(true)}
               aria-label="Account Portal"
-              className={`p-2 hover:text-clay transition-all rounded-xs ${
+              className={`p-2 hover:text-clay transition-all rounded-xs flex items-center gap-1.5 ${
                 isScrolled ? "hover:bg-cream/60" : "hover:bg-white/10"
               } ${textColorClass}`}
-              title="Account & Orders"
+              title={isAuthenticated ? `Logged in as ${user?.name}` : "Account & Orders"}
             >
-              <User size={18} strokeWidth={1.4} />
+              {isAuthenticated && user ? (
+                user.avatar ? (
+                  <img
+                    src={user.avatar}
+                    alt={user.name}
+                    referrerPolicy="no-referrer"
+                    className="w-5 h-5 rounded-full object-cover border border-clay/40"
+                  />
+                ) : (
+                  <div className="w-5 h-5 rounded-full bg-clay text-white text-[10px] font-bold flex items-center justify-center font-display italic">
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
+                )
+              ) : (
+                <User size={18} strokeWidth={1.4} />
+              )}
             </button>
 
             {/* Bag Icon Button with Dynamic Count Badge */}
@@ -231,7 +248,7 @@ export function Header() {
           <div className="lg:hidden bg-background shadow-xl animate-fade-up text-ink">
             <div className="px-6 py-4 space-y-4">
               <div className="flex items-center justify-center py-2">
-                <img src={logoEmblem} alt="Viśvam Harvest Emblem" className="h-10 w-auto object-contain" />
+                <img src={logoEmblem} alt="Viśvam Emblem" className="h-10 w-auto object-contain" />
               </div>
               {/* Quick Search Bar inside Mobile Menu */}
               <button

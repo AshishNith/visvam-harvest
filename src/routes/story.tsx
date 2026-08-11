@@ -6,13 +6,13 @@ import cashews1 from "@/assets/cashews-1.png";
 export const Route = createFileRoute("/story")({
   head: () => ({
     meta: [
-      { title: "Our Farm Story — Viśvam Harvest" },
+      { title: "Our Farm Story — Viśvam" },
       {
         name: "description",
         content:
-          "Discover the heritage behind Viśvam Harvest: single-origin orchards, traditional sun-drying, cold storage preservation, and zero preservatives.",
+          "Discover the heritage behind Viśvam: single-origin orchards, traditional sun-drying, cold storage preservation, and zero preservatives.",
       },
-      { property: "og:title", content: "Our Farm Story — Viśvam Harvest" },
+      { property: "og:title", content: "Our Farm Story — Viśvam" },
       { property: "og:description", content: "Direct-from-orchard harvest of premium nuts and dried fruits." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -4,10 +4,10 @@ import { SiteLayout } from "@/components/SiteLayout";
 export const Route = createFileRoute("/returns")({
   head: () => ({
     meta: [
-      { title: "Return & Refund Policy — Viśvam Harvest" },
+      { title: "Return & Refund Policy — Viśvam" },
       {
         name: "description",
-        content: "Learn about Viśvam Harvest's 100% Quality Guarantee and seamless return policy.",
+        content: "Learn about Viśvam's 100% Quality Guarantee and seamless return policy.",
       },
     ],
   }),

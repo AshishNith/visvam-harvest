@@ -1,5 +1,8 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { subscribeNewsletterToBackend } from "@/lib/api";
 import logoEmblem from "@/assets/Visvam Logo.png";
 import logoWordmark from "@/assets/Visvam Logo_Wordmark.png";
 
@@ -10,6 +13,29 @@ const HARVEST_GUARANTEES = [
 ];
 
 export function Footer() {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setLoading(true);
+    try {
+      const res = await subscribeNewsletterToBackend(email);
+      if (res.success) {
+        toast.success(res.message || "Subscribed to Royal Harvest Circle!");
+        setEmail("");
+      } else {
+        toast.error(res.message || "Failed to subscribe.");
+      }
+    } catch (err: any) {
+      toast.error("Subscription error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <footer className="bg-cream pt-24 pb-12">
       <div className="max-w-[1400px] mx-auto px-6">
@@ -19,16 +45,28 @@ export function Footer() {
             <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
               Subscribe for exclusive access to seasonal crop drops, festive gift box previews, and 10% off your first order.
             </p>
-            <form className="flex border-b border-ink" onSubmit={(e) => e.preventDefault()}>
+            <form className="flex border-b border-ink" onSubmit={handleSubscribe}>
               <input
                 type="email"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email address"
                 className="flex-1 py-3 text-sm bg-transparent outline-none placeholder:text-muted-foreground"
               />
-              <button className="group inline-flex items-center gap-2 text-[10.5px] tracked font-medium text-ink hover:text-clay transition uppercase">
-                <span>Subscribe</span>
-                <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-300 text-clay" />
+              <button
+                type="submit"
+                disabled={loading}
+                className="group inline-flex items-center gap-2 text-[10.5px] tracked font-medium text-ink hover:text-clay transition uppercase disabled:opacity-50"
+              >
+                {loading ? (
+                  <Loader2 size={12} className="animate-spin text-clay" />
+                ) : (
+                  <>
+                    <span>Subscribe</span>
+                    <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-300 text-clay" />
+                  </>
+                )}
               </button>
             </form>
           </div>
@@ -79,7 +117,7 @@ export function Footer() {
             />
             <img
               src={logoWordmark}
-              alt="Viśvam Harvest"
+              alt="Viśvam"
               width={120}
               height={40}
               loading="lazy"
@@ -87,7 +125,7 @@ export function Footer() {
             />
           </Link>
           <div className="text-[9px] tracked text-muted-foreground text-center">
-            © 2026 Viśvam Harvest — Cold-stored, single-origin nuts and organic dried fruits.
+            © 2026 Viśvam — Cold-stored, single-origin nuts and organic dried fruits.
           </div>
           <div className="flex items-center gap-6 text-[10px] tracked">
             <Link to="/privacy" className="hover:text-clay transition">Privacy</Link>

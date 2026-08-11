@@ -1,6 +1,8 @@
+import { useState, useEffect } from "react";
 import { SiteLayout } from "./SiteLayout";
 import { ProductCard } from "./ProductCard";
-import { getProductsByCategory, type Category } from "@/lib/products";
+import { getProductsByCategory, type Category, type Product } from "@/lib/products";
+import { fetchProductsFromBackend } from "@/lib/api";
 
 const META: Record<Category, { index: string; title: string; intro: string }> = {
   gourmet: {
@@ -24,7 +26,23 @@ const META: Record<Category, { index: string; title: string; intro: string }> = 
 };
 
 export function CategoryPage({ category }: { category: Category }) {
-  const products = getProductsByCategory(category);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
+    fetchProductsFromBackend({ category }).then((data) => {
+      if (isMounted) {
+        setProducts(data || []);
+        setLoading(false);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [category]);
+
   const meta = META[category] ?? META.gourmet;
   return (
     <SiteLayout>
@@ -50,7 +68,9 @@ export function CategoryPage({ category }: { category: Category }) {
             100% Nitrogen-Flushed Sealed Packaging
           </p>
         </div>
-        {products.length === 0 ? (
+        {loading ? (
+          <p className="font-display italic text-2xl text-center py-20 text-muted-foreground animate-pulse">Loading single-origin harvest from database...</p>
+        ) : products.length === 0 ? (
           <p className="font-display italic text-3xl text-center py-20">Fresh harvest coming soon.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">

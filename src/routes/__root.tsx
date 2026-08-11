@@ -13,6 +13,7 @@ import { Analytics } from "@vercel/analytics/react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CartProvider } from "../lib/cart-context";
+import { AuthProvider } from "../lib/auth-context";
 
 import { SiteLayout } from "../components/SiteLayout";
 
@@ -93,14 +94,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Viśvam Harvest — Premium Dry Fruits & Handpicked Nuts" },
+      { title: "Viśvam — Premium Dry Fruits & Handpicked Nuts" },
       {
         name: "description",
         content:
-          "Viśvam Harvest — cold-stored, single-origin dry fruits, jumbo almonds, W240 cashews, organic figs, dates and luxury gift hampers.",
+          "Viśvam — cold-stored, single-origin dry fruits, jumbo almonds, W240 cashews, organic figs, dates and luxury gift hampers.",
       },
-      { name: "author", content: "Viśvam Harvest" },
-      { property: "og:title", content: "Viśvam Harvest — Premium Dry Fruits & Handpicked Nuts" },
+      { name: "author", content: "Viśvam" },
+      { property: "og:title", content: "Viśvam — Premium Dry Fruits & Handpicked Nuts" },
       {
         property: "og:description",
         content: "Single-origin almonds, cashews, walnuts, dates and handcrafted gift boxes.",
@@ -124,11 +125,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         {children}
         <Scripts />
         <Analytics />
@@ -141,9 +142,11 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <CartProvider>
-        <Outlet />
-      </CartProvider>
+      <AuthProvider>
+        <CartProvider>
+          <Outlet />
+        </CartProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
