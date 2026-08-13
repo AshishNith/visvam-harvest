@@ -96,7 +96,7 @@ function Home() {
       <section className="relative min-h-screen lg:h-screen overflow-hidden bg-cream">
         <video
           ref={videoRef}
-          preload="auto"
+          preload="metadata"
           loop
           muted
           playsInline

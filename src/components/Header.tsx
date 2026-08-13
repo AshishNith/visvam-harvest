@@ -30,14 +30,21 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeCategoryHover, setActiveCategoryHover] = useState<string | null>(null);
 
-  // Add scroll listener for elevation
+  // Add scroll listener for elevation (throttled with rAF to avoid 60+ re-renders/sec)
   useEffect(() => {
+    let rafId = 0;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        setIsScrolled(window.scrollY > 20);
+      });
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      cancelAnimationFrame(rafId);
+    };
   }, []);
 
   const textColorClass = isScrolled
@@ -51,7 +58,7 @@ export function Header() {
       <header
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
           isScrolled
-            ? "bg-background/95 backdrop-blur-md shadow-md py-0"
+            ? "bg-background/95 backdrop-blur-sm shadow-md py-0"
             : "bg-transparent shadow-none border-none py-0"
         }`}
       >

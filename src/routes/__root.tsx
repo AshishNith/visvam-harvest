@@ -10,6 +10,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import visvamLogo from "../assets/Visvam Logo.png";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CartProvider } from "../lib/cart-context";
 import { AuthProvider } from "../lib/auth-context";
@@ -86,7 +87,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-import { RoutePendingLoader } from "../components/PageLoader";
+import { PageLoader, RoutePendingLoader } from "../components/PageLoader";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
@@ -109,9 +110,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
-      { rel: "icon", href: "/favicon.ico" },
-      { rel: "icon", type: "image/png", href: "/favicon.png" },
-      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+      { rel: "icon", href: visvamLogo },
+      { rel: "icon", type: "image/png", href: visvamLogo },
+      { rel: "shortcut icon", href: visvamLogo },
+      { rel: "apple-touch-icon", href: visvamLogo },
       { rel: "stylesheet", href: appCss },
     ],
   }),
@@ -142,6 +144,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <CartProvider>
+          <PageLoader />
           <Outlet />
         </CartProvider>
       </AuthProvider>

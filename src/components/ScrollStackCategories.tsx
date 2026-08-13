@@ -1,8 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import gourmetHero from "@/Categorized_Photos/05_Dates_Khajoor/DSC00525.JPG";
-import nutsHero from "@/Categorized_Photos/01_Almonds_Badam/DSC00414.JPG";
-import giftingHero from "@/Categorized_Photos/08_Assorted_Mix_and_Gift_Platters/DSC00762.JPG";
+import { cImg } from "@/lib/products";
 
 type CategoryItem = {
   id: string;
@@ -20,7 +18,7 @@ const CATEGORIES: CategoryItem[] = [
     tag: "01 / SELECTION",
     title: "Gourmet Selections",
     subtitle: "Sun-Dried Afghani Figs, Royal Medjool Dates & Superseed Mixes.",
-    image: gourmetHero,
+    image: cImg("05_Dates_Khajoor/DSC00525.jpg"),
   },
   {
     id: "nuts",
@@ -28,7 +26,7 @@ const CATEGORIES: CategoryItem[] = [
     tag: "02 / SELECTION",
     title: "Single-Origin Nuts",
     subtitle: "California Jumbo Almonds, W240 Cashews & Kashmiri Walnuts.",
-    image: nutsHero,
+    image: cImg("01_Almonds_Badam/DSC00414.jpg"),
   },
   {
     id: "gifting",
@@ -36,7 +34,7 @@ const CATEGORIES: CategoryItem[] = [
     tag: "03 / SELECTION",
     title: "Royal Gift Hampers",
     subtitle: "Handcrafted Luxury Gift Boxes & Vacuum-Sealed Compartments.",
-    image: giftingHero,
+    image: cImg("08_Assorted_Mix_and_Gift_Platters/DSC00762.jpg"),
   },
 ];
 
@@ -64,6 +62,9 @@ export function ScrollStackCategories() {
               <img
                 src={cat.image}
                 alt={cat.title}
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-black/40 flex flex-col justify-center p-8 sm:p-16 text-white space-y-4">
@@ -87,3 +88,4 @@ export function ScrollStackCategories() {
     </section>
   );
 }
+

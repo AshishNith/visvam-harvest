@@ -20,6 +20,7 @@ export function ProductCard({ product }: { product: Product }) {
             width={912}
             height={1200}
             loading="lazy"
+            decoding="async"
             className="absolute inset-0 w-full h-full object-cover transition-all duration-[900ms] ease-out group-hover:opacity-0 group-hover:scale-[1.04] rounded-2xl"
           />
           <img
@@ -28,6 +29,7 @@ export function ProductCard({ product }: { product: Product }) {
             width={912}
             height={1200}
             loading="lazy"
+            decoding="async"
             className="absolute inset-0 w-full h-full object-cover opacity-0 scale-[1.06] transition-all duration-[900ms] ease-out group-hover:opacity-100 group-hover:scale-100 rounded-2xl"
           />
         </Link>

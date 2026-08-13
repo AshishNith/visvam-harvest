@@ -113,6 +113,7 @@ export function Footer() {
               width={48}
               height={48}
               loading="lazy"
+              decoding="async"
               className="h-9 w-auto object-contain transition-transform group-hover:scale-105"
             />
             <img
@@ -121,6 +122,7 @@ export function Footer() {
               width={120}
               height={40}
               loading="lazy"
+              decoding="async"
               className="h-7 w-auto object-contain"
             />
           </Link>

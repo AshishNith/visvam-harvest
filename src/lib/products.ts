@@ -1,37 +1,3 @@
-import almondPhoto1 from "@/Categorized_Photos/01_Almonds_Badam/DSC00414.JPG";
-import almondPhoto2 from "@/Categorized_Photos/01_Almonds_Badam/DSC00445.JPG";
-import almondPhoto3 from "@/Categorized_Photos/01_Almonds_Badam/DSC00573.JPG";
-import mamraPhoto1 from "@/Categorized_Photos/01_Almonds_Badam/DSC00594.JPG";
-import mamraPhoto2 from "@/Categorized_Photos/01_Almonds_Badam/DSC00595.JPG";
-
-import cashewPhoto1 from "@/Categorized_Photos/02_Cashews_Kaju/DSC00438.JPG";
-import cashewPhoto2 from "@/Categorized_Photos/02_Cashews_Kaju/DSC00471.JPG";
-import cashewPhoto3 from "@/Categorized_Photos/02_Cashews_Kaju/DSC00515.JPG";
-
-import pistaPhoto1 from "@/Categorized_Photos/03_Pistachios_Pista/DSC00612.JPG";
-import pistaPhoto2 from "@/Categorized_Photos/03_Pistachios_Pista/DSC00613.JPG";
-import pistaPhoto3 from "@/Categorized_Photos/03_Pistachios_Pista/DSC00614.JPG";
-
-import walnutPhoto1 from "@/Categorized_Photos/04_Walnuts_Akhrot/DSC00512.JPG";
-import walnutPhoto2 from "@/Categorized_Photos/04_Walnuts_Akhrot/DSC00564.JPG";
-import walnutPhoto3 from "@/Categorized_Photos/04_Walnuts_Akhrot/DSC00591.JPG";
-
-import datePhoto1 from "@/Categorized_Photos/05_Dates_Khajoor/DSC00525.JPG";
-import datePhoto2 from "@/Categorized_Photos/05_Dates_Khajoor/DSC00530.JPG";
-import datePhoto3 from "@/Categorized_Photos/05_Dates_Khajoor/DSC00562.JPG";
-
-import raisinPhoto1 from "@/Categorized_Photos/06_Raisins_Kishmish/DSC00540.JPG";
-import raisinPhoto2 from "@/Categorized_Photos/06_Raisins_Kishmish/DSC00545.JPG";
-import raisinPhoto3 from "@/Categorized_Photos/06_Raisins_Kishmish/DSC00702.JPG";
-
-import seedPhoto1 from "@/Categorized_Photos/07_Peanuts_and_Other_Nuts/DSC00430.JPG";
-import seedPhoto2 from "@/Categorized_Photos/07_Peanuts_and_Other_Nuts/DSC00487.JPG";
-import seedPhoto3 from "@/Categorized_Photos/07_Peanuts_and_Other_Nuts/DSC00505.JPG";
-
-import giftPhoto1 from "@/Categorized_Photos/08_Assorted_Mix_and_Gift_Platters/DSC00762.JPG";
-import giftPhoto2 from "@/Categorized_Photos/08_Assorted_Mix_and_Gift_Platters/DSC00764.JPG";
-import giftPhoto3 from "@/Categorized_Photos/08_Assorted_Mix_and_Gift_Platters/DSC00766.JPG";
-
 export type Category = "gourmet" | "nuts" | "gifting";
 
 export type Product = {
@@ -56,9 +22,12 @@ export type Product = {
 
 const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "dvwpxb2oa";
 
+// Tiny 1×1 transparent placeholder — used only when Cloudinary is unavailable
+const PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'%3E%3Crect width='1' height='1' fill='%23f8f1e7'/%3E%3C/svg%3E";
+
 // Constructs optimized Cloudinary CDN URLs with auto-format & quality compression
-export function cImg(folderAndFilename: string, fallback: string): string {
-  if (!CLOUDINARY_CLOUD_NAME) return fallback;
+export function cImg(folderAndFilename: string): string {
+  if (!CLOUDINARY_CLOUD_NAME) return PLACEHOLDER;
   const cleanPath = folderAndFilename.replace(/^\//, "").replace(/\.JPG$/i, ".jpg");
   return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto/visvam_harvest/${cleanPath}`;
 }
@@ -72,9 +41,9 @@ export const products: Product[] = [
     category: "nuts",
     badge: "Bestseller",
     images: [
-      cImg("01_Almonds_Badam/DSC00414.jpg", almondPhoto1),
-      cImg("01_Almonds_Badam/DSC00445.jpg", almondPhoto2),
-      cImg("01_Almonds_Badam/DSC00418.jpg", almondPhoto3),
+      cImg("01_Almonds_Badam/DSC00414.jpg"),
+      cImg("01_Almonds_Badam/DSC00445.jpg"),
+      cImg("01_Almonds_Badam/DSC00418.jpg"),
     ],
     description:
       "Hand-selected jumbo whole almonds harvested at peak oil maturity. Gently air-dried and nitrogen-sealed to retain natural crunch, vitamin E, and sweet buttery flavor.",
@@ -92,9 +61,9 @@ export const products: Product[] = [
     category: "nuts",
     badge: "Premium Grade",
     images: [
-      cImg("02_Cashews_Kaju/DSC00438.jpg", cashewPhoto1),
-      cImg("02_Cashews_Kaju/DSC00471.jpg", cashewPhoto2),
-      cImg("02_Cashews_Kaju/DSC00472.jpg", cashewPhoto3),
+      cImg("02_Cashews_Kaju/DSC00438.jpg"),
+      cImg("02_Cashews_Kaju/DSC00471.jpg"),
+      cImg("02_Cashews_Kaju/DSC00472.jpg"),
     ],
     description:
       "Extra-large W240 whole cashew kernels renowned for their rich creaminess and smooth bite. Naturally sun-dried and lightly batch-roasted without artificial oils.",
@@ -112,9 +81,9 @@ export const products: Product[] = [
     category: "nuts",
     badge: "New Harvest",
     images: [
-      cImg("04_Walnuts_Akhrot/DSC00512.jpg", walnutPhoto1),
-      cImg("04_Walnuts_Akhrot/DSC00564.jpg", walnutPhoto2),
-      cImg("04_Walnuts_Akhrot/DSC00591.jpg", walnutPhoto3),
+      cImg("04_Walnuts_Akhrot/DSC00512.jpg"),
+      cImg("04_Walnuts_Akhrot/DSC00564.jpg"),
+      cImg("04_Walnuts_Akhrot/DSC00591.jpg"),
     ],
     description:
       "Hand-extracted half kernels from wild Kashmiri walnut groves. Naturally sweet with zero bitterness, packed with heart-healthy Omega-3 ALA fatty acids.",
@@ -132,9 +101,9 @@ export const products: Product[] = [
     category: "nuts",
     badge: "Crowd Favourite",
     images: [
-      cImg("03_Pistachios_Pista/DSC00612.jpg", pistaPhoto1),
-      cImg("03_Pistachios_Pista/DSC00613.jpg", pistaPhoto2),
-      cImg("03_Pistachios_Pista/DSC00614.jpg", pistaPhoto3),
+      cImg("03_Pistachios_Pista/DSC00612.jpg"),
+      cImg("03_Pistachios_Pista/DSC00613.jpg"),
+      cImg("03_Pistachios_Pista/DSC00614.jpg"),
     ],
     description:
       "Naturally opened jumbo pistachios slow-roasted over wood embers and lightly dusted with unrefined pink salt crystals. Easy to shell and intensely flavorful.",
@@ -152,9 +121,9 @@ export const products: Product[] = [
     category: "nuts",
     badge: "Superfood",
     images: [
-      cImg("01_Almonds_Badam/DSC00421.jpg", mamraPhoto1),
-      cImg("01_Almonds_Badam/DSC00423.jpg", mamraPhoto2),
-      cImg("01_Almonds_Badam/DSC00414.jpg", almondPhoto1),
+      cImg("01_Almonds_Badam/DSC00421.jpg"),
+      cImg("01_Almonds_Badam/DSC00423.jpg"),
+      cImg("01_Almonds_Badam/DSC00414.jpg"),
     ],
     description:
       "The undisputed king of almonds. Cultivated in mineral-rich mountain soil, Mamra almonds possess over 50% natural almond oil content for unmatched brain & wellness benefits.",
@@ -171,9 +140,9 @@ export const products: Product[] = [
     category: "gourmet",
     badge: "High Fiber",
     images: [
-      cImg("05_Dates_Khajoor/DSC00525.jpg", datePhoto1),
-      cImg("05_Dates_Khajoor/DSC00530.jpg", datePhoto2),
-      cImg("05_Dates_Khajoor/DSC00562.jpg", datePhoto3),
+      cImg("05_Dates_Khajoor/DSC00525.jpg"),
+      cImg("05_Dates_Khajoor/DSC00530.jpg"),
+      cImg("05_Dates_Khajoor/DSC00562.jpg"),
     ],
     description:
       "Hand-strung dried figs harvested from Kandahar orchards. Naturally sun-dried until the natural fruit sugars caramelize into a soft, honey-like center rich in dietary fiber.",
@@ -191,9 +160,9 @@ export const products: Product[] = [
     category: "gourmet",
     badge: "Organic",
     images: [
-      cImg("05_Dates_Khajoor/DSC00525.jpg", datePhoto1),
-      cImg("05_Dates_Khajoor/DSC00530.jpg", datePhoto2),
-      cImg("05_Dates_Khajoor/DSC00562.jpg", datePhoto3),
+      cImg("05_Dates_Khajoor/DSC00525.jpg"),
+      cImg("05_Dates_Khajoor/DSC00530.jpg"),
+      cImg("05_Dates_Khajoor/DSC00562.jpg"),
     ],
     description:
       "Known as the fruit of kings. Abundantly plump, soft, and moist Medjool dates with a rich caramel texture. Perfect as a natural pre-workout energy boost.",
@@ -211,9 +180,9 @@ export const products: Product[] = [
     category: "gourmet",
     badge: "Juicy",
     images: [
-      cImg("06_Raisins_Kishmish/DSC00540.jpg", raisinPhoto1),
-      cImg("06_Raisins_Kishmish/DSC00545.jpg", raisinPhoto2),
-      cImg("06_Raisins_Kishmish/DSC00702.jpg", raisinPhoto3),
+      cImg("06_Raisins_Kishmish/DSC00540.jpg"),
+      cImg("06_Raisins_Kishmish/DSC00545.jpg"),
+      cImg("06_Raisins_Kishmish/DSC00702.jpg"),
     ],
     description:
       "Slender long green raisins shade-dried in traditional earthen Kishmish Khana rooms to preserve their vivid green hue, tart acidity, and high antioxidant profile.",
@@ -230,9 +199,9 @@ export const products: Product[] = [
     category: "gourmet",
     badge: "Immunity",
     images: [
-      cImg("06_Raisins_Kishmish/DSC00545.jpg", raisinPhoto2),
-      cImg("06_Raisins_Kishmish/DSC00702.jpg", raisinPhoto3),
-      cImg("05_Dates_Khajoor/DSC00530.jpg", datePhoto2),
+      cImg("06_Raisins_Kishmish/DSC00545.jpg"),
+      cImg("06_Raisins_Kishmish/DSC00702.jpg"),
+      cImg("05_Dates_Khajoor/DSC00530.jpg"),
     ],
     description:
       "A vibrant berry blend of dark wild blueberries and succulent whole red cranberries. Lightly sweetened with natural apple juice concentrate for daily immunity support.",
@@ -250,9 +219,9 @@ export const products: Product[] = [
     category: "gourmet",
     badge: "Exotic",
     images: [
-      cImg("07_Peanuts_and_Other_Nuts/DSC00430.jpg", seedPhoto1),
-      cImg("07_Peanuts_and_Other_Nuts/DSC00487.jpg", seedPhoto2),
-      cImg("07_Peanuts_and_Other_Nuts/DSC00505.jpg", seedPhoto3),
+      cImg("07_Peanuts_and_Other_Nuts/DSC00430.jpg"),
+      cImg("07_Peanuts_and_Other_Nuts/DSC00487.jpg"),
+      cImg("07_Peanuts_and_Other_Nuts/DSC00505.jpg"),
     ],
     description:
       "Silky, buttery macadamia nut halves and wholes harvested in subterranean Australian soil. Unmatched rich texture with ultra-healthy keto-friendly monounsaturated fats.",
@@ -269,9 +238,9 @@ export const products: Product[] = [
     category: "gourmet",
     badge: "Daily Wellness",
     images: [
-      cImg("07_Peanuts_and_Other_Nuts/DSC00430.jpg", seedPhoto1),
-      cImg("07_Peanuts_and_Other_Nuts/DSC00487.jpg", seedPhoto2),
-      cImg("07_Peanuts_and_Other_Nuts/DSC00505.jpg", seedPhoto3),
+      cImg("07_Peanuts_and_Other_Nuts/DSC00430.jpg"),
+      cImg("07_Peanuts_and_Other_Nuts/DSC00487.jpg"),
+      cImg("07_Peanuts_and_Other_Nuts/DSC00505.jpg"),
     ],
     description:
       "A nutrient-dense blend of 7 super seeds lightly dry-roasted with Himalayan pink salt. Packed with plant protein, magnesium, zinc, and dietary fiber for effortless health.",
@@ -289,9 +258,9 @@ export const products: Product[] = [
     category: "gifting",
     badge: "Festive Favorite",
     images: [
-      cImg("08_Assorted_Mix_and_Gift_Platters/DSC00762.jpg", giftPhoto1),
-      cImg("08_Assorted_Mix_and_Gift_Platters/DSC00764.jpg", giftPhoto2),
-      cImg("08_Assorted_Mix_and_Gift_Platters/DSC00766.jpg", giftPhoto3),
+      cImg("08_Assorted_Mix_and_Gift_Platters/DSC00762.jpg"),
+      cImg("08_Assorted_Mix_and_Gift_Platters/DSC00764.jpg"),
+      cImg("08_Assorted_Mix_and_Gift_Platters/DSC00766.jpg"),
     ],
     description:
       "An opulent handcrafted rigid gift box featuring four individually vacuum-sealed compartments of our finest Jumbo Almonds, W240 Cashews, Walnut Halves, and Roasted Pistachios.",
@@ -309,9 +278,9 @@ export const products: Product[] = [
     category: "gifting",
     badge: "Luxury Edition",
     images: [
-      cImg("08_Assorted_Mix_and_Gift_Platters/DSC00764.jpg", giftPhoto2),
-      cImg("08_Assorted_Mix_and_Gift_Platters/DSC00766.jpg", giftPhoto3),
-      cImg("08_Assorted_Mix_and_Gift_Platters/DSC00762.jpg", giftPhoto1),
+      cImg("08_Assorted_Mix_and_Gift_Platters/DSC00764.jpg"),
+      cImg("08_Assorted_Mix_and_Gift_Platters/DSC00766.jpg"),
+      cImg("08_Assorted_Mix_and_Gift_Platters/DSC00762.jpg"),
     ],
     description:
       "The ultimate celebratory dry fruit collection. Includes Iranian Mamra Almonds, Royal Medjool King Dates, Dried Kandahar Figs, and Wild Berry Mix housed in an embossed metallic tin.",
