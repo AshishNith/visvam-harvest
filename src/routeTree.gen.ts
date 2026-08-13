@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as R10PdfRouteImport } from './routes/10-pdf'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CombosRouteImport } from './routes/combos'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -29,6 +30,11 @@ import { Route as MenuSlugRouteImport } from './routes/menu.$slug'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const R10PdfRoute = R10PdfRouteImport.update({
+  id: '/10-pdf',
+  path: '/10-pdf',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutRoute = CheckoutRouteImport.update({
@@ -109,6 +115,7 @@ const MenuSlugRoute = MenuSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/10-pdf': typeof R10PdfRoute
   '/checkout': typeof CheckoutRoute
   '/combos': typeof CombosRoute
   '/contact': typeof ContactRoute
@@ -127,6 +134,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/10-pdf': typeof R10PdfRoute
   '/checkout': typeof CheckoutRoute
   '/combos': typeof CombosRoute
   '/contact': typeof ContactRoute
@@ -146,6 +154,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/10-pdf': typeof R10PdfRoute
   '/checkout': typeof CheckoutRoute
   '/combos': typeof CombosRoute
   '/contact': typeof ContactRoute
@@ -166,6 +175,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/10-pdf'
     | '/checkout'
     | '/combos'
     | '/contact'
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/10-pdf'
     | '/checkout'
     | '/combos'
     | '/contact'
@@ -202,6 +213,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/10-pdf'
     | '/checkout'
     | '/combos'
     | '/contact'
@@ -221,6 +233,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  R10PdfRoute: typeof R10PdfRoute
   CheckoutRoute: typeof CheckoutRoute
   CombosRoute: typeof CombosRoute
   ContactRoute: typeof ContactRoute
@@ -245,6 +258,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/10-pdf': {
+      id: '/10-pdf'
+      path: '/10-pdf'
+      fullPath: '/10-pdf'
+      preLoaderRoute: typeof R10PdfRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout': {
@@ -357,6 +377,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  R10PdfRoute: R10PdfRoute,
   CheckoutRoute: CheckoutRoute,
   CombosRoute: CombosRoute,
   ContactRoute: ContactRoute,
