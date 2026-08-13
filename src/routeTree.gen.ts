@@ -14,6 +14,7 @@ import { Route as R10PdfRouteImport } from './routes/10-pdf'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CombosRouteImport } from './routes/combos'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as DomainGuideRouteImport } from './routes/domain-guide'
 import { Route as DriedFruitsRouteImport } from './routes/dried-fruits'
 import { Route as ExoticSeedsRouteImport } from './routes/exotic-seeds'
 import { Route as GiftingRouteImport } from './routes/gifting'
@@ -50,6 +51,11 @@ const CombosRoute = CombosRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DomainGuideRoute = DomainGuideRouteImport.update({
+  id: '/domain-guide',
+  path: '/domain-guide',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DriedFruitsRoute = DriedFruitsRouteImport.update({
@@ -119,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof CheckoutRoute
   '/combos': typeof CombosRoute
   '/contact': typeof ContactRoute
+  '/domain-guide': typeof DomainGuideRoute
   '/dried-fruits': typeof DriedFruitsRoute
   '/exotic-seeds': typeof ExoticSeedsRoute
   '/gifting': typeof GiftingRoute
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRoute
   '/combos': typeof CombosRoute
   '/contact': typeof ContactRoute
+  '/domain-guide': typeof DomainGuideRoute
   '/dried-fruits': typeof DriedFruitsRoute
   '/exotic-seeds': typeof ExoticSeedsRoute
   '/gifting': typeof GiftingRoute
@@ -158,6 +166,7 @@ export interface FileRoutesById {
   '/checkout': typeof CheckoutRoute
   '/combos': typeof CombosRoute
   '/contact': typeof ContactRoute
+  '/domain-guide': typeof DomainGuideRoute
   '/dried-fruits': typeof DriedFruitsRoute
   '/exotic-seeds': typeof ExoticSeedsRoute
   '/gifting': typeof GiftingRoute
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/combos'
     | '/contact'
+    | '/domain-guide'
     | '/dried-fruits'
     | '/exotic-seeds'
     | '/gifting'
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/combos'
     | '/contact'
+    | '/domain-guide'
     | '/dried-fruits'
     | '/exotic-seeds'
     | '/gifting'
@@ -217,6 +228,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/combos'
     | '/contact'
+    | '/domain-guide'
     | '/dried-fruits'
     | '/exotic-seeds'
     | '/gifting'
@@ -237,6 +249,7 @@ export interface RootRouteChildren {
   CheckoutRoute: typeof CheckoutRoute
   CombosRoute: typeof CombosRoute
   ContactRoute: typeof ContactRoute
+  DomainGuideRoute: typeof DomainGuideRoute
   DriedFruitsRoute: typeof DriedFruitsRoute
   ExoticSeedsRoute: typeof ExoticSeedsRoute
   GiftingRoute: typeof GiftingRoute
@@ -286,6 +299,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/domain-guide': {
+      id: '/domain-guide'
+      path: '/domain-guide'
+      fullPath: '/domain-guide'
+      preLoaderRoute: typeof DomainGuideRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dried-fruits': {
@@ -381,6 +401,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutRoute: CheckoutRoute,
   CombosRoute: CombosRoute,
   ContactRoute: ContactRoute,
+  DomainGuideRoute: DomainGuideRoute,
   DriedFruitsRoute: DriedFruitsRoute,
   ExoticSeedsRoute: ExoticSeedsRoute,
   GiftingRoute: GiftingRoute,

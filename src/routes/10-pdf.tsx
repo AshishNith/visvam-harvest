@@ -10,7 +10,7 @@ export const Route = createFileRoute("/10-pdf")({
   head: () => ({
     meta: [
       { title: "10 Bestseller Section Layout Concepts — Viśvam" },
-      { name: "description", content: "10 Elevated, non-boxy Bestseller section designs including GSAP ScrollTrigger pinning for Viśvam." },
+      { name: "description", content: "10 Elevated, vertically centered, left-aligned Bestseller section designs for Viśvam." },
     ],
   }),
   component: TenLayoutsPage,
@@ -26,7 +26,6 @@ function TenLayoutsPage() {
   const [gsapActiveIndex, setGsapActiveIndex] = useState<number>(0);
 
   const pinnedContainerRef = useRef<HTMLDivElement>(null);
-  const pinnedImageRef = useRef<HTMLDivElement>(null);
 
   const { add } = useCart();
 
@@ -71,48 +70,42 @@ function TenLayoutsPage() {
     if (typeof window === "undefined") return;
     gsap.registerPlugin(ScrollTrigger);
 
+    // Ensure first product (California Jumbo Almonds) is immediately active on load
+    setGsapActiveIndex(0);
+
     const ctx = gsap.context(() => {
       const cards = gsap.utils.toArray<HTMLElement>(".gsap-product-trigger");
 
       cards.forEach((card, index) => {
         ScrollTrigger.create({
           trigger: card,
-          start: "top 55%",
-          end: "bottom 45%",
+          start: "top 65%",
+          end: "bottom 35%",
           onEnter: () => setGsapActiveIndex(index),
           onEnterBack: () => setGsapActiveIndex(index),
         });
       });
-
-      if (pinnedContainerRef.current && pinnedImageRef.current) {
-        ScrollTrigger.create({
-          trigger: pinnedContainerRef.current,
-          start: "top top+=100",
-          end: "bottom bottom-=100",
-          pin: pinnedImageRef.current,
-          pinSpacing: false,
-          invalidateOnRefresh: true,
-        });
-      }
     });
 
     return () => ctx.revert();
   }, [bestsellers.length]);
 
+  const currentGsapProduct = bestsellers[gsapActiveIndex] || bestsellers[0];
+
   return (
-    <div className="min-h-screen bg-background text-foreground pb-32">
+    <div className="min-h-screen bg-background text-foreground pb-32 text-left">
       {/* Sticky Header & Toolbar */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/40 py-4 px-6 shadow-xs print:hidden">
-        <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div>
+        <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="text-left">
             <div className="flex items-center gap-3">
               <span className="text-[10px] tracked uppercase font-semibold text-clay bg-clay/10 px-3 py-1 rounded-md">
                 Client Concept Review
               </span>
               <h1 className="font-display text-2xl text-ink">10 Bestseller Section Layout Concepts</h1>
             </div>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Featuring GSAP ScrollTrigger <code className="text-clay">pin: true</code> • 100% Seamless text buttons • Un-boxed layouts
+            <p className="text-xs text-muted-foreground mt-0.5 text-left">
+              Vertically centered product stage • 100% Left-aligned typography • Stacked images
             </p>
           </div>
 
@@ -171,68 +164,71 @@ function TenLayoutsPage() {
       </header>
 
       {/* Main Content Showcase */}
-      <main className="max-w-[1400px] mx-auto px-6 py-12 space-y-32">
+      <main className="max-w-[1400px] mx-auto px-6 py-12 space-y-32 text-left">
 
         {/* Intro Solution Banner */}
-        <section className="py-6 border-b border-border/40 space-y-3">
+        <section className="py-6 border-b border-border/40 space-y-3 text-left">
           <div className="flex items-center gap-2 text-clay">
             <Sparkles size={16} />
-            <span className="text-xs font-semibold uppercase tracked">GSAP Pinned ScrollTrigger Layouts</span>
+            <span className="text-xs font-semibold uppercase tracked">Vertically Centered Product Showcase</span>
           </div>
-          <h2 className="font-display text-3xl md:text-4xl text-ink leading-tight">
-            GSAP Pinned & Un-Boxed Bestseller Layout Concepts
+          <h2 className="font-display text-3xl md:text-4xl text-ink leading-tight text-left">
+            Vertically Centered & Pinned Bestseller Concepts
           </h2>
-          <p className="text-sm text-muted-foreground max-w-3xl leading-relaxed">
-            Layout 01 introduces GSAP ScrollTrigger with <code className="text-clay">pin: true</code>. As you scroll down the right side, the left product image stage pins smoothly while updating images in real-time, accompanied by Viśvam's signature seamless button design.
+          <p className="text-sm text-muted-foreground max-w-3xl leading-relaxed text-left">
+            California Jumbo Almonds and all product images are vertically centered (<code className="text-clay">object-center self-center items-center</code>) within their respective layout stages and pinned frames.
           </p>
         </section>
 
         {/* LAYOUT 1 */}
-        <section id="layout-1" className="scroll-mt-32 space-y-8">
-          <div className="border-b border-border/40 pb-4 flex items-center justify-between">
+        <section id="layout-1" className="scroll-mt-32 space-y-8 text-left">
+          <div className="border-b border-border/40 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4 text-left">
             <div>
               <span className="text-xs font-semibold text-clay uppercase tracked">Option 01 • GSAP Pinned (pin: true)</span>
-              <h3 className="font-display text-3xl text-ink mt-0.5">Pinned Image Stage + Scrolling Text Story</h3>
+              <h3 className="font-display text-3xl text-ink mt-0.5 text-left">Pinned Image Stage + Vertical Centering</h3>
             </div>
-            <span className="text-xs bg-sand/60 text-ink px-3 py-1 rounded-full font-medium">
-              Scroll down to test pin animation
+            <span className="text-xs bg-sand/60 text-ink px-3 py-1 rounded-full font-medium self-start md:self-auto">
+              Scroll down to test pin behavior
             </span>
           </div>
 
-          <div ref={pinnedContainerRef} className="relative grid grid-cols-1 lg:grid-cols-12 gap-12 items-start min-h-[1400px]">
-            <div className="lg:col-span-6 hidden lg:block">
-              <div ref={pinnedImageRef} className="sticky top-28 aspect-[4/3] rounded-3xl overflow-hidden bg-cream border border-border/30 shadow-xs transition-all duration-700">
+          <div ref={pinnedContainerRef} className="relative grid grid-cols-1 lg:grid-cols-12 gap-12 items-start min-h-[1200px]">
+            {/* Left Pinned Image Stage (Always Visible & Vertically Centered) */}
+            <div className="lg:col-span-6 sticky top-28 self-start">
+              <div className="w-full aspect-[4/3] rounded-3xl overflow-hidden bg-cream border border-border/30 shadow-xs text-left relative flex items-center justify-center">
                 <img
-                  src={bestsellers[gsapActiveIndex]?.images[0] || bestsellers[0].images[0]}
-                  alt={bestsellers[gsapActiveIndex]?.name || bestsellers[0].name}
-                  className="w-full h-full object-cover transition-opacity duration-700 rounded-3xl"
+                  key={currentGsapProduct.slug}
+                  src={currentGsapProduct.images[0]}
+                  alt={currentGsapProduct.name}
+                  className="w-full h-full object-cover object-center rounded-3xl"
                 />
-                <div className="absolute bottom-4 left-4 right-4 bg-background/80 backdrop-blur-md p-4 rounded-2xl border border-border/30 flex items-center justify-between">
+                <div className="absolute bottom-4 left-4 right-4 bg-background/90 backdrop-blur-md p-4 rounded-2xl border border-border/30 flex items-center justify-between text-left">
                   <div>
-                    <span className="text-[10px] text-clay uppercase font-bold tracking-wider">
-                      {bestsellers[gsapActiveIndex]?.origin || bestsellers[0].origin}
+                    <span className="text-[10px] text-clay uppercase font-bold tracking-wider block text-left">
+                      {currentGsapProduct.origin}
                     </span>
-                    <h5 className="font-display text-lg text-ink">
-                      {bestsellers[gsapActiveIndex]?.name || bestsellers[0].name}
+                    <h5 className="font-display text-lg text-ink text-left">
+                      {currentGsapProduct.name}
                     </h5>
                   </div>
                   <span className="text-base font-bold text-ink">
-                    {formatPrice(bestsellers[gsapActiveIndex]?.price || bestsellers[0].price)}
+                    {formatPrice(currentGsapProduct.price)}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="lg:col-span-6 space-y-36 py-12">
+            {/* Right Scrolling Text List */}
+            <div className="lg:col-span-6 space-y-36 py-4 text-left">
               {bestsellers.slice(0, 4).map((p, idx) => (
                 <div
                   key={p.slug}
-                  className={`gsap-product-trigger space-y-4 transition-all duration-500 pb-12 border-b border-border/30 ${
-                    gsapActiveIndex === idx ? "opacity-100 scale-100" : "opacity-40 scale-95"
+                  className={`gsap-product-trigger space-y-4 pb-12 border-b border-border/30 text-left flex flex-col justify-center transition-opacity duration-300 ${
+                    gsapActiveIndex === idx ? "opacity-100" : "opacity-40"
                   }`}
                 >
-                  <div className="lg:hidden aspect-[16/10] rounded-2xl overflow-hidden mb-4 bg-cream">
-                    <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover rounded-2xl" />
+                  <div className="lg:hidden aspect-[16/10] rounded-2xl overflow-hidden mb-4 bg-cream flex items-center justify-center">
+                    <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover object-center rounded-2xl" />
                   </div>
 
                   <div className="flex items-center gap-2 text-clay">
@@ -240,8 +236,8 @@ function TenLayoutsPage() {
                     <span className="text-[10px] uppercase font-bold tracking-wider">0{idx + 1} Harvest Selection • {p.origin}</span>
                   </div>
 
-                  <h4 className="font-display text-4xl text-ink">{p.name}</h4>
-                  <p className="text-sm text-muted-foreground leading-relaxed max-w-md">{p.description}</p>
+                  <h4 className="font-display text-4xl text-ink text-left">{p.name}</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed max-w-md text-left">{p.description}</p>
 
                   <div className="flex items-center gap-4 text-xs text-muted-foreground pt-1">
                     <span className="inline-flex items-center gap-1.5"><ShieldCheck size={14} className="text-clay" /> Cold Lock 4°C</span>
@@ -249,9 +245,9 @@ function TenLayoutsPage() {
                   </div>
 
                   <div className="flex items-center justify-between pt-6 border-t border-border/40">
-                    <div>
-                      <span className="text-[10px] text-muted-foreground block">{p.serving}</span>
-                      <span className="text-2xl font-bold text-ink">{formatPrice(p.price)}</span>
+                    <div className="text-left">
+                      <span className="text-[10px] text-muted-foreground block text-left">{p.serving}</span>
+                      <span className="text-2xl font-bold text-ink text-left">{formatPrice(p.price)}</span>
                     </div>
                     <button
                       onClick={() => add(p)}
@@ -268,11 +264,11 @@ function TenLayoutsPage() {
         </section>
 
         {/* LAYOUT 2 */}
-        <section id="layout-2" className="scroll-mt-32 space-y-8">
-          <div className="flex items-end justify-between border-b border-border/40 pb-4">
+        <section id="layout-2" className="scroll-mt-32 space-y-8 text-left">
+          <div className="flex items-end justify-between border-b border-border/40 pb-4 text-left">
             <div>
               <span className="text-xs font-semibold text-clay uppercase tracked">Option 02</span>
-              <h3 className="font-display text-3xl text-ink mt-0.5">The Orchard Bestsellers Gallery</h3>
+              <h3 className="font-display text-3xl text-ink mt-0.5 text-left">The Orchard Bestsellers Gallery</h3>
             </div>
             <div className="flex items-center gap-4">
               <button
@@ -292,12 +288,12 @@ function TenLayoutsPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-left items-center">
             {bestsellers.slice(sliderIndex, sliderIndex + 4).map((p) => (
-              <div key={p.slug} className="flex flex-col justify-between group">
+              <div key={p.slug} className="flex flex-col justify-between group text-left h-full">
                 <div>
-                  <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 bg-cream/60">
-                    <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 rounded-2xl" />
+                  <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 bg-cream/60 flex items-center justify-center">
+                    <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover object-center rounded-2xl" />
                     <span className="absolute top-3 left-3 bg-ink/90 text-white text-[9px] px-2.5 py-0.5 rounded-full uppercase font-medium tracked">
                       {p.origin}
                     </span>
@@ -307,14 +303,14 @@ function TenLayoutsPage() {
                     <span className="font-semibold text-ink text-[11px]">4.9</span>
                     <span className="text-muted-foreground text-[10px] ml-1">• High Oil Content</span>
                   </div>
-                  <h5 className="font-display text-xl text-ink line-clamp-1 group-hover:text-clay transition-colors">{p.name}</h5>
-                  <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5 mb-4">{p.tagline}</p>
+                  <h5 className="font-display text-xl text-ink line-clamp-1 text-left">{p.name}</h5>
+                  <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5 mb-4 text-left">{p.tagline}</p>
                 </div>
 
-                <div className="pt-3 border-t border-border/40 flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] text-muted-foreground block">{p.serving}</span>
-                    <span className="text-base font-bold text-ink">{formatPrice(p.price)}</span>
+                <div className="pt-3 border-t border-border/40 flex items-center justify-between mt-auto">
+                  <div className="text-left">
+                    <span className="text-[10px] text-muted-foreground block text-left">{p.serving}</span>
+                    <span className="text-base font-bold text-ink text-left">{formatPrice(p.price)}</span>
                   </div>
                   <button
                     onClick={() => add(p)}
@@ -330,24 +326,24 @@ function TenLayoutsPage() {
         </section>
 
         {/* LAYOUT 3 */}
-        <section id="layout-3" className="scroll-mt-32 space-y-8">
-          <div className="border-b border-border/40 pb-4">
+        <section id="layout-3" className="scroll-mt-32 space-y-8 text-left">
+          <div className="border-b border-border/40 pb-4 text-left">
             <span className="text-xs font-semibold text-clay uppercase tracked">Option 03</span>
-            <h3 className="font-display text-3xl text-ink mt-0.5">Editorial Sourcing Spotlight</h3>
+            <h3 className="font-display text-3xl text-ink mt-0.5 text-left">Editorial Sourcing Spotlight</h3>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-5 space-y-5">
-              <div className="relative aspect-[16/10] rounded-2xl overflow-hidden bg-cream">
-                <img src={bestsellers[0].images[0]} alt={bestsellers[0].name} className="w-full h-full object-cover rounded-2xl" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center text-left">
+            <div className="lg:col-span-5 space-y-5 text-left self-center my-auto">
+              <div className="relative aspect-[16/10] rounded-2xl overflow-hidden bg-cream flex items-center justify-center">
+                <img src={bestsellers[0].images[0]} alt={bestsellers[0].name} className="w-full h-full object-cover object-center rounded-2xl" />
                 <span className="absolute top-3 left-3 bg-clay text-white text-[10px] px-3 py-1 rounded-full uppercase font-medium tracked">
                   #1 Harvest Selection
                 </span>
               </div>
-              <div className="space-y-2">
-                <span className="text-[10px] uppercase tracking-widest text-clay font-semibold">{bestsellers[0].origin}</span>
-                <h4 className="font-display text-3xl text-ink">{bestsellers[0].name}</h4>
-                <p className="text-xs text-muted-foreground leading-relaxed">{bestsellers[0].description}</p>
+              <div className="space-y-2 text-left">
+                <span className="text-[10px] uppercase tracking-widest text-clay font-semibold block text-left">{bestsellers[0].origin}</span>
+                <h4 className="font-display text-3xl text-ink text-left">{bestsellers[0].name}</h4>
+                <p className="text-xs text-muted-foreground leading-relaxed text-left">{bestsellers[0].description}</p>
               </div>
 
               <div className="flex items-center gap-6 text-xs text-muted-foreground pt-1">
@@ -356,9 +352,9 @@ function TenLayoutsPage() {
               </div>
 
               <div className="flex items-center justify-between pt-4 border-t border-border/40">
-                <div>
-                  <span className="text-[10px] text-muted-foreground block">{bestsellers[0].serving}</span>
-                  <span className="text-xl font-bold text-ink">{formatPrice(bestsellers[0].price)}</span>
+                <div className="text-left">
+                  <span className="text-[10px] text-muted-foreground block text-left">{bestsellers[0].serving}</span>
+                  <span className="text-xl font-bold text-ink text-left">{formatPrice(bestsellers[0].price)}</span>
                 </div>
                 <button
                   onClick={() => add(bestsellers[0])}
@@ -370,15 +366,15 @@ function TenLayoutsPage() {
               </div>
             </div>
 
-            <div className="lg:col-span-7 divide-y divide-border/40">
+            <div className="lg:col-span-7 divide-y divide-border/40 text-left self-center my-auto">
               {bestsellers.slice(1, 4).map((p) => (
-                <div key={p.slug} className="py-5 flex items-center justify-between gap-6 group first:pt-0">
-                  <div className="flex items-center gap-5">
-                    <img src={p.images[0]} alt={p.name} className="w-20 h-20 rounded-2xl object-cover shrink-0 bg-cream" />
-                    <div>
-                      <span className="text-[9px] uppercase tracking-wider text-clay font-bold">{p.origin}</span>
-                      <h5 className="font-display text-xl text-ink group-hover:text-clay transition-colors">{p.name}</h5>
-                      <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{p.tagline}</p>
+                <div key={p.slug} className="py-5 flex items-center justify-between gap-6 group first:pt-0 text-left">
+                  <div className="flex items-center gap-5 text-left">
+                    <img src={p.images[0]} alt={p.name} className="w-20 h-20 rounded-2xl object-cover object-center shrink-0 bg-cream" />
+                    <div className="text-left">
+                      <span className="text-[9px] uppercase tracking-wider text-clay font-bold block text-left">{p.origin}</span>
+                      <h5 className="font-display text-xl text-ink text-left">{p.name}</h5>
+                      <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5 text-left">{p.tagline}</p>
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2 shrink-0">
@@ -398,27 +394,27 @@ function TenLayoutsPage() {
         </section>
 
         {/* LAYOUT 4 */}
-        <section id="layout-4" className="scroll-mt-32 space-y-8">
-          <div className="border-b border-border/40 pb-4">
+        <section id="layout-4" className="scroll-mt-32 space-y-8 text-left">
+          <div className="border-b border-border/40 pb-4 text-left">
             <span className="text-xs font-semibold text-clay uppercase tracked">Option 04</span>
-            <h3 className="font-display text-3xl text-ink mt-0.5">4-Column Floating Artisanal Grid</h3>
+            <h3 className="font-display text-3xl text-ink mt-0.5 text-left">4-Column Floating Artisanal Grid</h3>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-left items-center">
             {bestsellers.slice(0, 4).map((p) => (
-              <div key={p.slug} className="flex flex-col justify-between group">
+              <div key={p.slug} className="flex flex-col justify-between group text-left h-full">
                 <div>
-                  <div className="w-full aspect-[3/2] rounded-2xl overflow-hidden bg-cream mb-4 relative">
-                    <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-2xl" />
+                  <div className="w-full aspect-[3/2] rounded-2xl overflow-hidden bg-cream mb-4 relative flex items-center justify-center">
+                    <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover object-center rounded-2xl" />
                     <span className="absolute top-2.5 right-2.5 bg-sand/90 text-ink text-[9px] px-2.5 py-0.5 rounded-full font-semibold">
                       {p.serving}
                     </span>
                   </div>
-                  <span className="text-[9px] uppercase tracking-wider text-clay font-bold">{p.origin}</span>
-                  <h5 className="font-display text-lg text-ink line-clamp-1 group-hover:text-clay transition-colors mt-0.5">{p.name}</h5>
-                  <p className="text-sm font-bold text-ink mt-1">{formatPrice(p.price)}</p>
+                  <span className="text-[9px] uppercase tracking-wider text-clay font-bold block text-left">{p.origin}</span>
+                  <h5 className="font-display text-lg text-ink line-clamp-1 mt-0.5 text-left">{p.name}</h5>
+                  <p className="text-sm font-bold text-ink mt-1 text-left">{formatPrice(p.price)}</p>
                 </div>
-                <div className="pt-4 mt-4 border-t border-border/30">
+                <div className="pt-4 mt-4 border-t border-border/30 mt-auto">
                   <button
                     onClick={() => add(p)}
                     className="group inline-flex items-center gap-2 text-ink text-[11px] font-medium tracked uppercase tracking-widest py-1 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 cursor-pointer"
@@ -433,11 +429,11 @@ function TenLayoutsPage() {
         </section>
 
         {/* LAYOUT 5 */}
-        <section id="layout-5" className="scroll-mt-32 space-y-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border/40 pb-4">
-            <div>
+        <section id="layout-5" className="scroll-mt-32 space-y-8 text-left">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border/40 pb-4 text-left">
+            <div className="text-left">
               <span className="text-xs font-semibold text-clay uppercase tracked">Option 05</span>
-              <h3 className="font-display text-3xl text-ink mt-0.5">Filterable Minimalist Showcase</h3>
+              <h3 className="font-display text-3xl text-ink mt-0.5 text-left">Filterable Minimalist Showcase</h3>
             </div>
 
             <div className="flex items-center gap-6">
@@ -461,7 +457,7 @@ function TenLayoutsPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left items-center">
             {bestsellers
               .filter((p) => {
                 if (selectedCategory === "nuts") return p.category === "nuts";
@@ -470,24 +466,24 @@ function TenLayoutsPage() {
               })
               .slice(0, 3)
               .map((p) => (
-                <div key={p.slug} className="flex flex-col justify-between group">
+                <div key={p.slug} className="flex flex-col justify-between group text-left h-full">
                   <div>
-                    <div className="relative aspect-[16/11] rounded-2xl overflow-hidden bg-cream mb-4">
-                      <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-2xl" />
+                    <div className="relative aspect-[16/11] rounded-2xl overflow-hidden bg-cream mb-4 flex items-center justify-center">
+                      <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover object-center rounded-2xl" />
                       <span className="absolute bottom-3 left-3 text-ink text-[10px] px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full font-semibold">
                         ★ 4.9 Harvest Rating
                       </span>
                     </div>
-                    <div className="space-y-1.5">
+                    <div className="space-y-1.5 text-left">
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] uppercase text-clay font-bold">{p.origin}</span>
                         <span className="text-xs text-muted-foreground">{p.serving}</span>
                       </div>
-                      <h5 className="font-display text-xl text-ink group-hover:text-clay transition-colors">{p.name}</h5>
-                      <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{p.description}</p>
+                      <h5 className="font-display text-xl text-ink text-left">{p.name}</h5>
+                      <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed text-left">{p.description}</p>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between pt-4 mt-6 border-t border-border/30">
+                  <div className="flex items-center justify-between pt-4 mt-6 border-t border-border/30 mt-auto">
                     <span className="text-lg font-bold text-ink">{formatPrice(p.price)}</span>
                     <button
                       onClick={() => add(p)}
@@ -503,28 +499,28 @@ function TenLayoutsPage() {
         </section>
 
         {/* LAYOUT 6 */}
-        <section id="layout-6" className="scroll-mt-32 space-y-8">
-          <div className="flex items-center justify-between border-b border-border/40 pb-4">
+        <section id="layout-6" className="scroll-mt-32 space-y-8 text-left">
+          <div className="flex items-center justify-between border-b border-border/40 pb-4 text-left">
             <div>
               <span className="text-xs font-semibold text-clay uppercase tracked">Option 06</span>
-              <h3 className="font-display text-3xl text-ink mt-0.5">Boutique Michelin Menu Catalog</h3>
+              <h3 className="font-display text-3xl text-ink mt-0.5 text-left">Boutique Michelin Menu Catalog</h3>
             </div>
             <span className="text-xs text-muted-foreground uppercase tracked">4 Selection Items</span>
           </div>
 
-          <div className="divide-y divide-border/30">
+          <div className="divide-y divide-border/30 text-left">
             {bestsellers.slice(0, 4).map((p) => (
-              <div key={p.slug} className="py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6 group">
-                <div className="flex items-center gap-6">
-                  <img src={p.images[0]} alt={p.name} className="w-16 h-16 rounded-full object-cover bg-cream border border-border/40 shrink-0" />
-                  <div>
+              <div key={p.slug} className="py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6 group text-left">
+                <div className="flex items-center gap-6 text-left">
+                  <img src={p.images[0]} alt={p.name} className="w-16 h-16 rounded-full object-cover object-center bg-cream border border-border/40 shrink-0" />
+                  <div className="text-left">
                     <div className="flex items-center gap-3">
-                      <h5 className="font-display text-2xl text-ink group-hover:text-clay transition-colors">{p.name}</h5>
+                      <h5 className="font-display text-2xl text-ink text-left">{p.name}</h5>
                       <span className="text-clay text-[10px] uppercase font-semibold tracked">
                         {p.origin}
                       </span>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{p.tagline}</p>
+                    <p className="text-xs text-muted-foreground mt-1 line-clamp-1 text-left">{p.tagline}</p>
                   </div>
                 </div>
 
@@ -547,25 +543,25 @@ function TenLayoutsPage() {
         </section>
 
         {/* LAYOUT 7 */}
-        <section id="layout-7" className="scroll-mt-32 space-y-8">
-          <div className="border-b border-border/40 pb-4">
+        <section id="layout-7" className="scroll-mt-32 space-y-8 text-left">
+          <div className="border-b border-border/40 pb-4 text-left">
             <span className="text-xs font-semibold text-clay uppercase tracked">Option 07</span>
-            <h3 className="font-display text-3xl text-ink mt-0.5">Free-Form Asymmetric Layout</h3>
+            <h3 className="font-display text-3xl text-ink mt-0.5 text-left">Free-Form Asymmetric Layout</h3>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div className="md:col-span-2 space-y-5">
-              <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-cream relative">
-                <img src={bestsellers[0].images[0]} alt={bestsellers[0].name} className="w-full h-full object-cover rounded-2xl" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 text-left items-center">
+            <div className="md:col-span-2 space-y-5 text-left self-center my-auto">
+              <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-cream relative flex items-center justify-center">
+                <img src={bestsellers[0].images[0]} alt={bestsellers[0].name} className="w-full h-full object-cover object-center rounded-2xl" />
                 <span className="absolute top-4 left-4 bg-clay text-white text-[10px] px-3 py-1 rounded-full uppercase font-bold tracking-wider">
                   Featured Reserve
                 </span>
               </div>
-              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pt-2">
-                <div>
-                  <span className="text-[10px] uppercase text-clay font-bold">{bestsellers[0].origin}</span>
-                  <h4 className="font-display text-3xl text-ink">{bestsellers[0].name}</h4>
-                  <p className="text-xs text-muted-foreground mt-1 max-w-md">{bestsellers[0].tagline}</p>
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pt-2 text-left">
+                <div className="text-left">
+                  <span className="text-[10px] uppercase text-clay font-bold block text-left">{bestsellers[0].origin}</span>
+                  <h4 className="font-display text-3xl text-ink text-left">{bestsellers[0].name}</h4>
+                  <p className="text-xs text-muted-foreground mt-1 max-w-md text-left">{bestsellers[0].tagline}</p>
                 </div>
                 <div className="flex items-center gap-6">
                   <span className="text-2xl font-bold text-ink">{formatPrice(bestsellers[0].price)}</span>
@@ -580,15 +576,15 @@ function TenLayoutsPage() {
               </div>
             </div>
 
-            <div className="divide-y divide-border/40">
+            <div className="divide-y divide-border/40 text-left self-center my-auto">
               {bestsellers.slice(1, 3).map((p) => (
-                <div key={p.slug} className="py-6 first:pt-0 space-y-3 group">
-                  <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-cream">
-                    <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500" />
+                <div key={p.slug} className="py-6 first:pt-0 space-y-3 group text-left">
+                  <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-cream flex items-center justify-center">
+                    <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover object-center rounded-2xl" />
                   </div>
-                  <div>
-                    <h5 className="font-display text-xl text-ink group-hover:text-clay transition-colors">{p.name}</h5>
-                    <span className="text-xs font-bold text-ink block mt-0.5">{formatPrice(p.price)}</span>
+                  <div className="text-left">
+                    <h5 className="font-display text-xl text-ink text-left">{p.name}</h5>
+                    <span className="text-xs font-bold text-ink block mt-0.5 text-left">{formatPrice(p.price)}</span>
                   </div>
                   <button
                     onClick={() => add(p)}
@@ -604,29 +600,29 @@ function TenLayoutsPage() {
         </section>
 
         {/* LAYOUT 8 */}
-        <section id="layout-8" className="scroll-mt-32 space-y-8">
-          <div className="border-b border-border/40 pb-4">
+        <section id="layout-8" className="scroll-mt-32 space-y-8 text-left">
+          <div className="border-b border-border/40 pb-4 text-left">
             <span className="text-xs font-semibold text-clay uppercase tracked">Option 08</span>
-            <h3 className="font-display text-3xl text-ink mt-0.5">Seamless Spotlight Showcase</h3>
+            <h3 className="font-display text-3xl text-ink mt-0.5 text-left">Seamless Spotlight Showcase</h3>
           </div>
 
-          <div className="space-y-8">
+          <div className="space-y-8 text-left">
             {(() => {
               const activeProd = bestsellers[activeThumbIndex] || bestsellers[0];
               return (
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-center">
-                  <div className="md:col-span-5 aspect-[4/3] rounded-2xl overflow-hidden bg-cream">
-                    <img src={activeProd.images[0]} alt={activeProd.name} className="w-full h-full object-cover rounded-2xl" />
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-center text-left">
+                  <div className="md:col-span-5 aspect-[4/3] rounded-2xl overflow-hidden bg-cream flex items-center justify-center">
+                    <img src={activeProd.images[0]} alt={activeProd.name} className="w-full h-full object-cover object-center rounded-2xl" />
                   </div>
-                  <div className="md:col-span-7 space-y-4">
-                    <div className="flex items-center gap-3">
+                  <div className="md:col-span-7 space-y-4 text-left self-center my-auto">
+                    <div className="flex items-center gap-3 text-left">
                       <span className="text-clay font-bold text-[10px] uppercase tracking-wider">
                         {activeProd.origin}
                       </span>
                       <span className="text-xs text-muted-foreground">• {activeProd.serving}</span>
                     </div>
-                    <h4 className="font-display text-4xl text-ink">{activeProd.name}</h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed max-w-xl">{activeProd.description}</p>
+                    <h4 className="font-display text-4xl text-ink text-left">{activeProd.name}</h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed max-w-xl text-left">{activeProd.description}</p>
                     <div className="flex items-center gap-8 pt-4">
                       <span className="text-3xl font-bold text-ink">{formatPrice(activeProd.price)}</span>
                       <button
@@ -642,7 +638,7 @@ function TenLayoutsPage() {
               );
             })()}
 
-            <div className="flex items-center justify-center gap-8 border-t border-border/40 pt-6">
+            <div className="flex items-center justify-start gap-8 border-t border-border/40 pt-6">
               {bestsellers.slice(0, 4).map((p, idx) => (
                 <button
                   key={p.slug}
@@ -653,7 +649,7 @@ function TenLayoutsPage() {
                       : "text-muted-foreground border-transparent hover:text-ink hover:border-ink/40"
                   }`}
                 >
-                  <img src={p.images[0]} alt={p.name} className="w-9 h-9 rounded-full object-cover" />
+                  <img src={p.images[0]} alt={p.name} className="w-9 h-9 rounded-full object-cover object-center" />
                   <span className="text-xs font-medium tracked uppercase">{p.name.split(" ")[0]}</span>
                 </button>
               ))}
@@ -662,27 +658,26 @@ function TenLayoutsPage() {
         </section>
 
         {/* LAYOUT 9 */}
-        <section id="layout-9" className="scroll-mt-32 space-y-8">
-          <div className="border-b border-border/40 pb-4">
+        <section id="layout-9" className="scroll-mt-32 space-y-8 text-left">
+          <div className="border-b border-border/40 pb-4 text-left">
             <span className="text-xs font-semibold text-clay uppercase tracked">Option 09</span>
-            <h3 className="font-display text-3xl text-ink mt-0.5">Cinematic 16:9 Landscape Strip</h3>
+            <h3 className="font-display text-3xl text-ink mt-0.5 text-left">Circular Reserve Vault</h3>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 text-left items-center">
             {bestsellers.slice(0, 3).map((p) => (
-              <div key={p.slug} className="flex flex-col justify-between group">
-                <div>
-                  <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-cream mb-4 relative">
-                    <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-2xl" />
-                    <span className="absolute top-3 left-3 bg-ink/90 text-white text-[9px] px-2.5 py-0.5 rounded-full uppercase font-semibold">
-                      {p.origin}
-                    </span>
+              <div key={p.slug} className="text-left space-y-4 group h-full flex flex-col justify-between">
+                <div className="space-y-4 text-left">
+                  <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-clay/30 p-1.5 bg-cream flex items-center justify-center">
+                    <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover object-center rounded-full" />
                   </div>
-                  <h5 className="font-display text-xl text-ink group-hover:text-clay transition-colors">{p.name}</h5>
-                  <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{p.tagline}</p>
+                  <div className="text-left">
+                    <span className="text-[10px] text-clay uppercase font-bold tracking-wider block text-left">{p.origin}</span>
+                    <h5 className="font-display text-2xl text-ink mt-0.5 text-left">{p.name}</h5>
+                    <span className="text-base font-bold text-ink block mt-1 text-left">{formatPrice(p.price)}</span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between pt-4 mt-6 border-t border-border/30">
-                  <span className="text-base font-bold text-ink">{formatPrice(p.price)}</span>
+                <div className="pt-1 text-left mt-auto">
                   <button
                     onClick={() => add(p)}
                     className="group inline-flex items-center gap-2 text-ink text-[11px] font-medium tracked uppercase tracking-widest py-1 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 cursor-pointer"
@@ -697,11 +692,11 @@ function TenLayoutsPage() {
         </section>
 
         {/* LAYOUT 10 */}
-        <section id="layout-10" className="scroll-mt-32 space-y-8">
-          <div className="flex items-center justify-between border-b border-border/40 pb-4">
+        <section id="layout-10" className="scroll-mt-32 space-y-8 text-left">
+          <div className="flex items-center justify-between border-b border-border/40 pb-4 text-left">
             <div>
               <span className="text-xs font-semibold text-clay uppercase tracked">Option 10</span>
-              <h3 className="font-display text-3xl text-ink mt-0.5">Build Your Harvest Bundle Multi-Picker</h3>
+              <h3 className="font-display text-3xl text-ink mt-0.5 text-left">Build Your Harvest Bundle Multi-Picker</h3>
             </div>
             {bundleCount > 0 && (
               <span className="text-xs font-semibold text-clay uppercase tracked">
@@ -710,17 +705,17 @@ function TenLayoutsPage() {
             )}
           </div>
 
-          <div className="space-y-8">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+          <div className="space-y-8 text-left">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-left items-center">
               {bestsellers.slice(0, 3).map((p) => {
                 const qty = bundleItems[p.slug] || 0;
                 const isSelected = qty > 0;
                 return (
-                  <div key={p.slug} className="flex flex-col justify-between">
-                    <div>
-                      <img src={p.images[0]} alt={p.name} className="w-full h-40 rounded-2xl object-cover bg-cream mb-4" />
-                      <h5 className="font-display text-xl text-ink line-clamp-1">{p.name}</h5>
-                      <p className="text-xs text-muted-foreground mb-4">{formatPrice(p.price)} / {p.serving}</p>
+                  <div key={p.slug} className="flex flex-col justify-between text-left h-full">
+                    <div className="text-left">
+                      <img src={p.images[0]} alt={p.name} className="w-full h-40 rounded-2xl object-cover object-center bg-cream mb-4" />
+                      <h5 className="font-display text-xl text-ink line-clamp-1 text-left">{p.name}</h5>
+                      <p className="text-xs text-muted-foreground mb-4 text-left">{formatPrice(p.price)} / {p.serving}</p>
 
                       {isSelected ? (
                         <div className="flex items-center justify-between py-1 border-b-2 border-clay max-w-[140px]">
@@ -754,7 +749,7 @@ function TenLayoutsPage() {
             </div>
 
             {bundleCount > 0 && (
-              <div className="bg-ink text-white rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4 animate-fade-up">
+              <div className="bg-ink text-white rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-full bg-clay grid place-items-center font-bold text-xs">
                     {bundleCount}

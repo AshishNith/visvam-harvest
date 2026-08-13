@@ -199,14 +199,23 @@ function CheckoutPage() {
   return (
     <div className="min-h-screen bg-background pt-28 pb-20 px-4 md:px-8">
       <div className="max-w-6xl mx-auto">
-        <div className="flex items-center gap-3 mb-8 pb-4 border-b border-border">
-          <Link to="/" className="text-muted-foreground hover:text-ink transition-colors">
-            <ArrowLeft size={18} />
-          </Link>
-          <div>
-            <h1 className="font-display italic text-3xl text-ink">Secure Express Checkout</h1>
-            <p className="text-[11px] tracked uppercase text-muted-foreground">Encrypted JWT Authentication & Priority Delivery</p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-4 border-b border-border">
+          <div className="flex items-center gap-3">
+            <Link to="/" className="text-muted-foreground hover:text-ink transition-colors" title="Back to Home">
+              <ArrowLeft size={18} />
+            </Link>
+            <div>
+              <h1 className="font-display italic text-3xl text-ink">Secure Express Checkout</h1>
+              <p className="text-[11px] tracked uppercase text-muted-foreground">Encrypted JWT Authentication & Priority Delivery</p>
+            </div>
           </div>
+          <Link
+            to="/nuts"
+            className="group inline-flex items-center gap-2 text-ink text-[11px] font-medium tracked uppercase border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 py-1 self-start sm:self-auto"
+          >
+            <span>Continue Shopping</span>
+            <ArrowRight size={13} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
+          </Link>
         </div>
 
         {authLoading ? (
@@ -554,6 +563,16 @@ function CheckoutPage() {
                 <div className="pt-2 text-[10px] text-muted-foreground space-y-1.5 border-t border-border/60">
                   <p className="flex items-center gap-2"><Truck size={12} className="text-clay" /> Dispatch within 24–48 Hours</p>
                   <p className="flex items-center gap-2"><ShieldCheck size={12} className="text-clay" /> Nitrogen-Flushed Sealed Packaging</p>
+                </div>
+
+                <div className="pt-4 border-t border-border/60">
+                  <Link
+                    to="/nuts"
+                    className="w-full py-3 border border-ink/40 text-ink text-xs font-semibold tracked uppercase tracking-widest hover:bg-ink hover:text-white transition-all duration-300 flex items-center justify-center gap-2 text-center"
+                  >
+                    <ArrowLeft size={14} />
+                    <span>Continue Shopping</span>
+                  </Link>
                 </div>
               </div>
             </div>
