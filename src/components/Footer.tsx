@@ -112,7 +112,7 @@ export function Footer() {
               alt="Viśvam Emblem"
               width={48}
               height={48}
-              loading="lazy"
+              loading="eager"
               decoding="async"
               className="h-9 w-auto object-contain transition-transform group-hover:scale-105"
             />
@@ -121,7 +121,7 @@ export function Footer() {
               alt="Viśvam"
               width={120}
               height={40}
-              loading="lazy"
+              loading="eager"
               decoding="async"
               className="h-7 w-auto object-contain"
             />

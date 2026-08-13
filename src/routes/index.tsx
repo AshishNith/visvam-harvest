@@ -163,7 +163,7 @@ function Home() {
             alt="Hand-selected jumbo whole cashews"
             width={1200}
             height={1504}
-            loading="lazy"
+            loading="eager"
             className="absolute inset-0 w-full h-full object-cover"
           />
         </div>
@@ -195,7 +195,7 @@ function Home() {
               alt={giftBox.name}
               width={1408}
               height={1008}
-              loading="lazy"
+              loading="eager"
               className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-[900ms]"
             />
             <div className="absolute top-5 left-5 flex flex-col gap-2">

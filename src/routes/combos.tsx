@@ -80,7 +80,7 @@ function Combos() {
             alt={featuredBox.name}
             width={1408}
             height={1008}
-            loading="lazy"
+            loading="eager"
             className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-[900ms]"
           />
           <div className="absolute top-5 left-5 flex flex-col gap-2">

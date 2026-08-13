@@ -242,7 +242,7 @@ function MenuItemPage() {
                     alt={`${product.name} thumbnail ${i + 1}`}
                     width={200}
                     height={200}
-                    loading="lazy"
+                    loading="eager"
                     className={`w-full h-full object-cover transition-opacity ${
                       i === active ? "opacity-100" : "opacity-70 hover:opacity-100"
                     }`}

@@ -210,7 +210,7 @@ export function CartDrawer() {
                               alt={product.name || "Product"}
                               width={96}
                               height={120}
-                              loading="lazy"
+                              loading="eager"
                               className="w-24 h-30 object-cover bg-cream shrink-0 border border-border/40"
                             />
                             <div className="flex-1 min-w-0">
@@ -266,7 +266,7 @@ export function CartDrawer() {
                               alt={p.name}
                               width={48}
                               height={48}
-                              loading="lazy"
+                              loading="eager"
                               className="size-12 object-cover bg-background shrink-0"
                             />
                             <div className="flex-1 min-w-0">

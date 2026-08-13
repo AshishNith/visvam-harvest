@@ -62,9 +62,8 @@ export function ScrollStackCategories() {
               <img
                 src={cat.image}
                 alt={cat.title}
-                loading="lazy"
+                loading="eager"
                 decoding="async"
-                fetchPriority="low"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-black/40 flex flex-col justify-center p-8 sm:p-16 text-white space-y-4">

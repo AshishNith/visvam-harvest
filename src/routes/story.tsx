@@ -39,7 +39,7 @@ function Story() {
             alt="Hand-selected premium cashew nuts harvested at peak maturity"
             width={1200}
             height={1504}
-            loading="lazy"
+            loading="eager"
             className="absolute inset-0 w-full h-full object-cover"
           />
         </div>
