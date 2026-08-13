@@ -1,14 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, ChevronLeft, ChevronRight, Sparkles, Download, ArrowUpRight, Plus, Minus } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Sparkles, Download, ArrowUpRight, Plus, Minus, Star, ShieldCheck, Droplets, Layers } from "lucide-react";
 import { products } from "@/lib/products";
 import { useCart, formatPrice } from "@/lib/cart-context";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export const Route = createFileRoute("/10-pdf")({
   head: () => ({
     meta: [
       { title: "10 Bestseller Section Layout Concepts — Viśvam" },
-      { name: "description", content: "10 Unique, compact, and luxury Bestseller section designs tailored for Viśvam brand identity." },
+      { name: "description", content: "10 Elevated, non-boxy Bestseller section designs including GSAP ScrollTrigger pinning for Viśvam." },
     ],
   }),
   component: TenLayoutsPage,
@@ -21,6 +23,10 @@ function TenLayoutsPage() {
   const [sliderIndex, setSliderIndex] = useState<number>(0);
   const [activeThumbIndex, setActiveThumbIndex] = useState<number>(0);
   const [bundleItems, setBundleItems] = useState<Record<string, number>>({});
+  const [gsapActiveIndex, setGsapActiveIndex] = useState<number>(0);
+
+  const pinnedContainerRef = useRef<HTMLDivElement>(null);
+  const pinnedImageRef = useRef<HTMLDivElement>(null);
 
   const { add } = useCart();
 
@@ -60,35 +66,68 @@ function TenLayoutsPage() {
 
   const bundleCount = Object.values(bundleItems).reduce((a, b) => a + b, 0);
 
+  // Initialize GSAP ScrollTrigger for Pinned Layout
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    gsap.registerPlugin(ScrollTrigger);
+
+    const ctx = gsap.context(() => {
+      const cards = gsap.utils.toArray<HTMLElement>(".gsap-product-trigger");
+
+      cards.forEach((card, index) => {
+        ScrollTrigger.create({
+          trigger: card,
+          start: "top 55%",
+          end: "bottom 45%",
+          onEnter: () => setGsapActiveIndex(index),
+          onEnterBack: () => setGsapActiveIndex(index),
+        });
+      });
+
+      if (pinnedContainerRef.current && pinnedImageRef.current) {
+        ScrollTrigger.create({
+          trigger: pinnedContainerRef.current,
+          start: "top top+=100",
+          end: "bottom bottom-=100",
+          pin: pinnedImageRef.current,
+          pinSpacing: false,
+          invalidateOnRefresh: true,
+        });
+      }
+    });
+
+    return () => ctx.revert();
+  }, [bestsellers.length]);
+
   return (
     <div className="min-h-screen bg-background text-foreground pb-32">
       {/* Sticky Header & Toolbar */}
-      <header className="sticky top-0 z-50 bg-cream/90 backdrop-blur-md border-b border-border/40 py-4 px-6 shadow-sm print:hidden">
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/40 py-4 px-6 shadow-xs print:hidden">
         <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-3">
-              <span className="bg-clay text-white text-[10px] tracked px-2.5 py-0.5 rounded-full uppercase font-semibold">
+              <span className="text-[10px] tracked uppercase font-semibold text-clay bg-clay/10 px-3 py-1 rounded-md">
                 Client Concept Review
               </span>
-              <h1 className="font-display text-2xl text-ink">10 Bestseller Section Layout Options</h1>
+              <h1 className="font-display text-2xl text-ink">10 Bestseller Section Layout Concepts</h1>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Custom non-bulk image layouts • Smooth organic corners • Authentic Viśvam button designs
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Featuring GSAP ScrollTrigger <code className="text-clay">pin: true</code> • 100% Seamless text buttons • Un-boxed layouts
             </p>
           </div>
 
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-6 flex-wrap">
             <button
               onClick={handlePrint}
-              className="group inline-flex items-center gap-2 px-4 py-2 bg-ink text-white rounded-full text-xs font-medium tracked uppercase hover:bg-clay transition-all duration-300 cursor-pointer"
+              className="group inline-flex items-center gap-2 text-ink text-[11px] font-medium tracked uppercase tracking-widest py-1 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 cursor-pointer"
             >
               <Download size={14} />
               <span>Export PDF</span>
-              <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-300 text-clay" />
+              <ArrowRight size={13} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
             </button>
             <Link
               to="/"
-              className="group inline-flex items-center gap-1.5 px-4 py-2 bg-sand/60 text-ink rounded-full text-xs font-medium tracked uppercase hover:bg-sand transition-all duration-300"
+              className="group inline-flex items-center gap-1.5 text-ink text-[11px] font-medium tracked uppercase tracking-widest py-1 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300"
             >
               <span>Back to Home</span>
               <ArrowUpRight size={14} />
@@ -96,19 +135,19 @@ function TenLayoutsPage() {
           </div>
         </div>
 
-        {/* Concept Quick Jump Pill Nav */}
-        <div className="max-w-[1400px] mx-auto mt-4 pt-3 border-t border-border/30 overflow-x-auto no-scrollbar flex items-center gap-2">
-          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracked shrink-0 mr-2">Jump to:</span>
+        {/* Navigation Quick Jump Tabs */}
+        <div className="max-w-[1400px] mx-auto mt-4 pt-3 border-t border-border/30 overflow-x-auto no-scrollbar flex items-center gap-4">
+          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracked shrink-0 mr-1">Jump to:</span>
           {[
-            "1. Carousel Strip",
-            "2. Editorial Spotlight",
-            "3. 4-Column Grid",
-            "4. Filterable Tabs",
-            "5. Boutique Menu List",
-            "6. Asymmetric Bento",
-            "7. Interactive Slider",
-            "8. Landscape 16:9 Grid",
-            "9. Card-in-Card Reserve",
+            "1. GSAP ScrollTrigger Pinned",
+            "2. Heritage Carousel",
+            "3. Editorial Spotlight",
+            "4. 4-Column Floating Grid",
+            "5. Text Filter Grid",
+            "6. Boutique Menu List",
+            "7. Free-Form Asymmetric",
+            "8. Seamless Spotlight",
+            "9. Cinematic 16:9 Strip",
             "10. Bundle Multi-Picker",
           ].map((title, idx) => {
             const num = idx + 1;
@@ -118,10 +157,10 @@ function TenLayoutsPage() {
                 key={num}
                 href={`#layout-${num}`}
                 onClick={() => setActiveLayout(num)}
-                className={`text-xs px-3.5 py-1.5 rounded-full transition-all shrink-0 font-medium tracked uppercase ${
+                className={`text-xs py-1 font-medium tracked uppercase border-b-2 transition-all shrink-0 ${
                   isActive
-                    ? "bg-clay text-white shadow-xs"
-                    : "bg-cream text-ink hover:bg-sand border border-border/30"
+                    ? "text-clay border-clay font-semibold"
+                    : "text-muted-foreground border-transparent hover:text-ink hover:border-ink/40"
                 }`}
               >
                 {title}
@@ -132,82 +171,95 @@ function TenLayoutsPage() {
       </header>
 
       {/* Main Content Showcase */}
-      <main className="max-w-[1400px] mx-auto px-6 py-12 space-y-24">
+      <main className="max-w-[1400px] mx-auto px-6 py-12 space-y-32">
 
-        {/* Intro Banner */}
-        <section className="bg-cream/60 border border-border/50 rounded-3xl p-8 md:p-10 space-y-4">
+        {/* Intro Solution Banner */}
+        <section className="py-6 border-b border-border/40 space-y-3">
           <div className="flex items-center gap-2 text-clay">
-            <Sparkles size={18} />
-            <span className="text-xs font-semibold uppercase tracked">Client Specific Solution</span>
+            <Sparkles size={16} />
+            <span className="text-xs font-semibold uppercase tracked">GSAP Pinned ScrollTrigger Layouts</span>
           </div>
           <h2 className="font-display text-3xl md:text-4xl text-ink leading-tight">
-            Addressing Image Scale & Layout Preference
+            GSAP Pinned & Un-Boxed Bestseller Layout Concepts
           </h2>
           <p className="text-sm text-muted-foreground max-w-3xl leading-relaxed">
-            To replace the tall 3/4 aspect ratio grid cards, we have created <strong>10 distinct, production-ready design variations</strong>. All options utilize Viśvam's signature tracked button typography, hover animations, and smooth rounded corners.
+            Layout 01 introduces GSAP ScrollTrigger with <code className="text-clay">pin: true</code>. As you scroll down the right side, the left product image stage pins smoothly while updating images in real-time, accompanied by Viśvam's signature seamless button design.
           </p>
         </section>
 
-        {/* ==========================================
-            LAYOUT 1: Compact Horizontal Carousel Strip
-           ========================================== */}
-        <section id="layout-1" className="scroll-mt-32 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-4">
+        {/* LAYOUT 1 */}
+        <section id="layout-1" className="scroll-mt-32 space-y-8">
+          <div className="border-b border-border/40 pb-4 flex items-center justify-between">
             <div>
-              <span className="text-xs font-semibold text-clay uppercase tracked">Option 01</span>
-              <h3 className="font-display text-2xl text-ink">Compact Horizontal Carousel Strip</h3>
+              <span className="text-xs font-semibold text-clay uppercase tracked">Option 01 • GSAP Pinned (pin: true)</span>
+              <h3 className="font-display text-3xl text-ink mt-0.5">Pinned Image Stage + Scrolling Text Story</h3>
             </div>
-            <p className="text-xs text-muted-foreground max-w-md">
-              Uses space-efficient 4:3 landscape thumbnails inside a smooth scroll container. Reduces vertical height by 55%.
-            </p>
+            <span className="text-xs bg-sand/60 text-ink px-3 py-1 rounded-full font-medium">
+              Scroll down to test pin animation
+            </span>
           </div>
 
-          <div className="bg-cream/40 p-8 rounded-3xl border border-border/40 space-y-8">
-            <div className="flex items-end justify-between">
-              <div>
-                <p className="text-[10px] tracked text-muted-foreground uppercase tracking-widest mb-1">— Harvest Staples</p>
-                <h4 className="font-display text-3xl text-ink">The Orchard Bestsellers</h4>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setSliderIndex((prev) => Math.max(0, prev - 1))}
-                  className="w-10 h-10 rounded-full border border-ink/20 flex items-center justify-center hover:bg-sand transition-colors cursor-pointer"
-                  aria-label="Previous items"
-                >
-                  <ChevronLeft size={18} />
-                </button>
-                <button
-                  onClick={() => setSliderIndex((prev) => Math.min(Math.max(0, bestsellers.length - 4), prev + 1))}
-                  className="w-10 h-10 rounded-full border border-ink/20 flex items-center justify-center hover:bg-sand transition-colors cursor-pointer"
-                  aria-label="Next items"
-                >
-                  <ChevronRight size={18} />
-                </button>
+          <div ref={pinnedContainerRef} className="relative grid grid-cols-1 lg:grid-cols-12 gap-12 items-start min-h-[1400px]">
+            <div className="lg:col-span-6 hidden lg:block">
+              <div ref={pinnedImageRef} className="sticky top-28 aspect-[4/3] rounded-3xl overflow-hidden bg-cream border border-border/30 shadow-xs transition-all duration-700">
+                <img
+                  src={bestsellers[gsapActiveIndex]?.images[0] || bestsellers[0].images[0]}
+                  alt={bestsellers[gsapActiveIndex]?.name || bestsellers[0].name}
+                  className="w-full h-full object-cover transition-opacity duration-700 rounded-3xl"
+                />
+                <div className="absolute bottom-4 left-4 right-4 bg-background/80 backdrop-blur-md p-4 rounded-2xl border border-border/30 flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] text-clay uppercase font-bold tracking-wider">
+                      {bestsellers[gsapActiveIndex]?.origin || bestsellers[0].origin}
+                    </span>
+                    <h5 className="font-display text-lg text-ink">
+                      {bestsellers[gsapActiveIndex]?.name || bestsellers[0].name}
+                    </h5>
+                  </div>
+                  <span className="text-base font-bold text-ink">
+                    {formatPrice(bestsellers[gsapActiveIndex]?.price || bestsellers[0].price)}
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {bestsellers.slice(sliderIndex, sliderIndex + 4).map((p) => (
-                <div key={p.slug} className="bg-background rounded-2xl p-4 border border-border/40 shadow-xs flex flex-col justify-between group">
-                  <div className="relative aspect-[4/3] rounded-xl overflow-hidden mb-3 bg-cream">
-                    <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-xl" />
-                    <span className="absolute top-2 left-2 bg-ink/80 text-white text-[9px] px-2 py-0.5 rounded-full uppercase font-medium">
-                      {p.origin}
-                    </span>
+            <div className="lg:col-span-6 space-y-36 py-12">
+              {bestsellers.slice(0, 4).map((p, idx) => (
+                <div
+                  key={p.slug}
+                  className={`gsap-product-trigger space-y-4 transition-all duration-500 pb-12 border-b border-border/30 ${
+                    gsapActiveIndex === idx ? "opacity-100 scale-100" : "opacity-40 scale-95"
+                  }`}
+                >
+                  <div className="lg:hidden aspect-[16/10] rounded-2xl overflow-hidden mb-4 bg-cream">
+                    <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover rounded-2xl" />
                   </div>
-                  <div>
-                    <h5 className="font-display text-base text-ink line-clamp-1">{p.name}</h5>
-                    <p className="text-[11px] text-muted-foreground line-clamp-1 mb-3">{p.tagline}</p>
-                    <div className="flex items-center justify-between pt-2 border-t border-border/30">
-                      <span className="text-sm font-semibold">{formatPrice(p.price)}</span>
-                      <button
-                        onClick={() => add(p)}
-                        className="group/btn inline-flex items-center gap-1.5 text-ink text-[10px] font-medium tracked uppercase border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 py-0.5 cursor-pointer"
-                      >
-                        <span>Add to bag</span>
-                        <ArrowRight size={11} className="group-hover/btn:translate-x-1 transition-transform duration-300 text-clay" />
-                      </button>
+
+                  <div className="flex items-center gap-2 text-clay">
+                    <Layers size={14} />
+                    <span className="text-[10px] uppercase font-bold tracking-wider">0{idx + 1} Harvest Selection • {p.origin}</span>
+                  </div>
+
+                  <h4 className="font-display text-4xl text-ink">{p.name}</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed max-w-md">{p.description}</p>
+
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground pt-1">
+                    <span className="inline-flex items-center gap-1.5"><ShieldCheck size={14} className="text-clay" /> Cold Lock 4°C</span>
+                    <span className="inline-flex items-center gap-1.5"><Droplets size={14} className="text-clay" /> Grade A1</span>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-6 border-t border-border/40">
+                    <div>
+                      <span className="text-[10px] text-muted-foreground block">{p.serving}</span>
+                      <span className="text-2xl font-bold text-ink">{formatPrice(p.price)}</span>
                     </div>
+                    <button
+                      onClick={() => add(p)}
+                      className="group inline-flex items-center gap-2.5 text-ink text-[12px] font-medium tracked uppercase tracking-widest py-1.5 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 cursor-pointer"
+                    >
+                      <span>Add to Bag</span>
+                      <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
+                    </button>
                   </div>
                 </div>
               ))}
@@ -215,42 +267,102 @@ function TenLayoutsPage() {
           </div>
         </section>
 
-        {/* ==========================================
-            LAYOUT 2: Editorial Spotlight Hero + Sidebar Stack
-           ========================================== */}
-        <section id="layout-2" className="scroll-mt-32 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-4">
+        {/* LAYOUT 2 */}
+        <section id="layout-2" className="scroll-mt-32 space-y-8">
+          <div className="flex items-end justify-between border-b border-border/40 pb-4">
             <div>
               <span className="text-xs font-semibold text-clay uppercase tracked">Option 02</span>
-              <h3 className="font-display text-2xl text-ink">Editorial Spotlight + Compact Sidebar Stack</h3>
+              <h3 className="font-display text-3xl text-ink mt-0.5">The Orchard Bestsellers Gallery</h3>
             </div>
-            <p className="text-xs text-muted-foreground max-w-md">
-              Combines one hero highlight on the left with ultra-compact horizontal list rows on the right. Zero vertical clutter.
-            </p>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setSliderIndex((prev) => Math.max(0, prev - 1))}
+                className="text-ink hover:text-clay transition-colors cursor-pointer"
+                aria-label="Previous items"
+              >
+                <ChevronLeft size={24} />
+              </button>
+              <button
+                onClick={() => setSliderIndex((prev) => Math.min(Math.max(0, bestsellers.length - 4), prev + 1))}
+                className="text-ink hover:text-clay transition-colors cursor-pointer"
+                aria-label="Next items"
+              >
+                <ChevronRight size={24} />
+              </button>
+            </div>
           </div>
 
-          <div className="bg-cream/40 p-8 rounded-3xl border border-border/40 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            {/* Left Hero Card */}
-            <div className="lg:col-span-5 bg-background rounded-2xl p-6 border border-border/40 shadow-xs space-y-4">
-              <div className="relative aspect-[16/10] rounded-xl overflow-hidden bg-cream">
-                <img src={bestsellers[0].images[0]} alt={bestsellers[0].name} className="w-full h-full object-cover rounded-xl" />
-                <span className="absolute top-3 left-3 bg-clay text-white text-[10px] px-3 py-1 rounded-full uppercase font-medium">
-                  #1 Top Choice
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {bestsellers.slice(sliderIndex, sliderIndex + 4).map((p) => (
+              <div key={p.slug} className="flex flex-col justify-between group">
+                <div>
+                  <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 bg-cream/60">
+                    <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 rounded-2xl" />
+                    <span className="absolute top-3 left-3 bg-ink/90 text-white text-[9px] px-2.5 py-0.5 rounded-full uppercase font-medium tracked">
+                      {p.origin}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1 text-amber-600 text-xs mb-1">
+                    <Star size={11} fill="currentColor" />
+                    <span className="font-semibold text-ink text-[11px]">4.9</span>
+                    <span className="text-muted-foreground text-[10px] ml-1">• High Oil Content</span>
+                  </div>
+                  <h5 className="font-display text-xl text-ink line-clamp-1 group-hover:text-clay transition-colors">{p.name}</h5>
+                  <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5 mb-4">{p.tagline}</p>
+                </div>
+
+                <div className="pt-3 border-t border-border/40 flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] text-muted-foreground block">{p.serving}</span>
+                    <span className="text-base font-bold text-ink">{formatPrice(p.price)}</span>
+                  </div>
+                  <button
+                    onClick={() => add(p)}
+                    className="group/btn inline-flex items-center gap-2 text-ink text-[11px] font-medium tracked uppercase border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 py-0.5 cursor-pointer"
+                  >
+                    <span>Add to Bag</span>
+                    <ArrowRight size={13} className="group-hover/btn:translate-x-1.5 transition-transform duration-300 text-clay" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* LAYOUT 3 */}
+        <section id="layout-3" className="scroll-mt-32 space-y-8">
+          <div className="border-b border-border/40 pb-4">
+            <span className="text-xs font-semibold text-clay uppercase tracked">Option 03</span>
+            <h3 className="font-display text-3xl text-ink mt-0.5">Editorial Sourcing Spotlight</h3>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-5 space-y-5">
+              <div className="relative aspect-[16/10] rounded-2xl overflow-hidden bg-cream">
+                <img src={bestsellers[0].images[0]} alt={bestsellers[0].name} className="w-full h-full object-cover rounded-2xl" />
+                <span className="absolute top-3 left-3 bg-clay text-white text-[10px] px-3 py-1 rounded-full uppercase font-medium tracked">
+                  #1 Harvest Selection
                 </span>
               </div>
-              <div>
-                <span className="text-[10px] uppercase text-muted-foreground font-semibold">{bestsellers[0].origin}</span>
-                <h4 className="font-display text-2xl text-ink">{bestsellers[0].name}</h4>
-                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{bestsellers[0].description.slice(0, 110)}...</p>
+              <div className="space-y-2">
+                <span className="text-[10px] uppercase tracking-widest text-clay font-semibold">{bestsellers[0].origin}</span>
+                <h4 className="font-display text-3xl text-ink">{bestsellers[0].name}</h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">{bestsellers[0].description}</p>
               </div>
-              <div className="flex items-center justify-between pt-2">
+
+              <div className="flex items-center gap-6 text-xs text-muted-foreground pt-1">
+                <span className="inline-flex items-center gap-1.5"><ShieldCheck size={14} className="text-clay" /> Cold Lock 4°C</span>
+                <span className="inline-flex items-center gap-1.5"><Droplets size={14} className="text-clay" /> Grade A1</span>
+              </div>
+
+              <div className="flex items-center justify-between pt-4 border-t border-border/40">
                 <div>
-                  <span className="text-xs text-muted-foreground block">Pack size: {bestsellers[0].serving}</span>
-                  <span className="text-lg font-bold text-ink">{formatPrice(bestsellers[0].price)}</span>
+                  <span className="text-[10px] text-muted-foreground block">{bestsellers[0].serving}</span>
+                  <span className="text-xl font-bold text-ink">{formatPrice(bestsellers[0].price)}</span>
                 </div>
                 <button
                   onClick={() => add(bestsellers[0])}
-                  className="group inline-flex items-center gap-2 bg-ink text-white hover:bg-clay text-[10.5px] font-medium tracked uppercase tracking-widest py-2.5 px-5 rounded-full transition-all duration-300 cursor-pointer"
+                  className="group inline-flex items-center gap-2.5 text-ink text-[11.5px] font-medium tracked uppercase tracking-widest py-1.5 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 cursor-pointer"
                 >
                   <span>Add Hero Item</span>
                   <ArrowRight size={13} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
@@ -258,27 +370,25 @@ function TenLayoutsPage() {
               </div>
             </div>
 
-            {/* Right Compact Stack */}
-            <div className="lg:col-span-7 space-y-4">
-              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracked">More Harvest Bestsellers</h4>
+            <div className="lg:col-span-7 divide-y divide-border/40">
               {bestsellers.slice(1, 4).map((p) => (
-                <div key={p.slug} className="bg-background rounded-2xl p-4 border border-border/40 flex items-center justify-between gap-4 hover:border-clay/40 transition-colors">
-                  <div className="flex items-center gap-4">
-                    <img src={p.images[0]} alt={p.name} className="w-20 h-20 rounded-xl object-cover shrink-0 bg-cream" />
+                <div key={p.slug} className="py-5 flex items-center justify-between gap-6 group first:pt-0">
+                  <div className="flex items-center gap-5">
+                    <img src={p.images[0]} alt={p.name} className="w-20 h-20 rounded-2xl object-cover shrink-0 bg-cream" />
                     <div>
                       <span className="text-[9px] uppercase tracking-wider text-clay font-bold">{p.origin}</span>
-                      <h5 className="font-display text-lg text-ink">{p.name}</h5>
-                      <p className="text-xs text-muted-foreground line-clamp-1">{p.tagline}</p>
+                      <h5 className="font-display text-xl text-ink group-hover:text-clay transition-colors">{p.name}</h5>
+                      <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{p.tagline}</p>
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2 shrink-0">
-                    <span className="text-sm font-semibold">{formatPrice(p.price)}</span>
+                    <span className="text-base font-semibold">{formatPrice(p.price)}</span>
                     <button
                       onClick={() => add(p)}
-                      className="group/btn inline-flex items-center gap-1.5 text-ink text-[10px] font-medium tracked uppercase border-b border-ink hover:text-clay hover:border-clay transition-all duration-300 py-1 cursor-pointer"
+                      className="group/btn inline-flex items-center gap-1.5 text-ink text-[10.5px] font-medium tracked uppercase border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 py-0.5 cursor-pointer"
                     >
                       <span>Add to bag</span>
-                      <ArrowRight size={11} className="group-hover/btn:translate-x-1 transition-transform duration-300 text-clay" />
+                      <ArrowRight size={12} className="group-hover/btn:translate-x-1 transition-transform duration-300 text-clay" />
                     </button>
                   </div>
                 </div>
@@ -287,285 +397,241 @@ function TenLayoutsPage() {
           </div>
         </section>
 
-        {/* ==========================================
-            LAYOUT 3: 4-Column Artisanal Grid (Compact 1:1 Images)
-           ========================================== */}
-        <section id="layout-3" className="scroll-mt-32 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-4">
-            <div>
-              <span className="text-xs font-semibold text-clay uppercase tracked">Option 03</span>
-              <h3 className="font-display text-2xl text-ink">4-Column Artisanal Grid (1:1 Aspect Ratio)</h3>
-            </div>
-            <p className="text-xs text-muted-foreground max-w-md">
-              Replaces 3 tall cards with 4 compact square cards per row. Balanced visual weight and quick browsing.
-            </p>
+        {/* LAYOUT 4 */}
+        <section id="layout-4" className="scroll-mt-32 space-y-8">
+          <div className="border-b border-border/40 pb-4">
+            <span className="text-xs font-semibold text-clay uppercase tracked">Option 04</span>
+            <h3 className="font-display text-3xl text-ink mt-0.5">4-Column Floating Artisanal Grid</h3>
           </div>
 
-          <div className="bg-cream/40 p-8 rounded-3xl border border-border/40">
-            <div className="text-center max-w-md mx-auto mb-10">
-              <span className="text-[10px] tracked text-muted-foreground uppercase font-semibold">Handpicked Selection</span>
-              <h4 className="font-display text-3xl text-ink mt-1">Our Favorite Harvests</h4>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {bestsellers.slice(0, 4).map((p) => (
-                <div key={p.slug} className="bg-background rounded-2xl p-4 border border-border/30 text-center flex flex-col items-center justify-between group">
-                  <div className="w-full aspect-square rounded-xl overflow-hidden bg-cream mb-4 relative">
-                    <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-xl" />
-                    <span className="absolute top-2 right-2 bg-sand/80 text-ink text-[9px] px-2 py-0.5 rounded-full font-semibold">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {bestsellers.slice(0, 4).map((p) => (
+              <div key={p.slug} className="flex flex-col justify-between group">
+                <div>
+                  <div className="w-full aspect-[3/2] rounded-2xl overflow-hidden bg-cream mb-4 relative">
+                    <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-2xl" />
+                    <span className="absolute top-2.5 right-2.5 bg-sand/90 text-ink text-[9px] px-2.5 py-0.5 rounded-full font-semibold">
                       {p.serving}
                     </span>
                   </div>
-                  <div className="space-y-1">
-                    <span className="text-[9px] uppercase tracking-wider text-clay font-bold">{p.origin}</span>
-                    <h5 className="font-display text-base text-ink line-clamp-1">{p.name}</h5>
-                    <p className="text-xs font-semibold text-ink">{formatPrice(p.price)}</p>
-                  </div>
+                  <span className="text-[9px] uppercase tracking-wider text-clay font-bold">{p.origin}</span>
+                  <h5 className="font-display text-lg text-ink line-clamp-1 group-hover:text-clay transition-colors mt-0.5">{p.name}</h5>
+                  <p className="text-sm font-bold text-ink mt-1">{formatPrice(p.price)}</p>
+                </div>
+                <div className="pt-4 mt-4 border-t border-border/30">
                   <button
                     onClick={() => add(p)}
-                    className="w-full mt-4 group inline-flex items-center justify-center gap-2 bg-cream hover:bg-clay hover:text-white text-ink text-[10.5px] font-medium tracked uppercase py-2.5 rounded-full transition-all duration-300 cursor-pointer"
+                    className="group inline-flex items-center gap-2 text-ink text-[11px] font-medium tracked uppercase tracking-widest py-1 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 cursor-pointer"
                   >
                     <span>Add to Bag</span>
-                    <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-300 text-clay" />
+                    <ArrowRight size={13} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
                   </button>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </section>
 
-        {/* ==========================================
-            LAYOUT 4: Category-Filtered Glassmorphic Tabs Grid
-           ========================================== */}
-        <section id="layout-4" className="scroll-mt-32 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-4">
+        {/* LAYOUT 5 */}
+        <section id="layout-5" className="scroll-mt-32 space-y-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border/40 pb-4">
             <div>
-              <span className="text-xs font-semibold text-clay uppercase tracked">Option 04</span>
-              <h3 className="font-display text-2xl text-ink">Category-Filtered Interactive Grid</h3>
+              <span className="text-xs font-semibold text-clay uppercase tracked">Option 05</span>
+              <h3 className="font-display text-3xl text-ink mt-0.5">Filterable Minimalist Showcase</h3>
             </div>
-            <p className="text-xs text-muted-foreground max-w-md">
-              Features top category filter tabs to prevent visual overload and let customers explore by preference.
-            </p>
+
+            <div className="flex items-center gap-6">
+              {[
+                { id: "all", label: "All Harvests" },
+                { id: "nuts", label: "Almonds & Cashews" },
+                { id: "dried", label: "Figs & Dates" },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setSelectedCategory(tab.id)}
+                  className={`text-xs py-1 font-medium tracked uppercase border-b-2 transition-all cursor-pointer ${
+                    selectedCategory === tab.id
+                      ? "text-clay border-clay font-semibold"
+                      : "text-muted-foreground border-transparent hover:text-ink hover:border-ink/40"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="bg-cream/40 p-8 rounded-3xl border border-border/40 space-y-8">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <h4 className="font-display text-3xl text-ink">Curated Bestsellers</h4>
-                <p className="text-xs text-muted-foreground">Select a category to filter top performers</p>
-              </div>
-
-              <div className="flex items-center gap-2 bg-background p-1.5 rounded-full border border-border/40 self-start">
-                {[
-                  { id: "all", label: "All Items" },
-                  { id: "nuts", label: "Almonds & Cashews" },
-                  { id: "dried", label: "Figs & Dates" },
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setSelectedCategory(tab.id)}
-                    className={`text-xs px-4 py-1.5 rounded-full font-medium tracked uppercase transition-all cursor-pointer ${
-                      selectedCategory === tab.id
-                        ? "bg-clay text-white shadow-xs"
-                        : "text-muted-foreground hover:text-ink"
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {bestsellers
-                .filter((p) => {
-                  if (selectedCategory === "nuts") return p.category === "nuts";
-                  if (selectedCategory === "dried") return p.slug.includes("fig") || p.slug.includes("date");
-                  return true;
-                })
-                .slice(0, 3)
-                .map((p) => (
-                  <div key={p.slug} className="bg-background/80 backdrop-blur-sm rounded-3xl p-6 border border-border/40 shadow-sm flex flex-col justify-between group">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {bestsellers
+              .filter((p) => {
+                if (selectedCategory === "nuts") return p.category === "nuts";
+                if (selectedCategory === "dried") return p.slug.includes("fig") || p.slug.includes("date");
+                return true;
+              })
+              .slice(0, 3)
+              .map((p) => (
+                <div key={p.slug} className="flex flex-col justify-between group">
+                  <div>
                     <div className="relative aspect-[16/11] rounded-2xl overflow-hidden bg-cream mb-4">
                       <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-2xl" />
-                      <span className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm text-ink text-[10px] px-3 py-1 rounded-full font-semibold border border-border/30">
+                      <span className="absolute bottom-3 left-3 text-ink text-[10px] px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full font-semibold">
                         ★ 4.9 Harvest Rating
                       </span>
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] uppercase text-clay font-bold">{p.origin}</span>
                         <span className="text-xs text-muted-foreground">{p.serving}</span>
                       </div>
-                      <h5 className="font-display text-xl text-ink">{p.name}</h5>
-                      <p className="text-xs text-muted-foreground line-clamp-2">{p.description}</p>
-                    </div>
-                    <div className="flex items-center justify-between pt-4 mt-4 border-t border-border/30">
-                      <span className="text-lg font-bold text-ink">{formatPrice(p.price)}</span>
-                      <button
-                        onClick={() => add(p)}
-                        className="group inline-flex items-center gap-2 bg-ink text-white hover:bg-clay text-[10.5px] font-medium tracked uppercase py-2 px-4 rounded-full transition-all duration-300 cursor-pointer"
-                      >
-                        <span>Add to Bag</span>
-                        <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-300 text-clay" />
-                      </button>
+                      <h5 className="font-display text-xl text-ink group-hover:text-clay transition-colors">{p.name}</h5>
+                      <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{p.description}</p>
                     </div>
                   </div>
-                ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ==========================================
-            LAYOUT 5: Luxury Boutique Menu / Row List Showcase
-           ========================================== */}
-        <section id="layout-5" className="scroll-mt-32 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-4">
-            <div>
-              <span className="text-xs font-semibold text-clay uppercase tracked">Option 05</span>
-              <h3 className="font-display text-2xl text-ink">Luxury Boutique Menu / Horizontal List View</h3>
-            </div>
-            <p className="text-xs text-muted-foreground max-w-md">
-              Michelin-star restaurant style text-first menu list. Completely removes image overload and focuses on quality details.
-            </p>
-          </div>
-
-          <div className="bg-cream/40 p-8 rounded-3xl border border-border/40 space-y-6">
-            <div className="flex items-center justify-between border-b border-border/30 pb-4">
-              <h4 className="font-display text-3xl text-ink">Signature Selection</h4>
-              <span className="text-xs text-muted-foreground">4 Products Available</span>
-            </div>
-
-            <div className="divide-y divide-border/30">
-              {bestsellers.slice(0, 4).map((p) => (
-                <div key={p.slug} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group">
-                  <div className="flex items-center gap-4">
-                    <img src={p.images[0]} alt={p.name} className="w-16 h-16 rounded-full object-cover bg-cream border border-border/40 shrink-0" />
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h5 className="font-display text-xl text-ink group-hover:text-clay transition-colors">{p.name}</h5>
-                        <span className="bg-sand/60 text-ink text-[9px] px-2 py-0.5 rounded-full uppercase font-medium">
-                          {p.origin}
-                        </span>
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{p.tagline}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between sm:justify-end gap-6 shrink-0">
-                    <div className="text-right">
-                      <span className="text-xs text-muted-foreground block">{p.serving}</span>
-                      <span className="text-base font-semibold text-ink">{formatPrice(p.price)}</span>
-                    </div>
+                  <div className="flex items-center justify-between pt-4 mt-6 border-t border-border/30">
+                    <span className="text-lg font-bold text-ink">{formatPrice(p.price)}</span>
                     <button
                       onClick={() => add(p)}
-                      className="group inline-flex items-center gap-1.5 text-ink hover:text-clay text-[10.5px] font-medium tracked uppercase border-b-2 border-ink hover:border-clay transition-all duration-300 py-1 cursor-pointer"
+                      className="group inline-flex items-center gap-2 text-ink text-[11px] font-medium tracked uppercase tracking-widest py-1 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 cursor-pointer"
                     >
                       <span>Add to Bag</span>
-                      <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-300 text-clay" />
+                      <ArrowRight size={13} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
                     </button>
                   </div>
                 </div>
               ))}
-            </div>
           </div>
         </section>
 
-        {/* ==========================================
-            LAYOUT 6: Asymmetric Bento Grid
-           ========================================== */}
-        <section id="layout-6" className="scroll-mt-32 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-4">
+        {/* LAYOUT 6 */}
+        <section id="layout-6" className="scroll-mt-32 space-y-8">
+          <div className="flex items-center justify-between border-b border-border/40 pb-4">
             <div>
               <span className="text-xs font-semibold text-clay uppercase tracked">Option 06</span>
-              <h3 className="font-display text-2xl text-ink">Asymmetric Bento Grid Layout</h3>
+              <h3 className="font-display text-3xl text-ink mt-0.5">Boutique Michelin Menu Catalog</h3>
             </div>
-            <p className="text-xs text-muted-foreground max-w-md">
-              Modern magazine bento layout with varied card sizes for strong visual hierarchy.
-            </p>
+            <span className="text-xs text-muted-foreground uppercase tracked">4 Selection Items</span>
           </div>
 
-          <div className="bg-cream/40 p-8 rounded-3xl border border-border/40 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-2 bg-background rounded-3xl p-8 border border-border/40 flex flex-col justify-between min-h-[320px] relative overflow-hidden group">
-              <div className="absolute right-0 top-0 bottom-0 w-1/2 overflow-hidden hidden sm:block">
-                <img src={bestsellers[0].images[0]} alt={bestsellers[0].name} className="w-full h-full object-cover rounded-l-3xl group-hover:scale-105 transition-transform duration-700" />
+          <div className="divide-y divide-border/30">
+            {bestsellers.slice(0, 4).map((p) => (
+              <div key={p.slug} className="py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6 group">
+                <div className="flex items-center gap-6">
+                  <img src={p.images[0]} alt={p.name} className="w-16 h-16 rounded-full object-cover bg-cream border border-border/40 shrink-0" />
+                  <div>
+                    <div className="flex items-center gap-3">
+                      <h5 className="font-display text-2xl text-ink group-hover:text-clay transition-colors">{p.name}</h5>
+                      <span className="text-clay text-[10px] uppercase font-semibold tracked">
+                        {p.origin}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{p.tagline}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between sm:justify-end gap-10 shrink-0">
+                  <div className="text-right">
+                    <span className="text-xs text-muted-foreground block">{p.serving}</span>
+                    <span className="text-lg font-bold text-ink">{formatPrice(p.price)}</span>
+                  </div>
+                  <button
+                    onClick={() => add(p)}
+                    className="group inline-flex items-center gap-2 text-ink text-[11px] font-medium tracked uppercase tracking-widest py-1 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 cursor-pointer"
+                  >
+                    <span>Add to Bag</span>
+                    <ArrowRight size={13} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
+                  </button>
+                </div>
               </div>
-              <div className="max-w-xs space-y-3 z-10">
-                <span className="bg-clay text-white text-[9px] px-2.5 py-1 rounded-full uppercase font-bold">
-                  Bento Hero
+            ))}
+          </div>
+        </section>
+
+        {/* LAYOUT 7 */}
+        <section id="layout-7" className="scroll-mt-32 space-y-8">
+          <div className="border-b border-border/40 pb-4">
+            <span className="text-xs font-semibold text-clay uppercase tracked">Option 07</span>
+            <h3 className="font-display text-3xl text-ink mt-0.5">Free-Form Asymmetric Layout</h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div className="md:col-span-2 space-y-5">
+              <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-cream relative">
+                <img src={bestsellers[0].images[0]} alt={bestsellers[0].name} className="w-full h-full object-cover rounded-2xl" />
+                <span className="absolute top-4 left-4 bg-clay text-white text-[10px] px-3 py-1 rounded-full uppercase font-bold tracking-wider">
+                  Featured Reserve
                 </span>
-                <h4 className="font-display text-3xl text-ink">{bestsellers[0].name}</h4>
-                <p className="text-xs text-muted-foreground leading-relaxed">{bestsellers[0].tagline}</p>
-                <div className="pt-2">
-                  <span className="text-xl font-bold text-ink block mb-3">{formatPrice(bestsellers[0].price)}</span>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pt-2">
+                <div>
+                  <span className="text-[10px] uppercase text-clay font-bold">{bestsellers[0].origin}</span>
+                  <h4 className="font-display text-3xl text-ink">{bestsellers[0].name}</h4>
+                  <p className="text-xs text-muted-foreground mt-1 max-w-md">{bestsellers[0].tagline}</p>
+                </div>
+                <div className="flex items-center gap-6">
+                  <span className="text-2xl font-bold text-ink">{formatPrice(bestsellers[0].price)}</span>
                   <button
                     onClick={() => add(bestsellers[0])}
-                    className="group inline-flex items-center gap-2 bg-ink text-white hover:bg-clay text-[10.5px] font-medium tracked uppercase py-2.5 px-5 rounded-full transition-all duration-300 cursor-pointer"
+                    className="group inline-flex items-center gap-2.5 text-ink text-[11.5px] font-medium tracked uppercase tracking-widest py-1.5 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 cursor-pointer"
                   >
                     <span>Explore & Add</span>
-                    <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform duration-300 text-clay" />
+                    <ArrowRight size={13} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
                   </button>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-6">
+            <div className="divide-y divide-border/40">
               {bestsellers.slice(1, 3).map((p) => (
-                <div key={p.slug} className="bg-background rounded-3xl p-5 border border-border/40 flex items-center gap-4 group">
-                  <img src={p.images[0]} alt={p.name} className="w-20 h-20 rounded-2xl object-cover bg-cream shrink-0" />
-                  <div className="flex-1 space-y-1">
-                    <h5 className="font-display text-base text-ink line-clamp-1">{p.name}</h5>
-                    <span className="text-xs font-semibold text-ink block">{formatPrice(p.price)}</span>
-                    <button
-                      onClick={() => add(p)}
-                      className="group/btn inline-flex items-center gap-1 text-[10.5px] text-clay font-medium tracked uppercase hover:underline cursor-pointer"
-                    >
-                      <span>+ Quick Add</span>
-                      <ArrowRight size={11} className="group-hover/btn:translate-x-1 transition-transform duration-300 text-clay" />
-                    </button>
+                <div key={p.slug} className="py-6 first:pt-0 space-y-3 group">
+                  <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-cream">
+                    <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500" />
                   </div>
+                  <div>
+                    <h5 className="font-display text-xl text-ink group-hover:text-clay transition-colors">{p.name}</h5>
+                    <span className="text-xs font-bold text-ink block mt-0.5">{formatPrice(p.price)}</span>
+                  </div>
+                  <button
+                    onClick={() => add(p)}
+                    className="group/btn inline-flex items-center gap-1.5 text-ink text-[10.5px] font-medium tracked uppercase border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 py-0.5 cursor-pointer"
+                  >
+                    <span>Add to bag</span>
+                    <ArrowRight size={12} className="group-hover/btn:translate-x-1 transition-transform duration-300 text-clay" />
+                  </button>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ==========================================
-            LAYOUT 7: Interactive Product Slider with Thumbnail Selector
-           ========================================== */}
-        <section id="layout-7" className="scroll-mt-32 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-4">
-            <div>
-              <span className="text-xs font-semibold text-clay uppercase tracked">Option 07</span>
-              <h3 className="font-display text-2xl text-ink">Single Spotlight Showcase + Mini Selector</h3>
-            </div>
-            <p className="text-xs text-muted-foreground max-w-md">
-              Displays one focused product at a time with a quick thumbnail switcher below. Minimal screen footprint.
-            </p>
+        {/* LAYOUT 8 */}
+        <section id="layout-8" className="scroll-mt-32 space-y-8">
+          <div className="border-b border-border/40 pb-4">
+            <span className="text-xs font-semibold text-clay uppercase tracked">Option 08</span>
+            <h3 className="font-display text-3xl text-ink mt-0.5">Seamless Spotlight Showcase</h3>
           </div>
 
-          <div className="bg-cream/40 p-8 rounded-3xl border border-border/40 space-y-6">
+          <div className="space-y-8">
             {(() => {
               const activeProd = bestsellers[activeThumbIndex] || bestsellers[0];
               return (
-                <div className="bg-background rounded-3xl p-8 border border-border/40 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-center">
                   <div className="md:col-span-5 aspect-[4/3] rounded-2xl overflow-hidden bg-cream">
                     <img src={activeProd.images[0]} alt={activeProd.name} className="w-full h-full object-cover rounded-2xl" />
                   </div>
                   <div className="md:col-span-7 space-y-4">
-                    <div className="flex items-center gap-2">
-                      <span className="bg-sand text-ink text-[10px] px-2.5 py-0.5 rounded-full font-semibold uppercase">
+                    <div className="flex items-center gap-3">
+                      <span className="text-clay font-bold text-[10px] uppercase tracking-wider">
                         {activeProd.origin}
                       </span>
-                      <span className="text-xs text-muted-foreground">{activeProd.serving}</span>
+                      <span className="text-xs text-muted-foreground">• {activeProd.serving}</span>
                     </div>
-                    <h4 className="font-display text-3xl text-ink">{activeProd.name}</h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{activeProd.description}</p>
-                    <div className="flex items-center gap-6 pt-2">
-                      <span className="text-2xl font-bold text-ink">{formatPrice(activeProd.price)}</span>
+                    <h4 className="font-display text-4xl text-ink">{activeProd.name}</h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed max-w-xl">{activeProd.description}</p>
+                    <div className="flex items-center gap-8 pt-4">
+                      <span className="text-3xl font-bold text-ink">{formatPrice(activeProd.price)}</span>
                       <button
                         onClick={() => add(activeProd)}
-                        className="group inline-flex items-center gap-2.5 bg-ink text-white hover:bg-clay text-[11px] font-medium tracked uppercase tracking-widest py-3 px-6 rounded-full transition-all duration-300 cursor-pointer"
+                        className="group inline-flex items-center gap-2.5 text-ink text-[12px] font-medium tracked uppercase tracking-widest py-2 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 cursor-pointer"
                       >
                         <span>Add Active Item</span>
                         <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
@@ -576,60 +642,53 @@ function TenLayoutsPage() {
               );
             })()}
 
-            <div className="flex items-center justify-center gap-4 overflow-x-auto py-2">
+            <div className="flex items-center justify-center gap-8 border-t border-border/40 pt-6">
               {bestsellers.slice(0, 4).map((p, idx) => (
                 <button
                   key={p.slug}
                   onClick={() => setActiveThumbIndex(idx)}
-                  className={`flex items-center gap-3 p-2 pr-4 rounded-full border transition-all cursor-pointer ${
+                  className={`flex items-center gap-3 py-1 border-b-2 transition-all cursor-pointer ${
                     activeThumbIndex === idx
-                      ? "bg-clay text-white border-clay shadow-xs"
-                      : "bg-background text-ink border-border/40 hover:bg-sand"
+                      ? "text-clay border-clay font-semibold"
+                      : "text-muted-foreground border-transparent hover:text-ink hover:border-ink/40"
                   }`}
                 >
-                  <img src={p.images[0]} alt={p.name} className="w-10 h-10 rounded-full object-cover" />
-                  <span className="text-xs font-medium">{p.name.split(" ")[0]}</span>
+                  <img src={p.images[0]} alt={p.name} className="w-9 h-9 rounded-full object-cover" />
+                  <span className="text-xs font-medium tracked uppercase">{p.name.split(" ")[0]}</span>
                 </button>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ==========================================
-            LAYOUT 8: Landscape Dual-Card Row (16:9 Aspect Ratio)
-           ========================================== */}
-        <section id="layout-8" className="scroll-mt-32 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-4">
-            <div>
-              <span className="text-xs font-semibold text-clay uppercase tracked">Option 08</span>
-              <h3 className="font-display text-2xl text-ink">Landscape 16:9 Compact Grid</h3>
-            </div>
-            <p className="text-xs text-muted-foreground max-w-md">
-              Uses wide 16:9 banner images instead of vertical images, giving a rich Cinematic look.
-            </p>
+        {/* LAYOUT 9 */}
+        <section id="layout-9" className="scroll-mt-32 space-y-8">
+          <div className="border-b border-border/40 pb-4">
+            <span className="text-xs font-semibold text-clay uppercase tracked">Option 09</span>
+            <h3 className="font-display text-3xl text-ink mt-0.5">Cinematic 16:9 Landscape Strip</h3>
           </div>
 
-          <div className="bg-cream/40 p-8 rounded-3xl border border-border/40 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {bestsellers.slice(0, 3).map((p) => (
-              <div key={p.slug} className="bg-background rounded-3xl p-5 border border-border/40 flex flex-col justify-between group">
+              <div key={p.slug} className="flex flex-col justify-between group">
                 <div>
                   <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-cream mb-4 relative">
                     <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-2xl" />
-                    <span className="absolute top-2 left-2 bg-ink/80 text-white text-[9px] px-2 py-0.5 rounded-full uppercase">
+                    <span className="absolute top-3 left-3 bg-ink/90 text-white text-[9px] px-2.5 py-0.5 rounded-full uppercase font-semibold">
                       {p.origin}
                     </span>
                   </div>
-                  <h5 className="font-display text-lg text-ink">{p.name}</h5>
+                  <h5 className="font-display text-xl text-ink group-hover:text-clay transition-colors">{p.name}</h5>
                   <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{p.tagline}</p>
                 </div>
-                <div className="flex items-center justify-between pt-4 mt-4 border-t border-border/30">
+                <div className="flex items-center justify-between pt-4 mt-6 border-t border-border/30">
                   <span className="text-base font-bold text-ink">{formatPrice(p.price)}</span>
                   <button
                     onClick={() => add(p)}
-                    className="group inline-flex items-center gap-1.5 border-b-2 border-ink text-ink hover:text-clay hover:border-clay text-[10.5px] font-medium tracked uppercase py-1 transition-all duration-300 cursor-pointer"
+                    className="group inline-flex items-center gap-2 text-ink text-[11px] font-medium tracked uppercase tracking-widest py-1 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 cursor-pointer"
                   >
                     <span>Add to Bag</span>
-                    <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-300 text-clay" />
+                    <ArrowRight size={13} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
                   </button>
                 </div>
               </div>
@@ -637,126 +696,72 @@ function TenLayoutsPage() {
           </div>
         </section>
 
-        {/* ==========================================
-            LAYOUT 9: Card-in-Card Layered Reserve Stack
-           ========================================== */}
-        <section id="layout-9" className="scroll-mt-32 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-4">
-            <div>
-              <span className="text-xs font-semibold text-clay uppercase tracked">Option 09</span>
-              <h3 className="font-display text-2xl text-ink">Card-in-Card Layered Reserve Stack</h3>
-            </div>
-            <p className="text-xs text-muted-foreground max-w-md">
-              Sophisticated dual-layer card design with oval cropped image frames.
-            </p>
-          </div>
-
-          <div className="bg-cream/40 p-8 rounded-3xl border border-border/40 grid grid-cols-1 md:grid-cols-3 gap-6">
-            {bestsellers.slice(0, 3).map((p) => (
-              <div key={p.slug} className="bg-cream border border-border/60 rounded-3xl p-6 shadow-xs text-center space-y-4">
-                <div className="bg-background rounded-2xl p-4 border border-border/30">
-                  <div className="w-28 h-28 mx-auto rounded-full overflow-hidden border-2 border-clay/30 p-1 bg-cream">
-                    <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover rounded-full" />
-                  </div>
-                  <h5 className="font-display text-xl text-ink mt-3">{p.name}</h5>
-                  <span className="text-[10px] text-clay uppercase font-bold tracked">{p.origin}</span>
-                </div>
-                <div className="flex items-center justify-between px-2">
-                  <span className="text-sm font-bold text-ink">{formatPrice(p.price)}</span>
-                  <button
-                    onClick={() => add(p)}
-                    className="group inline-flex items-center gap-2 bg-ink text-white hover:bg-clay text-[10.5px] font-medium tracked uppercase py-2 px-4 rounded-full transition-all duration-300 cursor-pointer"
-                  >
-                    <span>Add to Bag</span>
-                    <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-300 text-clay" />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ==========================================
-            LAYOUT 10: "Build Your Bundle" Interactive Multi-Picker
-           ========================================== */}
-        <section id="layout-10" className="scroll-mt-32 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-4">
+        {/* LAYOUT 10 */}
+        <section id="layout-10" className="scroll-mt-32 space-y-8">
+          <div className="flex items-center justify-between border-b border-border/40 pb-4">
             <div>
               <span className="text-xs font-semibold text-clay uppercase tracked">Option 10</span>
-              <h3 className="font-display text-2xl text-ink">Build Your Harvest Bundle (Interactive Multi-Picker)</h3>
+              <h3 className="font-display text-3xl text-ink mt-0.5">Build Your Harvest Bundle Multi-Picker</h3>
             </div>
-            <p className="text-xs text-muted-foreground max-w-md">
-              Allows customers to pick and bundle multiple items directly with live discount calculation bar.
-            </p>
+            {bundleCount > 0 && (
+              <span className="text-xs font-semibold text-clay uppercase tracked">
+                {bundleCount} {bundleCount === 1 ? "Item" : "Items"} Selected
+              </span>
+            )}
           </div>
 
-          <div className="bg-cream/40 p-8 rounded-3xl border border-border/40 space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="font-display text-3xl text-ink">Custom Bestseller Box</h4>
-                <p className="text-xs text-muted-foreground">Pick any 2 or more items to build your custom harvest box</p>
-              </div>
-              {bundleCount > 0 && (
-                <div className="bg-sand/80 px-4 py-1.5 rounded-full text-xs font-semibold text-ink">
-                  {bundleCount} {bundleCount === 1 ? "Item" : "Items"} Selected
-                </div>
-              )}
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
               {bestsellers.slice(0, 3).map((p) => {
                 const qty = bundleItems[p.slug] || 0;
                 const isSelected = qty > 0;
                 return (
-                  <div
-                    key={p.slug}
-                    className={`bg-background rounded-3xl p-5 border transition-all ${
-                      isSelected ? "border-clay ring-2 ring-clay/20 shadow-md" : "border-border/40"
-                    }`}
-                  >
-                    <img src={p.images[0]} alt={p.name} className="w-full h-32 rounded-2xl object-cover bg-cream mb-4" />
-                    <h5 className="font-display text-lg text-ink line-clamp-1">{p.name}</h5>
-                    <p className="text-xs text-muted-foreground mb-3">{formatPrice(p.price)} / {p.serving}</p>
+                  <div key={p.slug} className="flex flex-col justify-between">
+                    <div>
+                      <img src={p.images[0]} alt={p.name} className="w-full h-40 rounded-2xl object-cover bg-cream mb-4" />
+                      <h5 className="font-display text-xl text-ink line-clamp-1">{p.name}</h5>
+                      <p className="text-xs text-muted-foreground mb-4">{formatPrice(p.price)} / {p.serving}</p>
 
-                    {isSelected ? (
-                      <div className="flex items-center justify-between bg-cream p-1.5 rounded-full border border-clay/30">
+                      {isSelected ? (
+                        <div className="flex items-center justify-between py-1 border-b-2 border-clay max-w-[140px]">
+                          <button
+                            onClick={() => updateBundleQty(p.slug, -1)}
+                            className="text-ink hover:text-clay cursor-pointer"
+                          >
+                            <Minus size={14} />
+                          </button>
+                          <span className="text-xs font-bold">{qty}</span>
+                          <button
+                            onClick={() => updateBundleQty(p.slug, 1)}
+                            className="text-ink hover:text-clay cursor-pointer"
+                          >
+                            <Plus size={14} />
+                          </button>
+                        </div>
+                      ) : (
                         <button
-                          onClick={() => updateBundleQty(p.slug, -1)}
-                          className="w-7 h-7 rounded-full bg-background flex items-center justify-center text-ink hover:bg-sand cursor-pointer"
+                          onClick={() => toggleBundle(p.slug)}
+                          className="group inline-flex items-center gap-2 text-ink text-[11px] font-medium tracked uppercase tracking-widest py-1 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 cursor-pointer"
                         >
-                          <Minus size={12} />
+                          <span>+ Add to Bundle</span>
+                          <ArrowRight size={13} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
                         </button>
-                        <span className="text-xs font-bold px-2">{qty}</span>
-                        <button
-                          onClick={() => updateBundleQty(p.slug, 1)}
-                          className="w-7 h-7 rounded-full bg-clay text-white flex items-center justify-center hover:bg-ink cursor-pointer"
-                        >
-                          <Plus size={12} />
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => toggleBundle(p.slug)}
-                        className="w-full group inline-flex items-center justify-center gap-2 bg-sand/60 hover:bg-clay hover:text-white text-ink text-[10.5px] font-medium tracked uppercase py-2 rounded-full transition-all duration-300 cursor-pointer"
-                      >
-                        <span>+ Add to Bundle</span>
-                        <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-300 text-clay" />
-                      </button>
-                    )}
+                      )}
+                    </div>
                   </div>
                 );
               })}
             </div>
 
             {bundleCount > 0 && (
-              <div className="bg-ink text-white rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 animate-fade-up">
-                <div className="flex items-center gap-3">
+              <div className="bg-ink text-white rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4 animate-fade-up">
+                <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-full bg-clay grid place-items-center font-bold text-xs">
                     {bundleCount}
                   </div>
                   <div>
                     <span className="text-xs text-white/70 block">Bundle Total</span>
-                    <span className="text-lg font-bold">{formatPrice(bundleTotal)}</span>
+                    <span className="text-xl font-bold">{formatPrice(bundleTotal)}</span>
                   </div>
                 </div>
                 <button
@@ -768,7 +773,7 @@ function TenLayoutsPage() {
                       }
                     });
                   }}
-                  className="group inline-flex items-center gap-2.5 bg-clay hover:bg-ember text-white text-[11px] font-medium tracked uppercase tracking-widest py-3 px-7 rounded-full transition-all duration-300 cursor-pointer"
+                  className="group inline-flex items-center gap-2.5 text-white text-[11.5px] font-medium tracked uppercase tracking-widest py-1.5 border-b-2 border-white hover:text-clay hover:border-clay transition-all duration-300 cursor-pointer"
                 >
                   <span>Add Custom Bundle to Bag</span>
                   <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300 text-white" />

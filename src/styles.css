@@ -83,12 +83,9 @@
   h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 400; }
   ::selection { background: var(--sand); color: var(--ink); }
 
-  /* Brand aesthetic: No sharp corners anywhere */
-  button, input, select, textarea, img, video, article, section, [role="dialog"], [role="menu"], [role="popover"], .card, .badge, table, iframe, pre, code {
-    border-radius: var(--radius-md, 14px);
-  }
-  button, input[type="submit"], input[type="button"], input[type="reset"] {
-    border-radius: 9999px;
+  /* Brand aesthetic: Soft rounded corners for cards/inputs without sharp corners */
+  input, select, textarea, img, video, article, section, [role="dialog"], [role="menu"], [role="popover"], .card, .badge, table, iframe, pre, code {
+    border-radius: var(--radius-md, 12px);
   }
   .rounded-none, .rounded-xs {
     border-radius: 0.75rem !important;
