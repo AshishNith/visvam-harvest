@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Visvam — Client Follow-Up & Meeting Playbook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    @page {
+      size: A4;
+      margin: 10mm 10mm 10mm 10mm;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #FAF8F5;
+      color: #1A1A1A;
+      line-height: 1.45;
+      font-size: 11.5px;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      background: #FFFFFF;
+      padding: 28px 32px;
+      border: 1px solid #EAE3D9;
+      border-radius: 8px;
+    }
+
+    /* Cover / Header */
+    .header {
+      border-bottom: 2.5px solid #C5A059;
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .brand-title {
+      font-family: 'Cinzel', serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: #1B3629;
+      letter-spacing: 2px;
+    }
+
+    .subtitle {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #C5A059;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 2px;
+    }
+
+    .meta-info {
+      text-align: right;
+      font-size: 10px;
+      color: #666;
+    }
+
+    .meta-badge {
+      display: inline-block;
+      background: #1B3629;
+      color: #FFFFFF;
+      font-weight: 600;
+      font-size: 9px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-top: 4px;
+      text-transform: uppercase;
+    }
+
+    /* Banners & Cards */
+    .banner-box {
+      background-color: #F5EFE6;
+      border-left: 4px solid #1B3629;
+      padding: 10px 14px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      font-size: 11.5px;
+      color: #2D3748;
+    }
+
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: #1B3629;
+      margin-top: 16px;
+      margin-bottom: 8px;
+      padding-bottom: 3px;
+      border-bottom: 1.5px solid #EAE3D9;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      page-break-after: avoid;
+    }
+
+    .section-title-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-icon {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background-color: #C5A059;
+      border-radius: 50%;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .card {
+      background: #FFFFFF;
+      border: 1px solid #E8E2D8;
+      border-radius: 5px;
+      padding: 10px 12px;
+      page-break-inside: avoid;
+    }
+
+    .card.full {
+      grid-column: span 2;
+    }
+
+    .card.gold {
+      border-color: #C5A059;
+      background-color: #FDFBF7;
+    }
+
+    .card.green {
+      border-color: #86EFAC;
+      background-color: #F0FDF4;
+    }
+
+    .card-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #1B3629;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-text {
+      font-size: 10.5px;
+      color: #4A5568;
+      line-height: 1.4;
+    }
+
+    .bullet-list {
+      list-style: none;
+      margin-top: 4px;
+    }
+
+    .bullet-list li {
+      font-size: 10.5px;
+      color: #333;
+      margin-bottom: 3px;
+      position: relative;
+      padding-left: 12px;
+    }
+
+    .bullet-list li::before {
+      content: "•";
+      color: #C5A059;
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+
+    .pill {
+      font-size: 8.5px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 10px;
+      text-transform: uppercase;
+    }
+
+    .pill-green { background: #DEF7EC; color: #03543F; }
+    .pill-gold { background: #FEF3C7; color: #92400E; }
+    .pill-blue { background: #E1F5FE; color: #0277BD; }
+
+    .code-template {
+      background: #F7FAFC;
+      border: 1px dashed #CBD5E0;
+      border-radius: 4px;
+      padding: 8px 10px;
+      font-family: monospace;
+      font-size: 10px;
+      color: #2D3748;
+      white-space: pre-wrap;
+      margin-top: 6px;
+    }
+
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 10px;
+      color: #888;
+      border-top: 1px solid #EAE3D9;
+      padding-top: 8px;
+    }
+
+    .page-break {
+      page-break-before: always;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <div class="brand-title">VISVAM</div>
+      <div class="subtitle">Client Meeting & Follow-Up Playbook</div>
+    </div>
+    <div class="meta-info">
+      <div><strong>Purpose:</strong> Walkthrough & Review Guide</div>
+      <div><strong>Date:</strong> August 2026</div>
+      <div><span class="meta-badge">Complete Strategy & Code Analysis</span></div>
+    </div>
+  </div>
+
+  <!-- BANNER -->
+  <div class="banner-box">
+    <strong>Playbook Objective:</strong> This document equips you with the exact step-by-step meeting script, codebase feature map, client discovery questions, and ready-to-send WhatsApp/Email templates to get client feedback and production sign-off smoothly.
+  </div>
+
+  <!-- SECTION 1: CODEBASE FEATURE MAP -->
+  <div class="section-title">
+    <div class="section-title-left">
+      <span class="section-icon"></span> 1. Real Codebase Feature Map (Website & Admin)
+    </div>
+    <span class="pill pill-green">Verified Code</span>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">
+        Website: Homepage & Navigation
+        <span class="pill pill-green">Live</span>
+      </div>
+      <ul class="bullet-list">
+        <li><code>Header.tsx</code>: Luxury navbar with search, cart drawer trigger, profile modal.</li>
+        <li><code>AnnouncementBar.tsx</code>: Dynamic free shipping banner.</li>
+        <li><code>index.tsx</code>: Hero banner, category grid, best sellers, brand story, quality badges, customer reviews, newsletter form.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        Website: Product Details & Cart
+        <span class="pill pill-green">Live</span>
+      </div>
+      <ul class="bullet-list">
+        <li><code>menu.$slug.tsx</code>: Multi-image PDP gallery, package weight selector (250g/500g/1kg), nutritional info, verified reviews.</li>
+        <li><code>CartDrawer.tsx</code>: Slide-out drawer, quantity controls, free shipping tracker, checkout trigger.</li>
+        <li><code>checkout.tsx</code>: Delivery address form, order summary, UPI/Card/COD options.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        Website: Categories & Legal Pages
+        <span class="pill pill-green">Live</span>
+      </div>
+      <ul class="bullet-list">
+        <li><code>CategoryPage.tsx</code>: Nuts, Dried Fruits, Exotic Seeds, Gourmet, Combos, Gifting catalogs.</li>
+        <li><code>story.tsx</code> & <code>contact.tsx</code>: Brand heritage & contact form.</li>
+        <li><code>shipping.tsx</code>, <code>returns.tsx</code>, <code>privacy.tsx</code>: Policy pages.</li>
+      </ul>
+    </div>
+
+    <div class="card gold">
+      <div class="card-title">
+        Admin Panel: Operations Suite
+        <span class="pill pill-blue">Admin</span>
+      </div>
+      <ul class="bullet-list">
+        <li><code>DashboardPage.tsx</code>: Revenue metrics, order stats, top selling products.</li>
+        <li><code>ProductsPage.tsx</code>: Product CRUD & Cloudinary image upload.</li>
+        <li><code>OrdersPage.tsx</code>: Order pipeline (Pending → Shipped → Delivered).</li>
+        <li><code>SubscribersPage.tsx</code> & <code>InquiriesPage.tsx</code>: Lead management.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SECTION 2: STEP-BY-STEP MEETING SCRIPT -->
+  <div class="section-title">
+    <div class="section-title-left">
+      <span class="section-icon"></span> 2. Step-by-Step Client Meeting Walkthrough Script
+    </div>
+    <span class="pill pill-gold">Meeting Script</span>
+  </div>
+
+  <div class="grid-2">
+    <div class="card full">
+      <div class="card-title">Meeting Flow (What to say & show)</div>
+      <ul class="bullet-list">
+        <li><strong>Step 1: Welcome & Homepage (2 mins):</strong> Share screen on <code>/</code>. Show Hero banner, luxury navbar, shop by category tiles (Nuts, Dried Fruits, Seeds, Gourmet, Combos, Gifting), co-founder story, and customer review badges.</li>
+        <li><strong>Step 2: Category & Product Details (3 mins):</strong> Navigate to a category page. Open a product detail page (<code>/menu/cashews</code>). Show package weight selection (250g/500g/1kg) and demonstrate dynamic price updates.</li>
+        <li><strong>Step 3: Cart Drawer & Checkout (2 mins):</strong> Click "Add to Bag", open the slide-out Cart Drawer, show quantity controls and the Free Shipping progress bar. Click "Proceed to Checkout" to demo address inputs and payment choices (Razorpay/COD).</li>
+        <li><strong>Step 4: Admin Panel Showcase (3 mins):</strong> Switch tab to Admin Panel. Show the Dashboard sales overview, demonstrate adding/editing a product with Cloudinary image upload, and show updating order status (*Pending → Shipped → Delivered*).</li>
+        <li><strong>Step 5: Feature Proposal & Automations (5 mins):</strong> Open the <strong>Visvam_Client_Feature_Proposal.pdf</strong>. Walk through subscriber welcome emails, WhatsApp order alerts, abandoned cart recovery, and discount promo code capabilities.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- SECTION 3: POINT-BY-POINT DISCOVERY QUESTIONS -->
+  <div class="section-title">
+    <div class="section-title-left">
+      <span class="section-icon"></span> 3. Point-by-Point Questions to Ask the Client
+    </div>
+    <span class="pill pill-gold">Questionnaire</span>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">1. Design & Branding</div>
+      <ul class="bullet-list">
+        <li>Do you approve the luxury color scheme (Warm Cream & Dark Forest Green) and typography?</li>
+        <li>Are all product category names aligned with your current inventory list?</li>
+        <li>Do you have additional banner images or founder story details to update?</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">2. Payments & Shipping</div>
+      <ul class="bullet-list">
+        <li>Which active payment gateway account do you have (Razorpay, Cashfree, Stripe, Paytm)?</li>
+        <li>Do you want to enable Cash on Delivery (COD)? Should we set a COD fee (e.g. ₹50)?</li>
+        <li>Which logistics partner will you use (Shiprocket, Delhivery, NimbusPost)?</li>
+      </ul>
+    </div>
+
+    <div class="card full gold">
+      <div class="card-title">3. Marketing, Email & WhatsApp Automations</div>
+      <ul class="bullet-list">
+        <li><strong>Welcome Email Discount:</strong> Should subscriber signup give 10% OFF (`WELCOME10`) or flat ₹100 OFF?</li>
+        <li><strong>WhatsApp Integration:</strong> Should we enable automated WhatsApp order status alerts & post-delivery review requests?</li>
+        <li><strong>Abandoned Cart Recovery:</strong> Should we send automated reminder emails 1h & 24h after cart drop-off?</li>
+        <li><strong>Gift Packaging:</strong> Would you like to offer custom gift box packaging (+₹99) at checkout?</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SECTION 4: READY-TO-SEND WHATSAPP & EMAIL TEMPLATES -->
+  <div class="section-title">
+    <div class="section-title-left">
+      <span class="section-icon"></span> 4. Follow-Up WhatsApp & Email Copy Templates
+    </div>
+    <span class="pill pill-green">Copy & Paste</span>
+  </div>
+
+  <div class="card full green">
+    <div class="card-title">Template A: Post-Demo WhatsApp Follow-Up Message</div>
+    <div class="code-template">Hi [Client Name] 👋
+
+Thank you for taking the time to review the Visvam website & admin panel demo!
+
+Attached is the Feature Proposal PDF covering recommended launch options. To finalize setup, could you reply with your choices:
+
+1. Welcome Email Coupon: [10% OFF / ₹100 OFF / None]
+2. Enable WhatsApp Order Alerts & Review Requests? [YES / NO]
+3. Enable Abandoned Cart Email Recovery? [YES / NO]
+4. Payment Gateway Account: [Razorpay / Cashfree / Stripe]
+5. Cash on Delivery (COD) enabled? [YES / NO]
+
+Looking forward to your confirmation! 🚀</div>
+  </div>
+
+  <div class="card full">
+    <div class="card-title">Template B: Client Credentials Collection Request</div>
+    <div class="code-template">Subject: Visvam Production Launch — Account Credentials & Configuration Setup
+
+Hi [Client Name],
+
+To integrate live payments, email notifications, and courier tracking, please share access or API keys for:
+1. Payment Gateway (Razorpay Key ID & Key Secret)
+2. Email Service Provider (Resend or Klaviyo API Key)
+3. Shipping Partner (Shiprocket API Credentials, if applicable)
+
+Once received, we will connect all live integrations and map your custom domain!
+
+Best regards,
+[Your Name]</div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    Visvam E-Commerce Build • Complete Client Follow-Up & Review Playbook • Confidential
+  </div>
+
+</div>
+
+</body>
+</html>

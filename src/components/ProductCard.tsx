@@ -7,11 +7,11 @@ export function ProductCard({ product }: { product: Product }) {
   const { add } = useCart();
   return (
     <article className="group flex flex-col">
-      <div className="relative aspect-[3/4] mb-5 overflow-hidden bg-cream/70">
+      <div className="relative aspect-[3/4] mb-5 overflow-hidden bg-cream/70 rounded-2xl">
         <Link
           to="/menu/$slug"
           params={{ slug: product.slug }}
-          className="absolute inset-0 z-0 block"
+          className="absolute inset-0 z-0 block rounded-2xl overflow-hidden"
           aria-label={product.name}
         >
           <img
@@ -20,7 +20,7 @@ export function ProductCard({ product }: { product: Product }) {
             width={912}
             height={1200}
             loading="lazy"
-            className="absolute inset-0 w-full h-full object-cover transition-all duration-[900ms] ease-out group-hover:opacity-0 group-hover:scale-[1.04]"
+            className="absolute inset-0 w-full h-full object-cover transition-all duration-[900ms] ease-out group-hover:opacity-0 group-hover:scale-[1.04] rounded-2xl"
           />
           <img
             src={product.images?.[1] ?? product.images?.[0] ?? ""}
@@ -28,16 +28,16 @@ export function ProductCard({ product }: { product: Product }) {
             width={912}
             height={1200}
             loading="lazy"
-            className="absolute inset-0 w-full h-full object-cover opacity-0 scale-[1.06] transition-all duration-[900ms] ease-out group-hover:opacity-100 group-hover:scale-100"
+            className="absolute inset-0 w-full h-full object-cover opacity-0 scale-[1.06] transition-all duration-[900ms] ease-out group-hover:opacity-100 group-hover:scale-100 rounded-2xl"
           />
         </Link>
         {product.badge && (
           <div className="absolute top-3 left-3 z-10 pointer-events-none">
             <span
-              className={`text-[9px] tracked px-2.5 py-1 font-semibold uppercase ${
+              className={`text-[9px] tracked px-3 py-1 font-semibold uppercase rounded-full ${
                 product.isNew || product.badge === "Superfood" || product.badge === "Organic"
                   ? "bg-ink text-white"
-                  : "bg-white/90 backdrop-blur-sm text-ink"
+                  : "bg-white/90 backdrop-blur-sm text-ink border border-border/40"
               }`}
             >
               {product.badge}
@@ -45,14 +45,14 @@ export function ProductCard({ product }: { product: Product }) {
           </div>
         )}
         {product.stock !== undefined && product.stock <= 0 && (
-          <div className="absolute inset-0 z-20 bg-black/50 flex items-center justify-center pointer-events-none">
-            <span className="text-white text-[11px] tracked font-semibold uppercase bg-black/70 px-4 py-2">Out of Stock</span>
+          <div className="absolute inset-0 z-20 bg-black/50 flex items-center justify-center pointer-events-none rounded-2xl">
+            <span className="text-white text-[11px] tracked font-semibold uppercase bg-black/70 px-4 py-2 rounded-full">Out of Stock</span>
           </div>
         )}
-        <div className="absolute top-3 right-3 z-10 bg-black/60 backdrop-blur-sm text-white text-[9px] px-2 py-0.5 tracked pointer-events-none">
+        <div className="absolute top-3 right-3 z-10 bg-black/60 backdrop-blur-sm text-white text-[9px] px-2.5 py-1 tracked pointer-events-none rounded-full">
           {product.serving}
         </div>
-        <div className="absolute bottom-0 left-0 right-0 z-20 flex items-center justify-between bg-ink text-white py-3 px-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 pointer-events-auto">
+        <div className="absolute bottom-0 left-0 right-0 z-20 flex items-center justify-between bg-ink text-white py-3 px-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 pointer-events-auto rounded-b-2xl">
           <span className="text-[9.5px] tracked text-white/70">{product.origin}</span>
           <button
             type="button"

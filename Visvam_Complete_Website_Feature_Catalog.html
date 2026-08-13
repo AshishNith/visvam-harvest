@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Visvam — Complete Website & Admin Panel Feature Specification</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    @page {
+      size: A4;
+      margin: 10mm 10mm 10mm 10mm;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #FAF8F5;
+      color: #1A1A1A;
+      line-height: 1.45;
+      font-size: 12px;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      background: #FFFFFF;
+      padding: 28px 32px;
+      border: 1px solid #EAE3D9;
+      border-radius: 8px;
+    }
+
+    /* Cover / Header */
+    .header {
+      border-bottom: 2.5px solid #C5A059;
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .brand-title {
+      font-family: 'Cinzel', serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: #1B3629;
+      letter-spacing: 2.5px;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      font-weight: 600;
+      color: #C5A059;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 3px;
+    }
+
+    .meta-info {
+      text-align: right;
+      font-size: 10.5px;
+      color: #666;
+      line-height: 1.4;
+    }
+
+    .meta-badge {
+      display: inline-block;
+      background: #1B3629;
+      color: #FFFFFF;
+      font-weight: 600;
+      font-size: 9.5px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-top: 4px;
+      text-transform: uppercase;
+    }
+
+    /* Overview Banner */
+    .overview-banner {
+      background-color: #F5EFE6;
+      border-left: 4px solid #1B3629;
+      padding: 12px 16px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      font-size: 12px;
+      color: #2D3748;
+    }
+
+    /* Section Styling */
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #1B3629;
+      margin-top: 18px;
+      margin-bottom: 10px;
+      padding-bottom: 4px;
+      border-bottom: 1.5px solid #EAE3D9;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      page-break-after: avoid;
+    }
+
+    .section-title-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-icon {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      background-color: #C5A059;
+      border-radius: 50%;
+    }
+
+    .section-count {
+      font-size: 10px;
+      font-weight: 600;
+      color: #888;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* Feature Grid & Cards */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .feature-box {
+      background: #FFFFFF;
+      border: 1px solid #E8E2D8;
+      border-radius: 5px;
+      padding: 10px 12px;
+      page-break-inside: avoid;
+    }
+
+    .feature-box.full-width {
+      grid-column: span 2;
+    }
+
+    .feature-box.highlight {
+      border-color: #C5A059;
+      background-color: #FDFBF7;
+    }
+
+    .feature-box-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #1B3629;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .feature-box-desc {
+      font-size: 11px;
+      color: #4A5568;
+      line-height: 1.4;
+    }
+
+    .bullet-list {
+      list-style: none;
+      margin-top: 5px;
+    }
+
+    .bullet-list li {
+      font-size: 10.5px;
+      color: #333;
+      margin-bottom: 3px;
+      position: relative;
+      padding-left: 12px;
+    }
+
+    .bullet-list li::before {
+      content: "•";
+      color: #C5A059;
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+
+    .tag-pill {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .tag-live {
+      background-color: #DEF7EC;
+      color: #03543F;
+    }
+
+    .tag-upcoming {
+      background-color: #FEF3C7;
+      color: #92400E;
+    }
+
+    .tag-admin {
+      background-color: #E1F5FE;
+      color: #0277BD;
+    }
+
+    .footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 10.5px;
+      color: #888;
+      border-top: 1px solid #EAE3D9;
+      padding-top: 10px;
+    }
+
+    .page-break {
+      page-break-before: always;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <div class="brand-title">VISVAM</div>
+      <div class="subtitle">Complete Feature Specification & System Catalog</div>
+    </div>
+    <div class="meta-info">
+      <div><strong>Document:</strong> Client Presentation & Scope Review</div>
+      <div><strong>Version:</strong> Production v1.0</div>
+      <div><span class="meta-badge">Full Platform Specification</span></div>
+    </div>
+  </div>
+
+  <!-- OVERVIEW BANNER -->
+  <div class="overview-banner">
+    <strong>Overview:</strong> This document details every implemented feature across the <strong>Visvam E-Commerce Website</strong> and <strong>Admin Management Panel</strong>. It serves as your comprehensive feature guide during client walkthroughs and sign-off meetings.
+  </div>
+
+  <!-- SECTION 1: HEADER & NAVIGATION -->
+  <div class="section-title">
+    <div class="section-title-left">
+      <span class="section-icon"></span> 1. Header, Navigation & Brand Experience
+    </div>
+    <span class="section-count">5 Core Features</span>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Top Announcement Bar
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <div class="feature-box-desc">
+        Dynamic top promotional header displaying shipping thresholds (e.g. Free Shipping over ₹999) and active offers.
+      </div>
+    </div>
+
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Luxury Navigation Navbar
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <div class="feature-box-desc">
+        Responsive brand header featuring clean logo typography, smooth category menu links, and desktop/mobile layout.
+      </div>
+    </div>
+
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Interactive Search Engine
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <div class="feature-box-desc">
+        Real-time keyword search allowing customers to quickly search products (Nuts, Dried Fruits, Exotic Seeds, Gifting).
+      </div>
+    </div>
+
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Shopping Bag Counter & Drawer
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <div class="feature-box-desc">
+        Header bag icon displaying dynamic item count badge with 1-click trigger to slide out the cart drawer.
+      </div>
+    </div>
+
+    <div class="feature-box full-width">
+      <div class="feature-box-title">
+        User Profile & Account Access
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <div class="feature-box-desc">
+        Dedicated account profile portal giving customers quick access to login status, saved addresses, and order history.
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: HOMEPAGE EXPERIENCE -->
+  <div class="section-title">
+    <div class="section-title-left">
+      <span class="section-icon"></span> 2. Homepage & Brand Story Showcase
+    </div>
+    <span class="section-count">7 Core Features</span>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Hero Banner Showcase
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <div class="feature-box-desc">
+        High-definition luxury banner visual with brand messaging and primary "Shop Now" call-to-action button.
+      </div>
+    </div>
+
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Shop by Category Grid
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <div class="feature-box-desc">
+        Visual category cards for Nuts, Dried Fruits, Exotic Seeds, Gourmet Products, Combos, and Luxury Gifting.
+      </div>
+    </div>
+
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Best Sellers Carousel
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <div class="feature-box-desc">
+        Interactive product carousel highlighting top-rated items with pricing and instant add-to-bag controls.
+      </div>
+    </div>
+
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Co-Founder & Heritage Section
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <div class="feature-box-desc">
+        Dedicated brand story highlight detailing Visvam's vision and leadership (Madhavendra Mishra co-founder feature).
+      </div>
+    </div>
+
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Quality Assurance Badges
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <ul class="bullet-list">
+        <li>100% Organic & Hand-Picked Selection</li>
+        <li>Zero Artificial Additives or Preservatives</li>
+        <li>Eco-friendly Luxury Gift Packaging</li>
+      </ul>
+    </div>
+
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Customer Social Proof & Reviews
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <div class="feature-box-desc">
+        Customer testimonial blocks with 5-star rating stars to build buyer trust and improve conversion rates.
+      </div>
+    </div>
+
+    <div class="feature-box full-width">
+      <div class="feature-box-title">
+        Automated Newsletter Lead Capture
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <div class="feature-box-desc">
+        Footer email subscription input allowing visitors to sign up for brand updates and receive automated welcome discounts.
+      </div>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- SECTION 3: PRODUCT CATALOG & PDP -->
+  <div class="section-title">
+    <div class="section-title-left">
+      <span class="section-icon"></span> 3. Product Catalog & Details Page (PDP)
+    </div>
+    <span class="section-count">6 Core Features</span>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Multi-Category Filtering
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <div class="feature-box-desc">
+        Dedicated category pages for Nuts, Dried Fruits, Seeds, Gourmet, Combos, and Luxury Gifting Hampers.
+      </div>
+    </div>
+
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Interactive Product Cards
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <div class="feature-box-desc">
+        Image hover zoom effect, clear pricing, weight tags, star ratings, and 1-click add-to-bag triggers.
+      </div>
+    </div>
+
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Multi-Image High-Res Gallery
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <div class="feature-box-desc">
+        Interactive photo gallery on the product details page showing multiple product angles and packaging.
+      </div>
+    </div>
+
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Dynamic Package Size Selector
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <div class="feature-box-desc">
+        Allows customers to choose weights (e.g. 250g, 500g, 1kg) with real-time price updates on the page.
+      </div>
+    </div>
+
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Nutritional & Origin Info
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <div class="feature-box-desc">
+        Detailed breakdown of product origin, dietary tags (Vegan, Gluten-Free, Organic), and health benefits.
+      </div>
+    </div>
+
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Related Product Recommendations
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <div class="feature-box-desc">
+        "You May Also Like" carousel section on product pages to increase Average Order Value (AOV).
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: CART & CHECKOUT -->
+  <div class="section-title">
+    <div class="section-title-left">
+      <span class="section-icon"></span> 4. Shopping Cart & Checkout Experience
+    </div>
+    <span class="section-count">5 Core Features</span>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Slide-Out Cart Drawer
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <div class="feature-box-desc">
+        Non-intrusive side drawer that opens immediately when adding items without interrupting browsing.
+      </div>
+    </div>
+
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Quantity Controls & Recalculation
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <div class="feature-box-desc">
+        Easy <code>[+]</code> and <code>[-]</code> quantity buttons, item removal, and real-time subtotal calculation.
+      </div>
+    </div>
+
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Free Shipping Progress Tracker
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <div class="feature-box-desc">
+        Visual indicator bar showing customers how much more to add to unlock free shipping.
+      </div>
+    </div>
+
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Streamlined Checkout Form
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <div class="feature-box-desc">
+        Clean shipping address input, contact details, order summary breakdown, and promo code entry.
+      </div>
+    </div>
+
+    <div class="feature-box full-width">
+      <div class="feature-box-title">
+        Payment Gateway & COD Support
+        <span class="tag-pill tag-live">Live</span>
+      </div>
+      <ul class="bullet-list">
+        <li><strong>Online Payments:</strong> Razorpay / Cashfree / Stripe support for UPI, Credit/Debit Cards, and Net Banking.</li>
+        <li><strong>Cash on Delivery (COD):</strong> Configurable COD option with optional OTP verification.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SECTION 5: ADMIN PANEL -->
+  <div class="section-title">
+    <div class="section-title-left">
+      <span class="section-icon"></span> 5. Admin Panel & Operations Dashboard
+    </div>
+    <span class="section-count">4 Core Features</span>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Analytics Dashboard
+        <span class="tag-pill tag-admin">Admin</span>
+      </div>
+      <div class="feature-box-desc">
+        Centralized overview of total revenue, order count, top selling products, and store activity.
+      </div>
+    </div>
+
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Product CRUD Management
+        <span class="tag-pill tag-admin">Admin</span>
+      </div>
+      <div class="feature-box-desc">
+        Full control to create, update, price, and delete products and assign categories.
+      </div>
+    </div>
+
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Cloudinary Image Upload
+        <span class="tag-pill tag-admin">Admin</span>
+      </div>
+      <div class="feature-box-desc">
+        Direct high-performance cloud image uploads for ultra-crisp product imagery.
+      </div>
+    </div>
+
+    <div class="feature-box">
+      <div class="feature-box-title">
+        Order Status Pipeline
+        <span class="tag-pill tag-admin">Admin</span>
+      </div>
+      <div class="feature-box-desc">
+        View incoming orders and transition statuses from <em>Pending → Processing → Shipped → Delivered</em>.
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: UPCOMING AUTOMATIONS (PHASE 2) -->
+  <div class="section-title">
+    <div class="section-title-left">
+      <span class="section-icon"></span> 6. Upcoming Automations & Growth Modules (Phase 2)
+    </div>
+    <span class="section-count">3 Key Modules</span>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-box highlight">
+      <div class="feature-box-title">
+        Automated Email Suite
+        <span class="tag-pill tag-upcoming">Phase 2</span>
+      </div>
+      <ul class="bullet-list">
+        <li>Welcome email with discount code</li>
+        <li>Transactional receipts & tracking updates</li>
+        <li>1h & 24h Abandoned Cart recovery sequence</li>
+        <li>Back-in-stock alert emails</li>
+      </ul>
+    </div>
+
+    <div class="feature-box highlight">
+      <div class="feature-box-title">
+        WhatsApp Chat & Alerts
+        <span class="tag-pill tag-upcoming">Phase 2</span>
+      </div>
+      <ul class="bullet-list">
+        <li>Floating live chat support widget</li>
+        <li>Automated order status alerts on WhatsApp</li>
+        <li>Post-delivery automated review request</li>
+      </ul>
+    </div>
+
+    <div class="feature-box highlight full-width">
+      <div class="feature-box-title">
+        Coupons, Loyalty & Custom Gift Box Options
+        <span class="tag-pill tag-upcoming">Phase 2</span>
+      </div>
+      <ul class="bullet-list">
+        <li>Dynamic promo code engine in Admin Panel (% off, flat ₹ discount, category coupons).</li>
+        <li>Referral reward program ("Refer a Friend") and customer reward points.</li>
+        <li>Personalized gift card message & luxury gift box add-on (+₹99) at checkout.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    Visvam E-Commerce Platform • Complete Technical & Functional Specification • Confidential Client Document
+  </div>
+
+</div>
+
+</body>
+</html>

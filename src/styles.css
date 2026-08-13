@@ -50,9 +50,12 @@
   --font-display: "Athena", "EB Garamond", serif;
   --font-secondary: "Tenor Sans", "Inter", system-ui, sans-serif;
   --font-sans: "Tenor Sans", "Inter", system-ui, sans-serif;
-  --radius-sm: 0px;
-  --radius-md: 0px;
-  --radius-lg: 0px;
+  --radius-sm: 0.5rem;   /* 8px */
+  --radius-md: 0.875rem; /* 14px */
+  --radius-lg: 1.25rem;  /* 20px */
+  --radius-xl: 1.75rem;  /* 28px */
+  --radius-2xl: 2.25rem; /* 36px */
+  --radius: 1rem;       /* 16px */
 }
 
 :root {
@@ -79,6 +82,25 @@
   }
   h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 400; }
   ::selection { background: var(--sand); color: var(--ink); }
+
+  /* Brand aesthetic: No sharp corners anywhere */
+  button, input, select, textarea, img, video, article, section, [role="dialog"], [role="menu"], [role="popover"], .card, .badge, table, iframe, pre, code {
+    border-radius: var(--radius-md, 14px);
+  }
+  button, input[type="submit"], input[type="button"], input[type="reset"] {
+    border-radius: 9999px;
+  }
+  .rounded-none, .rounded-xs {
+    border-radius: 0.75rem !important;
+  }
+  .rounded-sm {
+    border-radius: 0.875rem !important;
+  }
+
+  /* Temporarily disable italic styles across the site */
+  .italic, i, em {
+    font-style: normal !important;
+  }
 
   /* Luxury Custom Scrollbar (Transparent Track) */
   ::-webkit-scrollbar {
