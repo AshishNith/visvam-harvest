@@ -68,18 +68,18 @@ export function Header() {
             </button>
 
             {/* Mobile Logo (Left-aligned) */}
-            <Link to="/" className="lg:hidden flex items-center py-2">
+            <Link to="/" className="lg:hidden flex items-center py-2 rounded-none">
               {isScrolled ? (
                 <img
                   src={logoEmblem}
                   alt="Viśvam — Royal Dry Fruits & Nuts"
-                  className="h-8 sm:h-9 w-auto object-contain transition-all duration-300"
+                  className="h-8 sm:h-9 w-auto object-contain transition-all duration-300 rounded-none logo"
                 />
               ) : (
                 <img
                   src={logoWordmark}
                   alt="Viśvam — Royal Dry Fruits & Nuts"
-                  className={`h-7 sm:h-8 w-auto object-contain transition-all duration-300 ${
+                  className={`h-7 sm:h-8 w-auto object-contain transition-all duration-300 rounded-none logo ${
                     isHomePage ? "brightness-0 invert drop-shadow-md" : ""
                   }`}
                 />
@@ -129,7 +129,7 @@ export function Header() {
                               params={{ slug: p.slug }}
                               className="flex items-center gap-3 p-2 hover:bg-cream/60 transition-colors"
                             >
-                              <img src={p.images[0]} alt={p.name} className="w-10 h-10 object-cover" />
+                              <img src={p.images[0]} alt={p.name} className="w-10 h-10 object-cover rounded-md" />
                               <div className="min-w-0">
                                 <h5 className="text-xs font-medium text-ink truncate">{p.name}</h5>
                                 <p className="text-[10px] text-clay font-semibold">{formatPrice(p.price)}</p>
@@ -145,14 +145,14 @@ export function Header() {
           </div>
 
           {/* Desktop Center Brand Logo */}
-          <Link to="/" className="hidden lg:flex flex-col items-center justify-center group py-2 text-center">
+          <Link to="/" className="hidden lg:flex flex-col items-center justify-center group py-2 text-center rounded-none">
             {isScrolled ? (
               <img
                 src={logoEmblem}
                 alt="Viśvam — Royal Dry Fruits & Nuts"
                 width={52}
                 height={52}
-                className="h-10 sm:h-12 w-auto object-contain transition-all duration-300 group-hover:scale-105"
+                className="h-10 sm:h-12 w-auto object-contain transition-all duration-300 group-hover:scale-105 rounded-none logo"
               />
             ) : (
               <div className="flex flex-col items-center justify-center transition-all duration-300">
@@ -161,7 +161,7 @@ export function Header() {
                   alt="Viśvam — Royal Dry Fruits & Nuts"
                   width={140}
                   height={48}
-                  className={`h-9 sm:h-11 w-auto object-contain transition-all duration-300 group-hover:scale-105 ${
+                  className={`h-9 sm:h-11 w-auto object-contain transition-all duration-300 group-hover:scale-105 rounded-none logo ${
                     isHomePage ? "brightness-0 invert drop-shadow-md" : ""
                   }`}
                 />

@@ -77,8 +77,8 @@ function ContactUs() {
                 <div>
                   <h5 className="text-xs font-semibold uppercase tracking-wider text-ink mb-1">Email Inquiries</h5>
                   <p className="text-xs text-muted-foreground mb-1">Customer Support & Orders:</p>
-                  <a href="mailto:support@visvamharvest.com" className="text-sm text-clay font-medium hover:underline">
-                    support@visvamharvest.com
+                  <a href="mailto:support@visvam.in" className="text-sm text-clay font-medium hover:underline">
+                    support@visvam.in
                   </a>
                 </div>
               </div>

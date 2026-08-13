@@ -64,8 +64,8 @@ function PrivacyPolicy() {
               <h2 className="font-display italic text-2xl text-ink">5. Your Rights & Contact</h2>
               <p className="text-muted-foreground">
                 You hold the right to access, update, or request the deletion of your personal data at any time. For privacy requests or inquiries, please contact our privacy concierge at{" "}
-                <a href="mailto:privacy@visvamharvest.com" className="text-clay font-medium underline">
-                  privacy@visvamharvest.com
+                <a href="mailto:privacy@visvam.in" className="text-clay font-medium underline">
+                  privacy@visvam.in
                 </a>.
               </p>
             </section>

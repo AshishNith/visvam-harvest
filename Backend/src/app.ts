@@ -41,9 +41,11 @@ app.use(
       if (
         allowedOrigins.includes(origin) ||
         allowedOrigins.includes("*") ||
+        origin === "https://visvam.in" ||
+        origin === "https://www.visvam.in" ||
+        origin.endsWith(".visvam.in") ||
         origin.startsWith("http://localhost:") ||
         origin.startsWith("http://127.0.0.1:") ||
-        origin.endsWith(".vercel.app") ||
         origin.endsWith(".lovable.app") ||
         origin.endsWith(".lovableproject.com")
       ) {

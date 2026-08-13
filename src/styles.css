@@ -83,13 +83,13 @@
   h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 400; }
   ::selection { background: var(--sand); color: var(--ink); }
 
-  /* Brand aesthetic: Soft rounded corners for product images, inputs, and cards */
-  input, select, textarea, img, [role="dialog"], [role="menu"], [role="popover"], .card, .badge {
+  /* Brand aesthetic: Soft rounded corners for form inputs, modals, cards, and badges */
+  input, select, textarea, [role="dialog"], [role="menu"], [role="popover"], .card, .badge {
     border-radius: var(--radius-md, 12px);
   }
   
-  /* Hero videos, section backgrounds, and elements with rounded-none are strictly un-rounded (0 border-radius) */
-  video, .hero-video, .rounded-none {
+  /* Navbar, logos, hero videos, section backgrounds, and elements with rounded-none are strictly un-rounded (0 border-radius) */
+  header, nav, .logo, header img, nav img, .logo img, video, .hero-video, .rounded-none {
     border-radius: 0 !important;
   }
   .rounded-sm {
