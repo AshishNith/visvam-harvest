@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Download, ArrowLeft, Globe, ShieldCheck, CheckCircle2, Copy, ExternalLink, Server, Key, AlertCircle } from "lucide-react";
+import { Download, ArrowLeft, Globe, ShieldCheck, Copy, ExternalLink, Server } from "lucide-react";
 import { useState } from "react";
 
 export const Route = createFileRoute("/domain-guide")({
@@ -35,7 +35,7 @@ function DomainGuidePage() {
               <ArrowLeft size={18} />
             </Link>
             <div>
-              <span className="text-[10px] uppercase font-bold tracking-wider text-clay">Documentation</span>
+              <span className="text-[10px] uppercase font-bold tracking-wider text-clay">Official Production Setup</span>
               <h1 className="font-display text-xl text-ink">Spaceship DNS Configuration Guide</h1>
             </div>
           </div>
@@ -70,7 +70,7 @@ function DomainGuidePage() {
           </h2>
 
           <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl">
-            This step-by-step documentation details the exact DNS records (A Record and CNAME Record) required to connect the custom domain <strong className="text-ink">visvam.in</strong> to your Viśvam Harvest web application server.
+            This step-by-step documentation details the exact DNS records required to connect the custom domain <strong className="text-ink">visvam.in</strong> to your production server.
           </p>
         </div>
 
@@ -78,7 +78,7 @@ function DomainGuidePage() {
         <div className="bg-cream/60 border-2 border-clay/40 p-6 space-y-4 rounded-xl print:border-black print:bg-white">
           <div className="flex items-center gap-2 text-clay font-bold text-xs uppercase tracking-wider">
             <Server size={16} />
-            <span>DNS Quick Reference Table (Copy-Paste for Spaceship)</span>
+            <span>Official DNS Records (Copy-Paste for Spaceship)</span>
           </div>
 
           <div className="overflow-x-auto">
@@ -97,11 +97,11 @@ function DomainGuidePage() {
                 <tr className="hover:bg-background/50">
                   <td className="py-3 px-3 font-bold text-clay">A</td>
                   <td className="py-3 px-3 font-semibold">@ <span className="text-[10px] text-muted-foreground font-sans">(or leave blank for root)</span></td>
-                  <td className="py-3 px-3 font-bold text-base">76.76.21.21</td>
+                  <td className="py-3 px-3 font-bold text-base select-all">216.198.79.1</td>
                   <td className="py-3 px-3 text-muted-foreground">Automatic / 300s</td>
                   <td className="py-3 px-3 text-right print:hidden">
                     <button
-                      onClick={() => handleCopy("76.76.21.21", "A Record")}
+                      onClick={() => handleCopy("216.198.79.1", "A Record")}
                       className="inline-flex items-center gap-1 text-[11px] text-clay hover:text-ink font-sans uppercase font-bold cursor-pointer"
                     >
                       <Copy size={12} />
@@ -114,12 +114,12 @@ function DomainGuidePage() {
                 <tr className="hover:bg-background/50">
                   <td className="py-3 px-3 font-bold text-clay">CNAME</td>
                   <td className="py-3 px-3 font-semibold">www</td>
-                  <td className="py-3 px-3 font-bold">cname.vercel-dns.com</td>
+                  <td className="py-3 px-3 font-bold text-xs select-all break-all">d417cae34a191192.vercel-dns-017.com.</td>
                   <td className="py-3 px-3 text-muted-foreground">Automatic / 300s</td>
                   <td className="py-3 px-3 text-right print:hidden">
                     <button
-                      onClick={() => handleCopy("cname.vercel-dns.com", "CNAME Record")}
-                      className="inline-flex items-center gap-1 text-[11px] text-clay hover:text-ink font-sans uppercase font-bold cursor-pointer"
+                      onClick={() => handleCopy("d417cae34a191192.vercel-dns-017.com.", "CNAME Record")}
+                      className="inline-flex items-center gap-1 text-[11px] text-clay hover:text-ink font-sans uppercase font-bold cursor-pointer shrink-0"
                     >
                       <Copy size={12} />
                       <span>{copiedField === "CNAME Record" ? "Copied!" : "Copy CNAME"}</span>
@@ -145,7 +145,7 @@ function DomainGuidePage() {
             <div className="space-y-2">
               <h4 className="font-display text-lg text-ink">Log in to Spaceship Control Panel</h4>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Open <a href="https://www.spaceship.com" target="_blank" rel="noopener noreferrer" className="text-clay underline font-medium inline-flex items-center gap-1">Spaceship.com <ExternalLink size={11} /></a> and sign in to your registrar account.
+                Open <a href="https://www.spaceship.com" target="_blank" rel="noopener noreferrer" className="text-clay underline font-medium inline-flex items-center gap-1">Spaceship.com <ExternalLink size={11} /></a> and sign in to your domain registrar account.
               </p>
             </div>
           </div>
@@ -169,14 +169,14 @@ function DomainGuidePage() {
               3
             </div>
             <div className="space-y-3">
-              <h4 className="font-display text-lg text-ink">Add Root A Record for visvam.in</h4>
+              <h4 className="font-display text-lg text-ink">Add / Update Root A Record for visvam.in</h4>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Click <strong>Add New Record</strong> and configure the main A record:
+                Click <strong>Add New Record</strong> (or edit existing A record) and configure:
               </p>
               <ul className="text-xs space-y-1.5 list-disc list-inside bg-cream/40 p-4 border border-border rounded-lg font-mono text-ink">
                 <li><strong>Type:</strong> A</li>
                 <li><strong>Host / Name:</strong> @ (or leave blank if Spaceship defaults to root)</li>
-                <li><strong>IP Address / Value:</strong> 76.76.21.21</li>
+                <li><strong>Value / IP Address:</strong> 216.198.79.1</li>
                 <li><strong>TTL:</strong> Automatic / 300 seconds</li>
               </ul>
             </div>
@@ -188,14 +188,14 @@ function DomainGuidePage() {
               4
             </div>
             <div className="space-y-3">
-              <h4 className="font-display text-lg text-ink">Add CNAME Record for www.visvam.in</h4>
+              <h4 className="font-display text-lg text-ink">Add / Update CNAME Record for www.visvam.in</h4>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Click <strong>Add New Record</strong> again for the www subdomain:
+                Click <strong>Add New Record</strong> (or edit existing CNAME record) for the www subdomain:
               </p>
               <ul className="text-xs space-y-1.5 list-disc list-inside bg-cream/40 p-4 border border-border rounded-lg font-mono text-ink">
                 <li><strong>Type:</strong> CNAME</li>
                 <li><strong>Host / Name:</strong> www</li>
-                <li><strong>Value / Target:</strong> cname.vercel-dns.com</li>
+                <li><strong>Value / Target:</strong> d417cae34a191192.vercel-dns-017.com.</li>
                 <li><strong>TTL:</strong> Automatic / 300 seconds</li>
               </ul>
             </div>
@@ -207,9 +207,9 @@ function DomainGuidePage() {
               5
             </div>
             <div className="space-y-2">
-              <h4 className="font-display text-lg text-ink">Save Changes & Allow DNS Propagation</h4>
+              <h4 className="font-display text-lg text-ink">Save Changes & Verify Connection</h4>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Click <strong>Save All Changes</strong>. DNS propagation across worldwide ISP resolvers typically takes between <strong>5 minutes to 30 minutes</strong> (up to 24 hours max).
+                Click <strong>Save All Changes</strong> on Spaceship. Then return to your hosting control panel and click <strong>Refresh / Verify</strong>. Propagation typically takes <strong>5 to 15 minutes</strong>.
               </p>
             </div>
           </div>
@@ -222,7 +222,7 @@ function DomainGuidePage() {
             <span>Automatic SSL Certificate & Security Provisioning</span>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Once the DNS A and CNAME records propagate, an SSL certificate (<code className="text-ink font-semibold">https://visvam.in</code>) will automatically be issued and renewed. No manual certificate installation is required.
+            As soon as the server detects the <code className="text-ink font-semibold">216.198.79.1</code> A record and <code className="text-ink font-semibold">d417cae34a191192.vercel-dns-017.com.</code> CNAME record, an SSL certificate (<code className="text-ink font-semibold">https://visvam.in</code>) will automatically be issued and active.
           </p>
         </div>
 

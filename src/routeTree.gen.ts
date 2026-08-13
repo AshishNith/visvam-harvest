@@ -22,6 +22,7 @@ import { Route as GourmetRouteImport } from './routes/gourmet'
 import { Route as NutsRouteImport } from './routes/nuts'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as ProposalPdfRouteImport } from './routes/proposal-pdf'
 import { Route as ReturnsRouteImport } from './routes/returns'
 import { Route as ShippingRouteImport } from './routes/shipping'
 import { Route as StoryRouteImport } from './routes/story'
@@ -93,6 +94,11 @@ const ProfileRoute = ProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProposalPdfRoute = ProposalPdfRouteImport.update({
+  id: '/proposal-pdf',
+  path: '/proposal-pdf',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReturnsRoute = ReturnsRouteImport.update({
   id: '/returns',
   path: '/returns',
@@ -133,6 +139,7 @@ export interface FileRoutesByFullPath {
   '/nuts': typeof NutsRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
+  '/proposal-pdf': typeof ProposalPdfRoute
   '/returns': typeof ReturnsRoute
   '/shipping': typeof ShippingRoute
   '/story': typeof StoryRoute
@@ -153,6 +160,7 @@ export interface FileRoutesByTo {
   '/nuts': typeof NutsRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
+  '/proposal-pdf': typeof ProposalPdfRoute
   '/returns': typeof ReturnsRoute
   '/shipping': typeof ShippingRoute
   '/story': typeof StoryRoute
@@ -174,6 +182,7 @@ export interface FileRoutesById {
   '/nuts': typeof NutsRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
+  '/proposal-pdf': typeof ProposalPdfRoute
   '/returns': typeof ReturnsRoute
   '/shipping': typeof ShippingRoute
   '/story': typeof StoryRoute
@@ -196,6 +205,7 @@ export interface FileRouteTypes {
     | '/nuts'
     | '/privacy'
     | '/profile'
+    | '/proposal-pdf'
     | '/returns'
     | '/shipping'
     | '/story'
@@ -216,6 +226,7 @@ export interface FileRouteTypes {
     | '/nuts'
     | '/privacy'
     | '/profile'
+    | '/proposal-pdf'
     | '/returns'
     | '/shipping'
     | '/story'
@@ -236,6 +247,7 @@ export interface FileRouteTypes {
     | '/nuts'
     | '/privacy'
     | '/profile'
+    | '/proposal-pdf'
     | '/returns'
     | '/shipping'
     | '/story'
@@ -257,6 +269,7 @@ export interface RootRouteChildren {
   NutsRoute: typeof NutsRoute
   PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
+  ProposalPdfRoute: typeof ProposalPdfRoute
   ReturnsRoute: typeof ReturnsRoute
   ShippingRoute: typeof ShippingRoute
   StoryRoute: typeof StoryRoute
@@ -357,6 +370,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/proposal-pdf': {
+      id: '/proposal-pdf'
+      path: '/proposal-pdf'
+      fullPath: '/proposal-pdf'
+      preLoaderRoute: typeof ProposalPdfRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/returns': {
       id: '/returns'
       path: '/returns'
@@ -409,6 +429,7 @@ const rootRouteChildren: RootRouteChildren = {
   NutsRoute: NutsRoute,
   PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
+  ProposalPdfRoute: ProposalPdfRoute,
   ReturnsRoute: ReturnsRoute,
   ShippingRoute: ShippingRoute,
   StoryRoute: StoryRoute,
