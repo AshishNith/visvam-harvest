@@ -91,6 +91,7 @@ export const products: Product[] = [
     origin: "Anantnag, Kashmir",
     grade: "Snow Light Halves",
     benefits: ["High Omega-3 ALA", "Memory Support", "100% Organic"],
+    bestseller: true,
     isNew: true,
   },
   {
@@ -140,9 +141,9 @@ export const products: Product[] = [
     category: "gourmet",
     badge: "High Fiber",
     images: [
-      cImg("05_Dates_Khajoor/DSC00525.jpg"),
-      cImg("05_Dates_Khajoor/DSC00530.jpg"),
-      cImg("05_Dates_Khajoor/DSC00562.jpg"),
+      cImg("05_Dates_Khajoor/DSC00565.jpg"),
+      cImg("05_Dates_Khajoor/DSC00566.jpg"),
+      cImg("05_Dates_Khajoor/DSC00567.jpg"),
     ],
     description:
       "Hand-strung dried figs harvested from Kandahar orchards. Naturally sun-dried until the natural fruit sugars caramelize into a soft, honey-like center rich in dietary fiber.",
@@ -150,7 +151,7 @@ export const products: Product[] = [
     origin: "Kandahar, Afghanistan",
     grade: "Grade A Garland",
     benefits: ["Digestive Wellness", "Rich Calcium Source", "Natural Sweetener"],
-    bestseller: true,
+    bestseller: false,
   },
   {
     slug: "royal-medjool-dates",
@@ -161,8 +162,8 @@ export const products: Product[] = [
     badge: "Organic",
     images: [
       cImg("05_Dates_Khajoor/DSC00525.jpg"),
+      cImg("05_Dates_Khajoor/DSC00526.jpg"),
       cImg("05_Dates_Khajoor/DSC00530.jpg"),
-      cImg("05_Dates_Khajoor/DSC00562.jpg"),
     ],
     description:
       "Known as the fruit of kings. Abundantly plump, soft, and moist Medjool dates with a rich caramel texture. Perfect as a natural pre-workout energy boost.",
@@ -170,7 +171,7 @@ export const products: Product[] = [
     origin: "Jericho Oasis",
     grade: "Super Jumbo",
     benefits: ["Instant Energy Boost", "High Iron", "Zero Additives"],
-    bestseller: true,
+    bestseller: false,
   },
   {
     slug: "afghan-green-raisins",
