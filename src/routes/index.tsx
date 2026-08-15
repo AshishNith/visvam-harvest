@@ -7,8 +7,9 @@ import { ScrollStackCategories } from "@/components/ScrollStackCategories";
 import { useCart, formatPrice } from "@/lib/cart-context";
 import { fetchProductsFromBackend } from "@/lib/api";
 import { products, categories, type Product } from "@/lib/products";
-import cashewsHero from "@/assets/cashews-1.png";
-import heroVideo from "@/assets/Dry_fruit_craftsmanship_montage_202608061931.mp4";
+import heroVideoMp4 from "@/assets/timeline-hero.mp4";
+import heroVideoMov from "@/assets/Timeline 1.mov";
+
 
 const HERO_SLIDES = [
   {
@@ -74,15 +75,23 @@ function Home() {
       setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
     }, 4500);
 
-    const handlePreloaderDone = () => {
+    const playVideo = () => {
       if (videoRef.current) {
-        videoRef.current.play().catch(() => {});
+        videoRef.current.muted = true;
+        videoRef.current.defaultMuted = true;
+        const playPromise = videoRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {});
+        }
       }
     };
 
+    const handlePreloaderDone = () => {
+      playVideo();
+    };
+
     window.addEventListener("preloaderDone", handlePreloaderDone);
-    // If preloader already finished
-    handlePreloaderDone();
+    playVideo();
 
     return () => {
       clearInterval(timer);
@@ -96,13 +105,22 @@ function Home() {
       <section className="relative min-h-screen lg:h-screen overflow-hidden bg-cream">
         <video
           ref={videoRef}
-          preload="metadata"
+          autoPlay
           loop
           muted
           playsInline
+          preload="auto"
+          onLoadedData={() => {
+            if (videoRef.current) {
+              videoRef.current.muted = true;
+              videoRef.current.play().catch(() => {});
+            }
+          }}
           className="absolute inset-0 w-full h-full object-cover rounded-none hero-video"
         >
-          <source src={heroVideo} type="video/mp4" />
+          <source src={heroVideoMp4} type="video/mp4" />
+          <source src={heroVideoMov} type="video/quicktime" />
+          <source src={heroVideoMov} type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-gradient-to-b from-ink/65 via-ink/20 to-ink/75 pointer-events-none" />
 
