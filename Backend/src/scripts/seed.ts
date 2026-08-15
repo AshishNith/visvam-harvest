@@ -5,6 +5,7 @@ import dns from "dns";
 import { Product } from "../models/Product.js";
 import { Category } from "../models/Category.js";
 import { User } from "../models/User.js";
+import { seedReviews } from "./seedReviews.js";
 
 try {
   dns.setServers(["8.8.8.8", "1.1.1.1"]);
@@ -342,6 +343,9 @@ export async function seedDatabase(customUri?: string) {
       });
       console.log(`[Seed] Created default admin account: ${adminEmail}`);
     }
+
+    // Seed 10-11 Customer Reviews for each product
+    await seedReviews();
 
     return { success: true, count: insertedProducts.length };
   } catch (error) {
