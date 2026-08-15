@@ -6,6 +6,7 @@ import { Product } from "../models/Product.js";
 import { Category } from "../models/Category.js";
 import { User } from "../models/User.js";
 import { seedReviews } from "./seedReviews.js";
+import { seedOrders } from "./seedOrders.js";
 
 try {
   dns.setServers(["8.8.8.8", "1.1.1.1"]);
@@ -346,6 +347,9 @@ export async function seedDatabase(customUri?: string) {
 
     // Seed 10-11 Customer Reviews for each product
     await seedReviews();
+
+    // Seed 48 historical orders across 90 days
+    await seedOrders();
 
     return { success: true, count: insertedProducts.length };
   } catch (error) {
