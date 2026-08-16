@@ -1,9 +1,11 @@
+import { useState, useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { ProductCard } from "@/components/ProductCard";
 import { useCart, formatPrice } from "@/lib/cart-context";
-import { products } from "@/lib/products";
+import { products, type Product } from "@/lib/products";
+import { fetchProductsFromBackend } from "@/lib/api";
 
 export const Route = createFileRoute("/combos")({
   head: () => ({
@@ -112,7 +114,7 @@ function Combos() {
             </span>
           </div>
           <button
-            onClick={() => bundleItems.forEach(add)}
+            onClick={() => bundleItems.forEach((p) => add(p, false))}
             className="group inline-flex items-center gap-3 text-ink text-[12px] font-medium tracked uppercase tracking-widest py-2 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 self-start"
           >
             <span>Add Bundle to Bag</span>

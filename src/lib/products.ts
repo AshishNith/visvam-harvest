@@ -301,6 +301,6 @@ export const getProductBySlug = (slug: string) =>
 
 export const categories: { slug: Category; label: string; index: string; description: string }[] = [
   { slug: "gourmet", label: "Gourmet", index: "01", description: "Organic Figs, Medjool Dates, Kishmish, Berries & Superseeds" },
-  { slug: "nuts", label: "Nuts", index: "02", description: "California Jumbo Almonds, W240 Cashews, Kashmiri Walnuts & Pistachios" },
+  { slug: "nuts", label: "Nuts & Dried Fruits", index: "02", description: "California Jumbo Almonds, W240 Cashews, Kashmiri Walnuts & Pistachios" },
   { slug: "gifting", label: "Gifting", index: "03", description: "Handcrafted Luxury Presentation Gift Boxes & Royal Hampers" },
 ];

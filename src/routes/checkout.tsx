@@ -376,7 +376,7 @@ function CheckoutPage() {
           <div className="py-20 text-center">
             <p className="font-display italic text-2xl mb-2">Your harvest bag is empty</p>
             <p className="text-xs text-muted-foreground mb-6">Add dry fruits or gift boxes to your bag before checking out.</p>
-            <Link to="/nuts" className="px-6 py-3 bg-ink text-white text-xs tracked uppercase font-medium">Browse Nuts & Kernels</Link>
+            <Link to="/nuts" className="px-6 py-3 bg-ink text-white text-xs tracked uppercase font-medium">Browse Nuts & Dried Fruits</Link>
           </div>
         ) : (
           /* Main Checkout Form */

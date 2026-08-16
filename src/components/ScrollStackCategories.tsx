@@ -24,7 +24,7 @@ const CATEGORIES: CategoryItem[] = [
     id: "nuts",
     slug: "nuts",
     tag: "02 / SELECTION",
-    title: "Single-Origin Nuts",
+    title: "Nuts & Dried Fruits",
     subtitle: "California Jumbo Almonds, W240 Cashews & Kashmiri Walnuts.",
     image: cImg("01_Almonds_Badam/DSC00414.jpg"),
   },

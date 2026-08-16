@@ -11,7 +11,7 @@ import { products } from "@/lib/products";
 
 const leftLinks = [
   { to: "/gourmet", label: "Gourmet", category: "gourmet" },
-  { to: "/nuts", label: "Nuts", category: "nuts" },
+  { to: "/nuts", label: "Nuts & Dried Fruits", category: "nuts" },
   { to: "/gifting", label: "Gifting", category: "gifting" },
 ] as const;
 
