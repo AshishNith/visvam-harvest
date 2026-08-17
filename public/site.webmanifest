@@ -1,0 +1,22 @@
+{
+  "name": "Viśvam — Premium Dry Fruits & Handpicked Nuts",
+  "short_name": "Viśvam",
+  "description": "Cold-stored, single-origin dry fruits, jumbo almonds, W240 cashews, organic figs, dates and luxury gift hampers.",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#1a1918",
+  "background_color": "#FAF7F2",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait"
+}

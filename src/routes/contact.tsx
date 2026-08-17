@@ -6,15 +6,59 @@ import { toast } from "sonner";
 import { submitContactInquiryToBackend } from "@/lib/api";
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
-      { title: "Contact Us — Viśvam Concierge" },
-      {
-        name: "description",
-        content: "Get in touch with Viśvam for order support, corporate gifting, and inquiries.",
-      },
-    ],
-  }),
+  head: () => {
+    const canonicalUrl = "https://visvam.in/contact";
+    const contactSchema = {
+      "@context": "https://schema.org",
+      "@type": "ContactPage",
+      "name": "Contact & Support — Viśvam",
+      "description": "Get in touch with Viśvam for order support, corporate gifting, and bulk inquiries.",
+      "url": canonicalUrl,
+      "mainEntity": {
+        "@type": "Organization",
+        "name": "Viśvam",
+        "email": "Contact@visvam.in",
+        "telephone": "+919217870974",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "F-329, 2nd floor, sector 63",
+          "addressLocality": "Noida",
+          "postalCode": "201309",
+          "addressCountry": "IN"
+        }
+      }
+    };
+
+    return {
+      meta: [
+        { title: "Contact Us & Support — Viśvam" },
+        {
+          name: "description",
+          content:
+            "Contact Viśvam customer support for order tracking, corporate dry fruit gifting, and bulk inquiries. Email Contact@visvam.in or call +91 9217870974.",
+        },
+        {
+          name: "keywords",
+          content: "Viśvam contact, Viśvam customer care, corporate dry fruit gifting inquiry, Viśvam email, dry fruit support India",
+        },
+        { property: "og:title", content: "Contact Us & Support — Viśvam" },
+        { property: "og:description", content: "Get in touch with Viśvam for order support, corporate gifting, and inquiries." },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: canonicalUrl },
+        { property: "og:image", content: "https://visvam.in/Visvam-Logo.png" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: "Contact Us & Support — Viśvam" },
+        { name: "twitter:image", content: "https://visvam.in/Visvam-Logo.png" },
+      ],
+      links: [{ rel: "canonical", href: canonicalUrl }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify(contactSchema),
+        },
+      ],
+    };
+  },
   component: ContactUs,
 });
 
@@ -59,8 +103,8 @@ function ContactUs() {
             <h1 className="font-display italic text-4xl sm:text-6xl text-ink">
               Contact & Support
             </h1>
-            <p className="text-sm text-muted-foreground mt-4 max-w-md leading-relaxed">
-              Have questions about single-origin crops, order tracking, or corporate gifting? We are here to assist.
+            <p className="text-sm text-muted-foreground mt-4 max-w-lg leading-relaxed">
+              Reach out to us in case of any queries about the products, order tracking, corporate gifting, bulk orders. We are there for you.
             </p>
           </div>
 
@@ -127,7 +171,7 @@ function ContactUs() {
                   </div>
                   <h4 className="font-display italic text-2xl text-ink">Inquiry Received</h4>
                   <p className="text-xs text-muted-foreground max-w-xs mx-auto leading-relaxed">
-                    Thank you for reaching out to Viśvam. Our concierge team has logged your request and will respond within 24 hours.
+                    Thank you for reaching out to Viśvam. Our team has logged your request and will respond within 24 hours.
                   </p>
                   <button
                     onClick={() => setSubmitted(false)}
@@ -173,7 +217,7 @@ function ContactUs() {
                       required
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      placeholder="How can our concierge assist you?"
+                      placeholder="How can we assist you?"
                       className="w-full px-4 py-3 text-xs bg-background border border-border/60 outline-none focus:border-clay transition resize-none"
                     />
                   </div>

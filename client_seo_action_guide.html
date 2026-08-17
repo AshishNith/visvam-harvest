@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Viśvam — Client SEO & Analytics Setup Guide</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 15mm 12mm 15mm 12mm;
+    }
+    body {
+      font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+      color: #1f2937;
+      line-height: 1.45;
+      font-size: 11.5px;
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff;
+    }
+    .header {
+      border-bottom: 2.5px solid #8a4f27;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .brand-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #241a12;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+    .brand-subtitle {
+      font-size: 11px;
+      color: #8a4f27;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+      margin-top: 3px;
+    }
+    .doc-date {
+      font-size: 10.5px;
+      color: #6b7280;
+      text-align: right;
+    }
+    
+    .intro-box {
+      background-color: #faf7f2;
+      border: 1px solid #e5d8c8;
+      border-left: 4px solid #8a4f27;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+    }
+    .intro-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #241a12;
+      margin-bottom: 4px;
+    }
+    .intro-text {
+      font-size: 11px;
+      color: #4b5563;
+      margin: 0;
+    }
+
+    .section {
+      margin-bottom: 18px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 14px 16px;
+      page-break-inside: avoid;
+    }
+    .section-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #1a1918;
+      margin: 0 0 8px 0;
+      border-bottom: 1px solid #edf2f7;
+      padding-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .badge {
+      background-color: #8a4f27;
+      color: #ffffff;
+      font-size: 9px;
+      padding: 2px 7px;
+      border-radius: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+    .badge-optional {
+      background-color: #6b7280;
+    }
+
+    .purpose-box {
+      background-color: #f8fafc;
+      border-left: 3px solid #0284c7;
+      padding: 8px 12px;
+      margin-bottom: 10px;
+      border-radius: 0 4px 4px 0;
+    }
+    .purpose-label {
+      font-size: 9.5px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #0369a1;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+    .purpose-text {
+      font-size: 11px;
+      color: #334155;
+      margin: 0;
+    }
+
+    .steps-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 6px;
+    }
+    ol {
+      margin: 0;
+      padding-left: 18px;
+    }
+    li {
+      margin-bottom: 4px;
+      color: #334155;
+      font-size: 11px;
+    }
+    li strong {
+      color: #0f172a;
+    }
+
+    .param-list {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      padding: 8px 12px;
+      margin-top: 8px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 10.5px;
+      color: #0f172a;
+    }
+    .param-item {
+      margin-bottom: 3px;
+    }
+    .param-item:last-child {
+      margin-bottom: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 10.5px;
+    }
+    th {
+      background-color: #241a12;
+      color: #ffffff;
+      text-align: left;
+      padding: 6px 10px;
+      font-weight: 600;
+    }
+    td {
+      border: 1px solid #e2e8f0;
+      padding: 6px 10px;
+      color: #334155;
+    }
+    tr:nth-child(even) {
+      background-color: #faf7f2;
+    }
+
+    .footer {
+      margin-top: 25px;
+      padding-top: 10px;
+      border-top: 1px solid #e2e8f0;
+      font-size: 9.5px;
+      color: #94a3b8;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div>
+      <h1 class="brand-title">VIŚVAM</h1>
+      <div class="brand-subtitle">Complete Client Action Guide: Search Engine Optimization (SEO) & Analytics</div>
+    </div>
+    <div class="doc-date">
+      <strong>Document Ref:</strong> VISVAM-SEO-2026<br>
+      <strong>Target Domain:</strong> https://visvam.in<br>
+      <strong>Date:</strong> August 17, 2026
+    </div>
+  </div>
+
+  <div class="intro-box">
+    <div class="intro-title">Technical SEO Summary & Action Overview</div>
+    <p class="intro-text">
+      The technical SEO infrastructure has been fully built into the <strong>visvam.in</strong> codebase (including XML sitemaps, robots.txt, JSON-LD product & store schemas, canonical tags, and OpenGraph parameters). To complete live search indexing, traffic tracking, and commercial Google Shopping listings, please follow the 5 step-by-step setup guides below.
+    </p>
+  </div>
+
+  <!-- SECTION 1: GOOGLE SEARCH CONSOLE -->
+  <div class="section">
+    <div class="section-title">
+      <span>1. Google Search Console (GSC) Domain Setup</span>
+      <span class="badge">Action Required</span>
+    </div>
+    
+    <div class="purpose-box">
+      <div class="purpose-label">Purpose & Business Value</div>
+      <p class="purpose-text">
+        Allows Google to index all 20+ dry fruit product pages, monitor site search performance, track keyword rankings in India, and report search queries bringing visitors to <strong>visvam.in</strong>.
+      </p>
+    </div>
+
+    <div class="steps-label">Step-by-Step Instructions:</div>
+    <ol>
+      <li>Go to <strong>https://search.google.com/search-console</strong> and sign in with the main Viśvam Google Account.</li>
+      <li>Click <strong>Add Property</strong> from the top-left dropdown.</li>
+      <li>Select the <strong>Domain</strong> option and enter <code>visvam.in</code> (or select <strong>URL prefix</strong> and enter <code>https://visvam.in</code>).</li>
+      <li>Choose the <strong>HTML Tag</strong> or <strong>TXT Record</strong> verification method.</li>
+      <li>Copy the verification code (e.g. <code>google-site-verification=XYZ...</code>) and share it with the technical team.</li>
+      <li>Once verified, click on <strong>Sitemaps</strong> in the left menu.</li>
+      <li>Enter <code>https://visvam.in/sitemap.xml</code> in the "Add a new sitemap" box and click <strong>Submit</strong>.</li>
+    </ol>
+
+    <div class="param-list">
+      <div class="param-item">✔ Deliverable to Tech Team: Google Site Verification Token</div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: GOOGLE ANALYTICS 4 -->
+  <div class="section">
+    <div class="section-title">
+      <span>2. Google Analytics 4 (GA4) Property & Measurement ID</span>
+      <span class="badge">Action Required</span>
+    </div>
+    
+    <div class="purpose-box">
+      <div class="purpose-label">Purpose & Business Value</div>
+      <p class="purpose-text">
+        Tracks live visitor counts, traffic sources (Google search, social media, direct), user engagement, popular products, and customer checkout conversions in real-time.
+      </p>
+    </div>
+
+    <div class="steps-label">Step-by-Step Instructions:</div>
+    <ol>
+      <li>Go to <strong>https://analytics.google.com/</strong> and sign in.</li>
+      <li>Click <strong>Admin (Gear icon)</strong> at the bottom left ➔ Click <strong>Create Account</strong>.</li>
+      <li>Name the account <strong>Viśvam</strong>, then create a property named <strong>Viśvam</strong> (select currency: <em>Indian Rupee INR</em>).</li>
+      <li>Under Data Streams, choose <strong>Web</strong>.</li>
+      <li>Enter Website URL: <code>https://visvam.in</code> and Stream Name: <code>Viśvam Web</code>.</li>
+      <li>Click <strong>Create Stream</strong>.</li>
+      <li>Copy the <strong>Measurement ID</strong> displayed at the top right (format: <code>G-XXXXXXXXXX</code>).</li>
+    </ol>
+
+    <div class="param-list">
+      <div class="param-item">✔ Deliverable to Tech Team: GA4 Measurement ID (e.g. G-ABC123XYZ)</div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: GOOGLE MERCHANT CENTER -->
+  <div class="section">
+    <div class="section-title">
+      <span>3. Google Merchant Center (Free Shopping Listings in India)</span>
+      <span class="badge">Recommended for E-Commerce</span>
+    </div>
+    
+    <div class="purpose-box">
+      <div class="purpose-label">Purpose & Business Value</div>
+      <p class="purpose-text">
+        Displays Viśvam's dry fruits, jumbo almonds, W240 cashews, and gift boxes directly inside Google Search results and the Google Shopping tab across India for free.
+      </p>
+    </div>
+
+    <div class="steps-label">Step-by-Step Instructions:</div>
+    <ol>
+      <li>Go to <strong>https://merchants.google.com/</strong> and sign up with your Google account.</li>
+      <li>Enter your business name: <strong>Viśvam</strong> and country: <strong>India</strong>.</li>
+      <li>Under <strong>Business Info</strong>, verify and claim the website domain <code>https://visvam.in</code> (automatic if using the same account as Search Console).</li>
+      <li>Set up shipping rates (e.g. Free shipping over ₹999) and store address details.</li>
+      <li>Navigate to <strong>Products</strong> ➔ <strong>Feeds</strong> to upload your product catalog or connect via Google Content API.</li>
+    </ol>
+  </div>
+
+  <!-- SECTION 4: GOOGLE TAG MANAGER -->
+  <div class="section">
+    <div class="section-title">
+      <span>4. Google Tag Manager (GTM) Container Setup</span>
+      <span class="badge badge-optional">Optional</span>
+    </div>
+    
+    <div class="purpose-box">
+      <div class="purpose-label">Purpose & Business Value</div>
+      <p class="purpose-text">
+        Allows your marketing team to easily add Meta (Facebook/Instagram) Pixel, Google Ads conversion tracking, and remarketing tags in the future without editing website code.
+      </p>
+    </div>
+
+    <div class="steps-label">Step-by-Step Instructions:</div>
+    <ol>
+      <li>Go to <strong>https://tagmanager.google.com/</strong> and sign in.</li>
+      <li>Click <strong>Create Account</strong>. Name the account <strong>Viśvam</strong>.</li>
+      <li>Target platform: Select <strong>Web</strong>. Container Name: <code>Viśvam Web</code>.</li>
+      <li>Copy the Container ID displayed at the top bar (format: <code>GTM-XXXXXXX</code>).</li>
+    </ol>
+
+    <div class="param-list">
+      <div class="param-item">✔ Deliverable to Tech Team: GTM Container ID (e.g. GTM-WXYZ123)</div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: GOOGLE BUSINESS PROFILE -->
+  <div class="section">
+    <div class="section-title">
+      <span>5. Google Business Profile (Local Maps & Search Ranks)</span>
+      <span class="badge">Recommended</span>
+    </div>
+    
+    <div class="purpose-box">
+      <div class="purpose-label">Purpose & Business Value</div>
+      <p class="purpose-text">
+        Ranks Viśvam in local Google Maps searches for premium dry fruits, corporate gifting, and luxury nut hampers in your operating region.
+      </p>
+    </div>
+
+    <div class="steps-label">Step-by-Step Instructions:</div>
+    <ol>
+      <li>Go to <strong>https://www.google.com/business/</strong> and click <strong>Manage Now</strong>.</li>
+      <li>Enter Business Name: <strong>Viśvam — Premium Dry Fruits & Handpicked Nuts</strong>.</li>
+      <li>Category: Select <strong>Dry Fruit Store</strong> or <strong>Corporate Gift Shop</strong>.</li>
+      <li>Enter Store/Facility Address: <code>F-329, 2nd floor, sector 63, Noida, 201309</code>.</li>
+      <li>Add Customer Phone: <code>+91 9217870974</code> and Website: <code>https://visvam.in</code>.</li>
+      <li>Complete verification via phone SMS, video call, or postcard.</li>
+    </ol>
+  </div>
+
+  <!-- SUMMARY TABLE -->
+  <div class="section">
+    <div class="section-title">Summary: What to Send to the Development Team</div>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Service / Account</th>
+          <th>Required Key / Token</th>
+          <th>Example Format</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Google Search Console</strong></td>
+          <td>Site Verification Token</td>
+          <td><code>google-site-verification=XYZ123...</code></td>
+          <td>Pending Client Setup</td>
+        </tr>
+        <tr>
+          <td><strong>Google Analytics 4</strong></td>
+          <td>GA4 Measurement ID</td>
+          <td><code>G-ABC123XYZ</code></td>
+          <td>Pending Client Setup</td>
+        </tr>
+        <tr>
+          <td><strong>Google Tag Manager</strong></td>
+          <td>GTM Container ID</td>
+          <td><code>GTM-WXYZ123</code></td>
+          <td>Optional</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    Viśvam SEO & Analytics Setup Guide — Prepared by GoRan AI Technical Team
+  </div>
+
+</body>
+</html>

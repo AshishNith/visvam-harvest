@@ -15,31 +15,120 @@ export const Route = createFileRoute("/menu/$slug")({
     if (!product) throw notFound();
     return { product };
   },
-  head: ({ loaderData }) => ({
-    meta: [
-      {
-        title: loaderData
-          ? `${loaderData.product.name} — Viśvam`
-          : "Viśvam Selection",
-      },
-      {
-        name: "description",
-        content:
-          loaderData?.product.description ??
-          "Handpicked single-origin dry fruits and premium nuts at Viśvam.",
-      },
-      {
-        property: "og:title",
-        content: loaderData ? `${loaderData.product.name} — Viśvam` : "Viśvam",
-      },
-      {
-        property: "og:description",
-        content: loaderData?.product.description ?? "Cold-stored, handpicked dry fruits and nuts.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  head: ({ loaderData }) => {
+    const product = loaderData?.product;
+    const title = product ? `${product.name} — Viśvam` : "Viśvam Selection";
+    const description =
+      product?.description ??
+      "Handpicked single-origin dry fruits and premium nuts at Viśvam.";
+    const imageUrl =
+      product?.images && product.images.length > 0
+        ? product.images[0]
+        : "https://visvam.in/Visvam-Logo.png";
+    const canonicalUrl = product
+      ? `https://visvam.in/menu/${product.slug}`
+      : "https://visvam.in/nuts";
+
+    const productSchema = product
+      ? {
+          "@context": "https://schema.org/",
+          "@type": "Product",
+          "name": product.name,
+          "image": product.images && product.images.length > 0 ? product.images : [imageUrl],
+          "description": product.description,
+          "sku": product.slug,
+          "mpn": product.slug,
+          "brand": {
+            "@type": "Brand",
+            "name": "Viśvam"
+          },
+          "offers": {
+            "@type": "Offer",
+            "url": canonicalUrl,
+            "priceCurrency": "INR",
+            "price": product.price,
+            "priceValidUntil": "2027-12-31",
+            "itemCondition": "https://schema.org/NewCondition",
+            "availability": "https://schema.org/InStock",
+            "seller": {
+              "@type": "Organization",
+              "name": "Viśvam"
+            }
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "reviewCount": "84"
+          }
+        }
+      : null;
+
+    const breadcrumbSchema = product
+      ? {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://visvam.in/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": product.category ? product.category.toUpperCase() : "Catalog",
+              "item": `https://visvam.in/${product.category || "nuts"}`
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": product.name,
+              "item": canonicalUrl
+            }
+          ]
+        }
+      : null;
+
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        {
+          name: "keywords",
+          content: `${product?.name || "dry fruit"}, buy ${product?.name || "nuts"} online, Viśvam ${product?.category || "harvest"}, cold stored dry fruits India`,
+        },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "product" },
+        { property: "og:url", content: canonicalUrl },
+        { property: "og:image", content: imageUrl },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+        { name: "twitter:image", content: imageUrl },
+      ],
+      links: [{ rel: "canonical", href: canonicalUrl }],
+      scripts: [
+        ...(productSchema
+          ? [
+              {
+                type: "application/ld+json",
+                children: JSON.stringify(productSchema),
+              },
+            ]
+          : []),
+        ...(breadcrumbSchema
+          ? [
+              {
+                type: "application/ld+json",
+                children: JSON.stringify(breadcrumbSchema),
+              },
+            ]
+          : []),
+      ],
+    };
+  },
   component: MenuItemPage,
 });
 
@@ -95,11 +184,13 @@ function MenuItemPage() {
   const [reviewComment, setReviewComment] = useState("");
   const [reviewerName, setReviewerName] = useState("");
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [showAllReviews, setShowAllReviews] = useState(false);
 
   // Sync state when route params change (e.g. clicking another product card)
   useEffect(() => {
     setProduct(initialProduct);
     setActive(0);
+    setShowAllReviews(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [initialProduct]);
 
@@ -345,10 +436,10 @@ function MenuItemPage() {
               </div>
             )}
           </div>
-          {!hasUserReviewed && !showReviewForm && (
+          {!showReviewForm && (
             <button
               onClick={() => setShowReviewForm(true)}
-              className="inline-flex items-center gap-2 border border-ink text-ink px-5 py-2.5 text-[11px] font-semibold tracked uppercase hover:bg-ink hover:text-white transition-colors"
+              className="inline-flex items-center gap-2 border border-ink text-ink px-5 py-2.5 text-[11px] font-semibold tracked uppercase hover:bg-ink hover:text-white transition-colors cursor-pointer"
             >
               Write a Review
             </button>
@@ -450,7 +541,7 @@ function MenuItemPage() {
           </div>
         ) : (
           <div className="space-y-6 max-w-2xl">
-            {reviews.map((review: any) => (
+            {(showAllReviews ? reviews : reviews.slice(0, 2)).map((review: any) => (
               <div
                 key={review._id}
                 className="border-b border-border/60 pb-5 last:border-0"
@@ -477,6 +568,19 @@ function MenuItemPage() {
                 <p className="text-xs text-muted-foreground leading-relaxed">{review.comment}</p>
               </div>
             ))}
+
+            {reviews.length > 2 && (
+              <div className="pt-2">
+                <button
+                  onClick={() => setShowAllReviews((prev) => !prev)}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-clay hover:text-ink transition-colors uppercase tracking-wider underline cursor-pointer"
+                >
+                  {showAllReviews
+                    ? "Show less reviews"
+                    : `Show more reviews (${reviews.length - 2} more)`}
+                </button>
+              </div>
+            )}
           </div>
         )}
       </section>

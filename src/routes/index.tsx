@@ -18,20 +18,30 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Viśvam — Premium Dry Fruits & Handpicked Nuts" },
+      { title: "Viśvam — Premium Dry Fruits & Handpicked Nuts | Buy Online India" },
       {
         name: "description",
         content:
-          "Viśvam offers single-origin California Jumbo Almonds, W240 Whole Cashews, Kashmiri Extra-Light Walnuts, Organic Figs, and Medjool Dates delivered in nitrogen-sealed fresh packaging.",
+          "Buy cold-stored, single-origin California Jumbo Almonds, W240 Whole Cashews, Kashmiri Extra-Light Walnuts, Organic Figs, and Medjool Dates delivered nationwide in nitrogen-sealed fresh packaging.",
+      },
+      {
+        name: "keywords",
+        content:
+          "buy dry fruits online, premium almonds India, W240 cashews online, Kashmiri walnuts, dry fruit gift boxes, fresh dates online, Viśvam harvest",
       },
       { property: "og:title", content: "Viśvam — Premium Dry Fruits & Handpicked Nuts" },
       {
         property: "og:description",
-        content: "Cold-stored, single-origin dry fruits and royal gift hampers.",
+        content: "Cold-stored, single-origin dry fruits, jumbo nuts, and handcrafted royal gift hampers.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://visvam.in/" },
+      { property: "og:image", content: "https://visvam.in/Visvam-Logo.png" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Viśvam — Premium Dry Fruits & Handpicked Nuts" },
+      { name: "twitter:image", content: "https://visvam.in/Visvam-Logo.png" },
     ],
+    links: [{ rel: "canonical", href: "https://visvam.in/" }],
   }),
   component: Home,
 });
@@ -136,8 +146,8 @@ function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
-            {bestsellers.slice(0, 4).map((p) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+            {bestsellers.slice(0, 3).map((p) => (
               <div key={p.slug} className="group flex flex-col justify-between">
                 <div>
                   {/* Small Image with Rounded Corners */}

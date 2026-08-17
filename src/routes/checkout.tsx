@@ -19,6 +19,12 @@ import { submitOrderToBackend } from "@/lib/api";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/checkout")({
+  head: () => ({
+    meta: [
+      { title: "Checkout — Viśvam" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: CheckoutPage,
 });
 
@@ -152,9 +158,12 @@ function CheckoutPage() {
 
       if (res.success || res.data) {
         const orderId = res.data?._id || `VIS-${Math.floor(100000 + Math.random() * 900000)}`;
-        setOrderSuccess(orderId);
         clearCart();
         toast.success("Order submitted successfully!");
+        navigate({
+          to: "/order-success",
+          search: { orderId, amount: totalPrice },
+        });
       } else {
         toast.error(res.message || "Order placement failed");
       }
@@ -173,7 +182,7 @@ function CheckoutPage() {
         </div>
         <h1 className="font-display italic text-4xl mb-3">Order Confirmed!</h1>
         <p className="text-sm text-muted-foreground max-w-md mb-2">
-          Thank you for choosing Viśvam Harvest. Order reference: <strong className="text-ink font-mono">{orderSuccess}</strong>
+          Thank you for choosing Viśvam. Order reference: <strong className="text-ink font-mono">{orderSuccess}</strong>
         </p>
         <p className="text-xs text-muted-foreground max-w-md leading-relaxed mb-8">
           Your order will be nitrogen-sealed in airtight cold-chain packaging and dispatched via priority courier. A tracking notification has been sent to your account email: <strong className="text-ink">{user?.email}</strong>.

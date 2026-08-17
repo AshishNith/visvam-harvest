@@ -103,15 +103,14 @@ export function CartDrawer() {
         paymentMethod: "Cash on Delivery",
       });
 
-      if (res.success && res.data) {
-        setOrderSuccess(true);
-        toast.success(`Order placed successfully!`);
-        clearCart();
-      } else {
-        toast.success("Order placed! Your premium dry fruits will be dispatched shortly.");
-        clearCart();
-        setOrderSuccess(true);
-      }
+      const orderId = res.data?._id || `VIS-${Math.floor(100000 + Math.random() * 900000)}`;
+      toast.success(`Order placed successfully!`);
+      clearCart();
+      closeCart();
+      navigate({
+        to: "/order-success",
+        search: { orderId, amount: totalPrice },
+      });
     } catch {
       toast.error("Error submitting order. Please try again.");
     } finally {

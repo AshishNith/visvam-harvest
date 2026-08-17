@@ -4,20 +4,50 @@ import { SiteLayout } from "@/components/SiteLayout";
 import cashews1 from "@/assets/cashews-1.png";
 
 export const Route = createFileRoute("/story")({
-  head: () => ({
-    meta: [
-      { title: "Our Farm Story — Viśvam" },
-      {
-        name: "description",
-        content:
-          "Discover the heritage behind Viśvam: single-origin orchards, traditional sun-drying, cold storage preservation, and zero preservatives.",
-      },
-      { property: "og:title", content: "Our Farm Story — Viśvam" },
-      { property: "og:description", content: "Direct-from-orchard harvest of premium nuts and dried fruits." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  head: () => {
+    const canonicalUrl = "https://visvam.in/story";
+    const storySchema = {
+      "@context": "https://schema.org",
+      "@type": "AboutPage",
+      "name": "Our Farm Story — Viśvam",
+      "description": "Discover the heritage behind Viśvam: single-origin orchards, traditional sun-drying, cold storage preservation, and zero preservatives.",
+      "url": canonicalUrl,
+      "publisher": {
+        "@type": "Organization",
+        "name": "Viśvam"
+      }
+    };
+
+    return {
+      meta: [
+        { title: "Our Farm Story & Orchard Heritage — Viśvam" },
+        {
+          name: "description",
+          content:
+            "Discover the heritage behind Viśvam: direct single-origin sourcing from California, Kashmir, & Kandahar, 4°C cold lock preservation, and zero added preservatives.",
+        },
+        {
+          name: "keywords",
+          content: "Viśvam farm story, single origin dry fruits, cold lock storage dry fruits, unadulterated nuts, Kashmiri walnut orchards",
+        },
+        { property: "og:title", content: "Our Farm Story — Viśvam" },
+        { property: "og:description", content: "Direct-from-orchard harvest of premium nuts and dried fruits." },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: canonicalUrl },
+        { property: "og:image", content: "https://visvam.in/Visvam-Logo.png" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: "Our Farm Story — Viśvam" },
+        { name: "twitter:image", content: "https://visvam.in/Visvam-Logo.png" },
+      ],
+      links: [{ rel: "canonical", href: canonicalUrl }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify(storySchema),
+        },
+      ],
+    };
+  },
   component: Story,
 });
 

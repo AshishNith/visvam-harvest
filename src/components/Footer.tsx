@@ -24,7 +24,7 @@ export function Footer() {
     try {
       const res = await subscribeNewsletterToBackend(email);
       if (res.success) {
-        toast.success(res.message || "Subscribed to Royal Harvest Circle!");
+        toast.success(res.message || "Subscribed to Letters from Viśvam!");
         setEmail("");
       } else {
         toast.error(res.message || "Failed to subscribe.");
@@ -41,9 +41,9 @@ export function Footer() {
       <div className="max-w-[1400px] mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 mb-20">
           <div className="max-w-md">
-            <h3 className="font-display italic text-3xl mb-6">Join the Harvest Circle.</h3>
+            <h3 className="font-display italic text-3xl mb-6">Letters from Viśvam.</h3>
             <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
-              Subscribe for exclusive access to seasonal crop drops, festive gift box previews, and 10% off your first order.
+              Be the first to hear about new arrivals, seasonal releases, and first word on anything worth knowing.
             </p>
             <form className="flex border-b border-ink" onSubmit={handleSubscribe}>
               <input
@@ -73,10 +73,10 @@ export function Footer() {
 
           <div className="grid grid-cols-3 gap-10">
             <div className="space-y-4">
-              <h6 className="text-[10px] tracked font-semibold uppercase">Shop Harvest</h6>
+              <h6 className="text-[10px] tracked font-semibold uppercase">Shop Now</h6>
               <ul className="space-y-2.5 text-[11px]">
-                <li><Link to="/gourmet" className="hover:text-clay transition">Gourmet</Link></li>
                 <li><Link to="/nuts" className="hover:text-clay transition">Nuts & Dried Fruits</Link></li>
+                <li><Link to="/gourmet" className="hover:text-clay transition">Gourmet</Link></li>
                 <li><Link to="/gifting" className="hover:text-clay transition">Gifting</Link></li>
               </ul>
             </div>
@@ -99,7 +99,7 @@ export function Footer() {
                 <li><Link to="/terms" className="hover:text-clay transition">Terms & Conditions</Link></li>
                 <li><Link to="/returns" className="hover:text-clay transition">Return & Refund Policy</Link></li>
                 <li><Link to="/shipping" className="hover:text-clay transition">Shipping & Delivery</Link></li>
-                <li><Link to="/contact" className="hover:text-clay transition">Contact Concierge</Link></li>
+                <li><Link to="/contact" className="hover:text-clay transition">Contact Support</Link></li>
               </ul>
             </div>
           </div>

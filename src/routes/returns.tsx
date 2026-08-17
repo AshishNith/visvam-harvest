@@ -4,12 +4,19 @@ import { SiteLayout } from "@/components/SiteLayout";
 export const Route = createFileRoute("/returns")({
   head: () => ({
     meta: [
-      { title: "Return & Refund Policy — Viśvam" },
+      { title: "Return & Refund Policy — Viśvam Quality Guarantee" },
       {
         name: "description",
-        content: "Learn about Viśvam's 100% Quality Guarantee and seamless return policy.",
+        content: "Learn about Viśvam's 100% Quality Guarantee, 7-day return policy, transit damage coverage, and refund timelines.",
       },
+      { property: "og:title", content: "Return & Refund Policy — Viśvam" },
+      { property: "og:description", content: "100% Quality Guarantee and seamless return policy for dry fruits and nuts." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://visvam.in/returns" },
+      { property: "og:image", content: "https://visvam.in/Visvam-Logo.png" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://visvam.in/returns" }],
   }),
   component: ReturnPolicy,
 });

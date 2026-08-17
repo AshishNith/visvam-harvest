@@ -1,0 +1,30 @@
+# Robots.txt for Viśvam — Premium Dry Fruits & Handpicked Nuts
+# Domain: https://visvam.in
+
+User-agent: *
+Allow: /
+Allow: /nuts
+Allow: /gourmet
+Allow: /gifting
+Allow: /combos
+Allow: /dried-fruits
+Allow: /exotic-seeds
+Allow: /story
+Allow: /contact
+Allow: /shipping
+Allow: /returns
+Allow: /privacy
+Allow: /terms
+Allow: /menu/
+
+# Disallow private user flows & internal utilities
+Disallow: /checkout
+Disallow: /order-success
+Disallow: /profile
+Disallow: /10-pdf
+Disallow: /proposal-pdf
+Disallow: /domain-guide
+Disallow: /api/
+
+# Sitemap Location
+Sitemap: https://visvam.in/sitemap.xml

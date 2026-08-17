@@ -4,12 +4,19 @@ import { SiteLayout } from "@/components/SiteLayout";
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacy Policy — Viśvam" },
+      { title: "Privacy Policy — Viśvam Data Protection" },
       {
         name: "description",
-        content: "Learn how Viśvam protects your personal data, order details, and privacy.",
+        content: "Learn how Viśvam safeguards your personal information, order data, payment security, and privacy rights.",
       },
+      { property: "og:title", content: "Privacy Policy — Viśvam" },
+      { property: "og:description", content: "Data protection and privacy guidelines for Viśvam customers." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://visvam.in/privacy" },
+      { property: "og:image", content: "https://visvam.in/Visvam-Logo.png" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://visvam.in/privacy" }],
   }),
   component: PrivacyPolicy,
 });
@@ -63,7 +70,7 @@ function PrivacyPolicy() {
             <section className="space-y-4">
               <h2 className="font-display italic text-2xl text-ink">5. Your Rights & Contact</h2>
               <p className="text-muted-foreground">
-                You hold the right to access, update, or request the deletion of your personal data at any time. For privacy requests or inquiries, please contact our privacy concierge at{" "}
+                You hold the right to access, update, or request the deletion of your personal data at any time. For privacy requests or inquiries, please contact our support team at{" "}
                 <a href="mailto:Contact@visvam.in" className="text-clay font-medium underline">
                   Contact@visvam.in
                 </a>.

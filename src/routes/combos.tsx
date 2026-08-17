@@ -8,20 +8,50 @@ import { products, type Product } from "@/lib/products";
 import { fetchProductsFromBackend } from "@/lib/api";
 
 export const Route = createFileRoute("/combos")({
-  head: () => ({
-    meta: [
-      { title: "Gift Boxes & Combos — Viśvam" },
-      {
-        name: "description",
-        content:
-          "Handcrafted luxury dry fruit gift boxes, festive celebration collections, and corporate hampers.",
-      },
-      { property: "og:title", content: "Gift Boxes & Combos — Viśvam" },
-      { property: "og:description", content: "Opulent gift boxes with vacuum-sealed premium nuts and dried fruits." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  head: () => {
+    const canonicalUrl = "https://visvam.in/combos";
+    const collectionSchema = {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "Gift Boxes & Combos — Viśvam",
+      "description": "Handcrafted luxury dry fruit gift boxes, festive celebration collections, and corporate hampers.",
+      "url": canonicalUrl,
+      "publisher": {
+        "@type": "Organization",
+        "name": "Viśvam"
+      }
+    };
+
+    return {
+      meta: [
+        { title: "Dry Fruit Combos & Gift Boxes — Viśvam | Luxury Hampers" },
+        {
+          name: "description",
+          content:
+            "Shop curated dry fruit combo packs, 4-in-1 luxury gift boxes, and festive corporate hampers with vacuum-sealed California almonds, cashews, and walnuts.",
+        },
+        {
+          name: "keywords",
+          content: "dry fruit combos online, dry fruit gift box, festive hampers India, corporate dry fruit box, luxury combos Viśvam",
+        },
+        { property: "og:title", content: "Gift Boxes & Combos — Viśvam" },
+        { property: "og:description", content: "Opulent gift boxes with vacuum-sealed premium nuts and dried fruits." },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: canonicalUrl },
+        { property: "og:image", content: "https://visvam.in/Visvam-Logo.png" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: "Gift Boxes & Combos — Viśvam" },
+        { name: "twitter:image", content: "https://visvam.in/Visvam-Logo.png" },
+      ],
+      links: [{ rel: "canonical", href: canonicalUrl }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify(collectionSchema),
+        },
+      ],
+    };
+  },
   component: Combos,
 });
 

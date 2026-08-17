@@ -5,7 +5,7 @@ export const Route = createFileRoute("/proposal-pdf")({
   head: () => ({
     meta: [
       { title: "Client Proposal & SLA Agreement — GoRan AI" },
-      { name: "description", content: "Official Website Development & Maintenance Agreement by GoRan AI for Viśvam." },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: ProposalPage,

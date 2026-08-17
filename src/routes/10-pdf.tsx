@@ -10,7 +10,7 @@ export const Route = createFileRoute("/10-pdf")({
   head: () => ({
     meta: [
       { title: "10 Bestseller Section Layout Concepts — Viśvam" },
-      { name: "description", content: "10 Elevated, vertically centered, left-aligned Bestseller section designs for Viśvam." },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: TenLayoutsPage,

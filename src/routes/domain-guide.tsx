@@ -6,7 +6,7 @@ export const Route = createFileRoute("/domain-guide")({
   head: () => ({
     meta: [
       { title: "Domain Setup & DNS Guide — visvam.in" },
-      { name: "description", content: "Step-by-step guide to connect visvam.in domain via Spaceship.com DNS settings." },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: DomainGuidePage,

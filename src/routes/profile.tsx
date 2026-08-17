@@ -25,6 +25,12 @@ import { formatPrice } from "@/lib/cart-context";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/profile")({
+  head: () => ({
+    meta: [
+      { title: "My Account — Viśvam" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: ProfilePage,
 });
 
@@ -185,7 +191,7 @@ function ProfilePage() {
             <div className="flex-1">
               <h1 className="font-display italic text-3xl text-ink">My Account</h1>
               <p className="text-[11px] tracked uppercase text-muted-foreground">
-                Viśvam Harvest Royal Member Portal
+                Viśvam Royal Member Portal
               </p>
             </div>
           </div>

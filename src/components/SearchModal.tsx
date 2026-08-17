@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Search, X, ArrowRight, Sparkles } from "lucide-react";
 import { products, type Product } from "@/lib/products";
 import { formatPrice } from "@/lib/cart-context";
+import { fetchProductsFromBackend } from "@/lib/api";
 
 type SearchModalProps = {
   isOpen: boolean;
@@ -13,17 +14,31 @@ const POPULAR_TAGS = ["Jumbo Almonds", "W240 Cashews", "Medjool Dates", "Mamra A
 
 export function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const [query, setQuery] = useState("");
+  const [allProducts, setAllProducts] = useState<Product[]>(products);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchProductsFromBackend().then((backendProducts) => {
+        if (backendProducts && backendProducts.length > 0) {
+          const map = new Map<string, Product>();
+          products.forEach((p) => map.set(p.slug, p));
+          backendProducts.forEach((p) => map.set(p.slug, p));
+          setAllProducts(Array.from(map.values()));
+        }
+      });
+    }
+  }, [isOpen]);
 
   const results = useMemo(() => {
     if (!query.trim()) return [];
     const q = query.toLowerCase();
-    return products.filter(
+    return allProducts.filter(
       (p) =>
         p.name.toLowerCase().includes(q) ||
         p.description.toLowerCase().includes(q) ||
         p.category.toLowerCase().includes(q)
     );
-  }, [query]);
+  }, [query, allProducts]);
 
   useEffect(() => {
     if (isOpen) {

@@ -20,6 +20,7 @@ import { Route as ExoticSeedsRouteImport } from './routes/exotic-seeds'
 import { Route as GiftingRouteImport } from './routes/gifting'
 import { Route as GourmetRouteImport } from './routes/gourmet'
 import { Route as NutsRouteImport } from './routes/nuts'
+import { Route as OrderSuccessRouteImport } from './routes/order-success'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ProposalPdfRouteImport } from './routes/proposal-pdf'
@@ -84,6 +85,11 @@ const NutsRoute = NutsRouteImport.update({
   path: '/nuts',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrderSuccessRoute = OrderSuccessRouteImport.update({
+  id: '/order-success',
+  path: '/order-success',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -137,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/gifting': typeof GiftingRoute
   '/gourmet': typeof GourmetRoute
   '/nuts': typeof NutsRoute
+  '/order-success': typeof OrderSuccessRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/proposal-pdf': typeof ProposalPdfRoute
@@ -158,6 +165,7 @@ export interface FileRoutesByTo {
   '/gifting': typeof GiftingRoute
   '/gourmet': typeof GourmetRoute
   '/nuts': typeof NutsRoute
+  '/order-success': typeof OrderSuccessRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/proposal-pdf': typeof ProposalPdfRoute
@@ -180,6 +188,7 @@ export interface FileRoutesById {
   '/gifting': typeof GiftingRoute
   '/gourmet': typeof GourmetRoute
   '/nuts': typeof NutsRoute
+  '/order-success': typeof OrderSuccessRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/proposal-pdf': typeof ProposalPdfRoute
@@ -203,6 +212,7 @@ export interface FileRouteTypes {
     | '/gifting'
     | '/gourmet'
     | '/nuts'
+    | '/order-success'
     | '/privacy'
     | '/profile'
     | '/proposal-pdf'
@@ -224,6 +234,7 @@ export interface FileRouteTypes {
     | '/gifting'
     | '/gourmet'
     | '/nuts'
+    | '/order-success'
     | '/privacy'
     | '/profile'
     | '/proposal-pdf'
@@ -245,6 +256,7 @@ export interface FileRouteTypes {
     | '/gifting'
     | '/gourmet'
     | '/nuts'
+    | '/order-success'
     | '/privacy'
     | '/profile'
     | '/proposal-pdf'
@@ -267,6 +279,7 @@ export interface RootRouteChildren {
   GiftingRoute: typeof GiftingRoute
   GourmetRoute: typeof GourmetRoute
   NutsRoute: typeof NutsRoute
+  OrderSuccessRoute: typeof OrderSuccessRoute
   PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
   ProposalPdfRoute: typeof ProposalPdfRoute
@@ -356,6 +369,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NutsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/order-success': {
+      id: '/order-success'
+      path: '/order-success'
+      fullPath: '/order-success'
+      preLoaderRoute: typeof OrderSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -427,6 +447,7 @@ const rootRouteChildren: RootRouteChildren = {
   GiftingRoute: GiftingRoute,
   GourmetRoute: GourmetRoute,
   NutsRoute: NutsRoute,
+  OrderSuccessRoute: OrderSuccessRoute,
   PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
   ProposalPdfRoute: ProposalPdfRoute,

@@ -4,12 +4,19 @@ import { SiteLayout } from "@/components/SiteLayout";
 export const Route = createFileRoute("/shipping")({
   head: () => ({
     meta: [
-      { title: "Shipping & Delivery Policy — Viśvam" },
+      { title: "Shipping & Delivery Policy — Viśvam Logistics" },
       {
         name: "description",
-        content: "Discover Viśvam's cold-chain shipping logistics and express delivery timelines.",
+        content: "Read Viśvam's cold-chain shipping logistics, nitrogen-sealed packaging details, express delivery timelines, and tracking info across India.",
       },
+      { property: "og:title", content: "Shipping & Delivery Policy — Viśvam" },
+      { property: "og:description", content: "Cold-chain shipping policy and express courier delivery timelines across India." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://visvam.in/shipping" },
+      { property: "og:image", content: "https://visvam.in/Visvam-Logo.png" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://visvam.in/shipping" }],
   }),
   component: ShippingPolicy,
 });
@@ -56,7 +63,7 @@ function ShippingPolicy() {
             <section className="space-y-4">
               <h2 className="font-display italic text-2xl text-ink">4. Shipping Charges & Festive Gifting</h2>
               <p className="text-muted-foreground">
-                We offer complimentary express shipping on orders exceeding specified minimum thresholds. For bulk corporate gifting and festive hampers, custom delivery schedules can be arranged via our concierge.
+                We offer complimentary express shipping on orders exceeding specified minimum thresholds. For bulk corporate gifting and festive hampers, custom delivery schedules can be arranged via our support team.
               </p>
             </section>
           </div>

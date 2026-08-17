@@ -4,12 +4,19 @@ import { SiteLayout } from "@/components/SiteLayout";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Terms & Conditions — Viśvam" },
+      { title: "Terms & Conditions — Viśvam Legal Terms" },
       {
         name: "description",
-        content: "Review the Terms & Conditions governing orders and website usage at Viśvam.",
+        content: "Review the Terms & Conditions governing single-origin dry fruit purchases, delivery, and website usage at Viśvam.",
       },
+      { property: "og:title", content: "Terms & Conditions — Viśvam" },
+      { property: "og:description", content: "Terms and conditions governing purchases and website usage at Viśvam." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://visvam.in/terms" },
+      { property: "og:image", content: "https://visvam.in/Visvam-Logo.png" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://visvam.in/terms" }],
   }),
   component: TermsAndConditions,
 });
