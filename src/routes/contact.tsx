@@ -77,8 +77,8 @@ function ContactUs() {
                 <div>
                   <h5 className="text-xs font-semibold uppercase tracking-wider text-ink mb-1">Email Inquiries</h5>
                   <p className="text-xs text-muted-foreground mb-1">Customer Support & Orders:</p>
-                  <a href="mailto:support@visvam.in" className="text-sm text-clay font-medium hover:underline">
-                    support@visvam.in
+                  <a href="mailto:Contact@visvam.in" className="text-sm text-clay font-medium hover:underline">
+                    Contact@visvam.in
                   </a>
                 </div>
               </div>
@@ -89,8 +89,10 @@ function ContactUs() {
                 </div>
                 <div>
                   <h5 className="text-xs font-semibold uppercase tracking-wider text-ink mb-1">Phone Helpline</h5>
-                  <p className="text-xs text-muted-foreground mb-1">Mon - Sat (9:00 AM - 7:00 PM IST):</p>
-                  <p className="text-sm text-ink font-medium">+91 (800) 847-826</p>
+                  <p className="text-xs text-muted-foreground mb-1">Mon - Sat (9:30 AM - 6:00 PM IST):</p>
+                  <a href="tel:+919217870974" className="text-sm text-ink font-medium hover:text-clay transition-colors">
+                    +91 9217870974
+                  </a>
                 </div>
               </div>
 
@@ -99,9 +101,9 @@ function ContactUs() {
                   <MapPin size={18} />
                 </div>
                 <div>
-                  <h5 className="text-xs font-semibold uppercase tracking-wider text-ink mb-1">Harvest Headquarters</h5>
+                  <h5 className="text-xs font-semibold uppercase tracking-wider text-ink mb-1">Viśvam Headquarters</h5>
                   <p className="text-xs text-muted-foreground leading-relaxed max-w-xs">
-                    Viśvam Estates, Orchard Heights, Bengaluru, KA 560001
+                    F-329, 2nd floor, sector 63, Noida, 201309
                   </p>
                 </div>
               </div>

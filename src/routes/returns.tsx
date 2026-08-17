@@ -50,8 +50,8 @@ function ReturnPolicy() {
               <h2 className="font-display italic text-2xl text-ink">3. Damaged or Compromised Shipments</h2>
               <p className="text-muted-foreground">
                 If your parcel suffers transit damage or seal breakage, please capture a photo or short video of the unopened package and share it with our support team at{" "}
-                <a href="mailto:support@visvam.in" className="text-clay font-medium underline">
-                  support@visvam.in
+                <a href="mailto:Contact@visvam.in" className="text-clay font-medium underline">
+                  Contact@visvam.in
                 </a>.
               </p>
             </section>
