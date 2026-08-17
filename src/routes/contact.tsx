@@ -56,9 +56,6 @@ function ContactUs() {
       <div className="bg-background min-h-screen py-20 md:py-28">
         <div className="max-w-[1200px] mx-auto px-6">
           <div className="mb-16 border-b border-border/40 pb-10">
-            <span className="text-[11px] font-mono text-clay uppercase tracking-widest font-semibold block mb-3">
-              CLIENT CONCIERGE
-            </span>
             <h1 className="font-display italic text-4xl sm:text-6xl text-ink">
               Contact & Support
             </h1>
