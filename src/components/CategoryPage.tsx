@@ -15,7 +15,7 @@ const META: Record<Category, { index: string; title: string; intro: string }> = 
     index: "02",
     title: "Nuts & Dried Fruits",
     intro:
-      "Handpicked California Jumbo Almonds, W240 Whole Cashews, Kashmiri Extra-Light Walnuts, Roasted Pistachios, and Royal Iranian Mamra Almonds. Cold-stored at 4°C to lock in natural oils and orchard crunch.",
+      "Handpicked California Jumbo Almonds, W240 Whole Cashews, Kashmiri Extra-Light Walnuts, Roasted Pistachios, and Royal Iranian Mamra Almonds. Cold-stored at 4°C to lock in natural oils and fresh crunch.",
   },
   gifting: {
     index: "03",

@@ -57,7 +57,7 @@ export function ScrollStackCategories() {
           {CATEGORIES.map((cat) => (
             <div
               key={cat.id}
-              className="relative aspect-[21/9] sm:aspect-[24/9] overflow-hidden group rounded-xs shadow-sm"
+              className="relative aspect-[21/9] sm:aspect-[24/9] overflow-hidden group rounded-2xl sm:rounded-3xl shadow-sm"
             >
               <img
                 src={cat.image}

@@ -11,9 +11,7 @@ export type Product = {
   images: string[];
   description: string;
   serving: string;
-  origin: string;
   stock?: number;
-  grade?: string;
   benefits?: string[];
   bestseller?: boolean;
   isNew?: boolean;
@@ -36,7 +34,7 @@ export const products: Product[] = [
   {
     slug: "california-jumbo-almonds",
     name: "California Jumbo Almonds (Badam)",
-    tagline: "Grade A1 · California Orchards · Cold-Stored",
+    tagline: "Cold-Stored · Nitrogen-Locked Freshness",
     price: 1199,
     category: "nuts",
     badge: "Bestseller",
@@ -48,15 +46,13 @@ export const products: Product[] = [
     description:
       "Hand-selected jumbo whole almonds harvested at peak oil maturity. Gently air-dried and nitrogen-sealed to retain natural crunch, vitamin E, and sweet buttery flavor.",
     serving: "500g Pouch",
-    origin: "California, USA",
-    grade: "Jumbo A1",
     benefits: ["Rich in Vitamin E", "Heart Healthy", "High Plant Protein"],
     bestseller: true,
   },
   {
     slug: "king-w240-cashews",
     name: "King W240 Whole Cashews (Kaju)",
-    tagline: "W240 King Size · Mangaluru Origin · Slow-Roasted",
+    tagline: "W240 King Size · Slow-Roasted",
     price: 1399,
     category: "nuts",
     badge: "Premium Grade",
@@ -68,15 +64,13 @@ export const products: Product[] = [
     description:
       "Extra-large W240 whole cashew kernels renowned for their rich creaminess and smooth bite. Naturally sun-dried and lightly batch-roasted without artificial oils.",
     serving: "500g Jar",
-    origin: "Mangaluru, India",
-    grade: "W240 Whole",
     benefits: ["Rich in Magnesium", "Zero Cholesterol", "Creamy Crunch"],
     bestseller: true,
   },
   {
     slug: "kashmiri-snow-walnuts",
     name: "Kashmiri Extra-Light Walnuts (Akhrot)",
-    tagline: "Extra-Light Halves · Single-Origin Kashmir · Brain Food",
+    tagline: "Extra-Light Halves · Brain Food",
     price: 1549,
     category: "nuts",
     badge: "New Harvest",
@@ -88,8 +82,6 @@ export const products: Product[] = [
     description:
       "Hand-extracted half kernels from wild Kashmiri walnut groves. Naturally sweet with zero bitterness, packed with heart-healthy Omega-3 ALA fatty acids.",
     serving: "500g Box",
-    origin: "Anantnag, Kashmir",
-    grade: "Snow Light Halves",
     benefits: ["High Omega-3 ALA", "Memory Support", "100% Organic"],
     bestseller: true,
     isNew: true,
@@ -109,8 +101,6 @@ export const products: Product[] = [
     description:
       "Naturally opened jumbo pistachios slow-roasted over wood embers and lightly dusted with unrefined pink salt crystals. Easy to shell and intensely flavorful.",
     serving: "500g Pouch",
-    origin: "Kerman Valley",
-    grade: "Jumbo 20/22",
     benefits: ["High Fiber", "Potassium Rich", "Low Calorie Snack"],
     bestseller: true,
   },
@@ -129,8 +119,6 @@ export const products: Product[] = [
     description:
       "The undisputed king of almonds. Cultivated in mineral-rich mountain soil, Mamra almonds possess over 50% natural almond oil content for unmatched brain & wellness benefits.",
     serving: "500g Tin",
-    origin: "Chaharmahal, Iran",
-    grade: "Authentic Mamra",
     benefits: ["50%+ Natural Oil", "Brain Boost", "Rich Antioxidants"],
   },
   {
@@ -148,8 +136,6 @@ export const products: Product[] = [
     description:
       "Hand-strung dried figs harvested from Kandahar orchards. Naturally sun-dried until the natural fruit sugars caramelize into a soft, honey-like center rich in dietary fiber.",
     serving: "500g Pack",
-    origin: "Kandahar, Afghanistan",
-    grade: "Grade A Garland",
     benefits: ["Digestive Wellness", "Rich Calcium Source", "Natural Sweetener"],
     bestseller: false,
   },
@@ -168,8 +154,6 @@ export const products: Product[] = [
     description:
       "Known as the fruit of kings. Abundantly plump, soft, and moist Medjool dates with a rich caramel texture. Perfect as a natural pre-workout energy boost.",
     serving: "500g Box",
-    origin: "Jericho Oasis",
-    grade: "Super Jumbo",
     benefits: ["Instant Energy Boost", "High Iron", "Zero Additives"],
     bestseller: false,
   },
@@ -188,8 +172,6 @@ export const products: Product[] = [
     description:
       "Slender long green raisins shade-dried in traditional earthen Kishmish Khana rooms to preserve their vivid green hue, tart acidity, and high antioxidant profile.",
     serving: "500g Pouch",
-    origin: "Herat, Afghanistan",
-    grade: "Long Green A+",
     benefits: ["High Iron", "Blood Health", "Natural Energy"],
   },
   {
@@ -207,8 +189,6 @@ export const products: Product[] = [
     description:
       "A vibrant berry blend of dark wild blueberries and succulent whole red cranberries. Lightly sweetened with natural apple juice concentrate for daily immunity support.",
     serving: "400g Jar",
-    origin: "Pacific Northwest",
-    grade: "Wild Harvest",
     benefits: ["Rich in Polyphenols", "Urinary Health", "Vibrant Taste"],
     isNew: true,
   },
@@ -227,8 +207,6 @@ export const products: Product[] = [
     description:
       "Silky, buttery macadamia nut halves and wholes harvested in subterranean Australian soil. Unmatched rich texture with ultra-healthy keto-friendly monounsaturated fats.",
     serving: "400g Glass Jar",
-    origin: "Queensland, Australia",
-    grade: "Style 1 Whole",
     benefits: ["Keto Approved", "Monounsaturated Fats", "Silky Texture"],
   },
   {
@@ -246,8 +224,6 @@ export const products: Product[] = [
     description:
       "A nutrient-dense blend of 7 super seeds lightly dry-roasted with Himalayan pink salt. Packed with plant protein, magnesium, zinc, and dietary fiber for effortless health.",
     serving: "500g Pouch",
-    origin: "Craft Roasted",
-    grade: "7-Seed Synergy",
     benefits: ["Plant Protein", "Zinc & Magnesium", "Zero Oil Roasted"],
     bestseller: true,
   },
@@ -266,8 +242,6 @@ export const products: Product[] = [
     description:
       "An opulent handcrafted rigid gift box featuring four individually vacuum-sealed compartments of our finest Jumbo Almonds, W240 Cashews, Walnut Halves, and Roasted Pistachios.",
     serving: "1kg Luxury Gift Box",
-    origin: "Curated Collection",
-    grade: "Heritage Gift Edition",
     benefits: ["Vacuum Sealed Freshness", "Custom Ribbon Included", "100% Organic Selection"],
     bestseller: true,
   },
@@ -286,8 +260,6 @@ export const products: Product[] = [
     description:
       "The ultimate celebratory dry fruit collection. Includes Iranian Mamra Almonds, Royal Medjool King Dates, Dried Kandahar Figs, and Wild Berry Mix housed in an embossed metallic tin.",
     serving: "1.2kg Gold Tin",
-    origin: "Grand Selection",
-    grade: "Royal Edition",
     benefits: ["Gold Embossed Tin", "Air-tight Lock", "Guaranteed Premium Grade"],
     isNew: true,
   },

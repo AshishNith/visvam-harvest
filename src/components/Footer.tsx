@@ -8,8 +8,8 @@ import logoWordmark from "@/assets/Visvam Logo_Wordmark.png";
 
 const HARVEST_GUARANTEES = [
   { id: "100-natural", name: "100% Handpicked & Natural", detail: "Zero artificial preservatives, colorings or added oil" },
-  { id: "nitrogen-fresh", name: "Nitrogen-Flushed Packaging", detail: "Locks in natural oils, aroma and peak orchard crunch" },
-  { id: "direct-trade", name: "Direct Orchard Sourcing", detail: "Fair trade partnerships with premier global farms" },
+  { id: "nitrogen-fresh", name: "Nitrogen-Flushed Packaging", detail: "Locks in natural oils, aroma and peak fresh crunch" },
+  { id: "direct-trade", name: "Direct Harvest Sourcing", detail: "Fair trade partnerships with premier global farms" },
 ];
 
 export function Footer() {

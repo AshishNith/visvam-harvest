@@ -10,8 +10,8 @@ import logoEmblem from "@/assets/Visvam Logo.png";
 import { products } from "@/lib/products";
 
 const leftLinks = [
-  { to: "/gourmet", label: "Gourmet", category: "gourmet" },
   { to: "/nuts", label: "Nuts & Dried Fruits", category: "nuts" },
+  { to: "/gourmet", label: "Gourmet", category: "gourmet" },
   { to: "/gifting", label: "Gifting", category: "gifting" },
 ] as const;
 
@@ -113,37 +113,47 @@ export function Header() {
 
                   {/* Mega Menu Dropdown */}
                   {activeCategoryHover === l.category && (
-                    <div className="absolute top-full left-0 w-80 bg-background/98 backdrop-blur-md shadow-2xl p-4 animate-fade-up z-50 rounded-sm text-ink">
-                      <div className="flex items-center justify-between pb-2 mb-3">
-                        <span className="text-[9px] tracked text-muted-foreground uppercase font-semibold">
-                          Featured in {l.label}
-                        </span>
-                        <Link
-                          to={l.to}
-                          className="text-[9px] text-clay hover:underline flex items-center gap-1 font-sans capitalize"
-                        >
-                          View All <ArrowRight size={10} />
-                        </Link>
-                      </div>
-                      <div className="space-y-2">
-                        {products
-                          .filter((p) => p.category === l.category)
-                          .slice(0, 2)
-                          .map((p) => (
+                    <div className={`absolute top-full left-0 bg-background/98 backdrop-blur-md shadow-lg p-3 animate-fade-up z-50 rounded-xs text-ink border border-border/40 ${
+                      l.category === "gifting" ? "w-40" : "w-72"
+                    }`}>
+                      {l.category === "gifting" ? (
+                        <p className="text-xs text-muted-foreground text-center py-1 font-sans">
+                          Coming soon
+                        </p>
+                      ) : (
+                        <>
+                          <div className="flex items-center justify-between pb-2 mb-2 border-b border-border/30">
+                            <span className="text-[9px] tracked text-muted-foreground uppercase font-medium">
+                              Featured in {l.label}
+                            </span>
                             <Link
-                              key={p.slug}
-                              to="/menu/$slug"
-                              params={{ slug: p.slug }}
-                              className="flex items-center gap-3 p-2 hover:bg-cream/60 transition-colors"
+                              to={l.to}
+                              className="text-[9px] text-clay hover:underline flex items-center gap-1 font-sans capitalize"
                             >
-                              <img src={p.images[0]} alt={p.name} className="w-10 h-10 object-cover rounded-md" />
-                              <div className="min-w-0">
-                                <h5 className="text-xs font-medium text-ink truncate">{p.name}</h5>
-                                <p className="text-[10px] text-clay font-semibold">{formatPrice(p.price)}</p>
-                              </div>
+                              View All <ArrowRight size={10} />
                             </Link>
-                          ))}
-                      </div>
+                          </div>
+                          <div className="space-y-2 pt-1">
+                            {products
+                              .filter((p) => p.category === l.category)
+                              .slice(0, 2)
+                              .map((p) => (
+                                <Link
+                                  key={p.slug}
+                                  to="/menu/$slug"
+                                  params={{ slug: p.slug }}
+                                  className="flex items-center gap-3 p-2 hover:bg-cream/60 transition-colors"
+                                >
+                                  <img src={p.images[0]} alt={p.name} className="w-10 h-10 object-cover rounded-md" />
+                                  <div className="min-w-0">
+                                    <h5 className="text-xs font-medium text-ink truncate">{p.name}</h5>
+                                    <p className="text-[10px] text-clay font-semibold">{formatPrice(p.price)}</p>
+                                  </div>
+                                </Link>
+                              ))}
+                          </div>
+                        </>
+                      )}
                     </div>
                   )}
                 </div>
@@ -272,20 +282,20 @@ export function Header() {
               {/* Mobile Links */}
               <div className="flex flex-col space-y-3 pt-2">
                 <Link
+                  to="/nuts"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-xs font-medium tracked uppercase py-2 hover:text-clay flex items-center justify-between"
+                >
+                  <span>Nuts & Dried Fruits</span>
+                  <ArrowRight size={14} className="text-clay" />
+                </Link>
+
+                <Link
                   to="/gourmet"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="text-xs font-medium tracked uppercase py-2 hover:text-clay flex items-center justify-between"
                 >
                   <span>Gourmet</span>
-                  <ArrowRight size={14} className="text-clay" />
-                </Link>
-
-                <Link
-                  to="/nuts"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-xs font-medium tracked uppercase py-2 hover:text-clay flex items-center justify-between"
-                >
-                  <span>Nuts</span>
                   <ArrowRight size={14} className="text-clay" />
                 </Link>
 

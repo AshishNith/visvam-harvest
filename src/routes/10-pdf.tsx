@@ -204,9 +204,6 @@ function TenLayoutsPage() {
                 />
                 <div className="absolute bottom-4 left-4 right-4 bg-background/90 backdrop-blur-md p-4 rounded-2xl border border-border/30 flex items-center justify-between text-left">
                   <div>
-                    <span className="text-[10px] text-clay uppercase font-bold tracking-wider block text-left">
-                      {currentGsapProduct.origin}
-                    </span>
                     <h5 className="font-display text-lg text-ink text-left">
                       {currentGsapProduct.name}
                     </h5>
@@ -233,7 +230,7 @@ function TenLayoutsPage() {
 
                   <div className="flex items-center gap-2 text-clay">
                     <Layers size={14} />
-                    <span className="text-[10px] uppercase font-bold tracking-wider">0{idx + 1} Harvest Selection • {p.origin}</span>
+                    <span className="text-[10px] uppercase font-bold tracking-wider">0{idx + 1} Harvest Selection</span>
                   </div>
 
                   <h4 className="font-display text-4xl text-ink text-left">{p.name}</h4>
@@ -294,9 +291,6 @@ function TenLayoutsPage() {
                 <div>
                   <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 bg-cream/60 flex items-center justify-center">
                     <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover object-center rounded-2xl" />
-                    <span className="absolute top-3 left-3 bg-ink/90 text-white text-[9px] px-2.5 py-0.5 rounded-full uppercase font-medium tracked">
-                      {p.origin}
-                    </span>
                   </div>
                   <div className="flex items-center gap-1 text-amber-600 text-xs mb-1">
                     <Star size={11} fill="currentColor" />
@@ -341,7 +335,6 @@ function TenLayoutsPage() {
                 </span>
               </div>
               <div className="space-y-2 text-left">
-                <span className="text-[10px] uppercase tracking-widest text-clay font-semibold block text-left">{bestsellers[0].origin}</span>
                 <h4 className="font-display text-3xl text-ink text-left">{bestsellers[0].name}</h4>
                 <p className="text-xs text-muted-foreground leading-relaxed text-left">{bestsellers[0].description}</p>
               </div>
@@ -372,7 +365,6 @@ function TenLayoutsPage() {
                   <div className="flex items-center gap-5 text-left">
                     <img src={p.images[0]} alt={p.name} className="w-20 h-20 rounded-2xl object-cover object-center shrink-0 bg-cream" />
                     <div className="text-left">
-                      <span className="text-[9px] uppercase tracking-wider text-clay font-bold block text-left">{p.origin}</span>
                       <h5 className="font-display text-xl text-ink text-left">{p.name}</h5>
                       <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5 text-left">{p.tagline}</p>
                     </div>
@@ -410,7 +402,6 @@ function TenLayoutsPage() {
                       {p.serving}
                     </span>
                   </div>
-                  <span className="text-[9px] uppercase tracking-wider text-clay font-bold block text-left">{p.origin}</span>
                   <h5 className="font-display text-lg text-ink line-clamp-1 mt-0.5 text-left">{p.name}</h5>
                   <p className="text-sm font-bold text-ink mt-1 text-left">{formatPrice(p.price)}</p>
                 </div>
@@ -475,10 +466,7 @@ function TenLayoutsPage() {
                       </span>
                     </div>
                     <div className="space-y-1.5 text-left">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] uppercase text-clay font-bold">{p.origin}</span>
                         <span className="text-xs text-muted-foreground">{p.serving}</span>
-                      </div>
                       <h5 className="font-display text-xl text-ink text-left">{p.name}</h5>
                       <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed text-left">{p.description}</p>
                     </div>
@@ -514,12 +502,7 @@ function TenLayoutsPage() {
                 <div className="flex items-center gap-6 text-left">
                   <img src={p.images[0]} alt={p.name} className="w-16 h-16 rounded-full object-cover object-center bg-cream border border-border/40 shrink-0" />
                   <div className="text-left">
-                    <div className="flex items-center gap-3">
                       <h5 className="font-display text-2xl text-ink text-left">{p.name}</h5>
-                      <span className="text-clay text-[10px] uppercase font-semibold tracked">
-                        {p.origin}
-                      </span>
-                    </div>
                     <p className="text-xs text-muted-foreground mt-1 line-clamp-1 text-left">{p.tagline}</p>
                   </div>
                 </div>
@@ -559,7 +542,6 @@ function TenLayoutsPage() {
               </div>
               <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pt-2 text-left">
                 <div className="text-left">
-                  <span className="text-[10px] uppercase text-clay font-bold block text-left">{bestsellers[0].origin}</span>
                   <h4 className="font-display text-3xl text-ink text-left">{bestsellers[0].name}</h4>
                   <p className="text-xs text-muted-foreground mt-1 max-w-md text-left">{bestsellers[0].tagline}</p>
                 </div>
@@ -615,12 +597,7 @@ function TenLayoutsPage() {
                     <img src={activeProd.images[0]} alt={activeProd.name} className="w-full h-full object-cover object-center rounded-2xl" />
                   </div>
                   <div className="md:col-span-7 space-y-4 text-left self-center my-auto">
-                    <div className="flex items-center gap-3 text-left">
-                      <span className="text-clay font-bold text-[10px] uppercase tracking-wider">
-                        {activeProd.origin}
-                      </span>
-                      <span className="text-xs text-muted-foreground">• {activeProd.serving}</span>
-                    </div>
+                      <span className="text-xs text-muted-foreground">{activeProd.serving}</span>
                     <h4 className="font-display text-4xl text-ink text-left">{activeProd.name}</h4>
                     <p className="text-sm text-muted-foreground leading-relaxed max-w-xl text-left">{activeProd.description}</p>
                     <div className="flex items-center gap-8 pt-4">
@@ -672,7 +649,6 @@ function TenLayoutsPage() {
                     <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover object-center rounded-full" />
                   </div>
                   <div className="text-left">
-                    <span className="text-[10px] text-clay uppercase font-bold tracking-wider block text-left">{p.origin}</span>
                     <h5 className="font-display text-2xl text-ink mt-0.5 text-left">{p.name}</h5>
                     <span className="text-base font-bold text-ink block mt-1 text-left">{formatPrice(p.price)}</span>
                   </div>

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { Search, X, ArrowRight, Sparkles } from "lucide-react";
 import { products, type Product } from "@/lib/products";
@@ -21,11 +21,23 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
       (p) =>
         p.name.toLowerCase().includes(q) ||
         p.description.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q) ||
-        (p.grade && p.grade.toLowerCase().includes(q)) ||
-        (p.origin && p.origin.toLowerCase().includes(q))
+        p.category.toLowerCase().includes(q)
     );
   }, [query]);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -38,7 +50,10 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
       />
 
       {/* Dialog Container */}
-      <div className="relative w-full max-w-2xl bg-background border border-border shadow-2xl z-10 overflow-hidden animate-fade-up">
+      <div
+        data-lenis-prevent
+        className="relative w-full max-w-2xl bg-background border border-border shadow-2xl z-10 overflow-hidden animate-fade-up overscroll-contain"
+      >
         {/* Header Bar */}
         <div className="flex items-center px-6 py-4 border-b border-border bg-cream/40 gap-3">
           <Search size={20} className="text-clay shrink-0" strokeWidth={1.5} />
@@ -68,7 +83,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
         </div>
 
         {/* Modal Content */}
-        <div className="p-6 max-h-[70vh] overflow-y-auto">
+        <div data-lenis-prevent className="p-6 max-h-[70vh] overflow-y-auto overscroll-contain">
           {!query.trim() ? (
             <div className="space-y-6">
               <div>
@@ -108,7 +123,6 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
                         <h4 className="text-xs font-medium text-ink truncate group-hover:text-clay transition-colors">
                           {p.name}
                         </h4>
-                        <p className="text-[10px] text-muted-foreground truncate">{p.origin}</p>
                         <p className="text-xs font-semibold text-clay mt-0.5">{formatPrice(p.price)}</p>
                       </div>
                     </Link>

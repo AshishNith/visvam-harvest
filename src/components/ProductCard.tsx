@@ -54,8 +54,7 @@ export function ProductCard({ product }: { product: Product }) {
         <div className="absolute top-3 right-3 z-10 bg-black/60 backdrop-blur-sm text-white text-[9px] px-2.5 py-1 tracked pointer-events-none rounded-full">
           {product.serving}
         </div>
-        <div className="absolute bottom-0 left-0 right-0 z-20 flex items-center justify-between bg-ink text-white py-3 px-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 pointer-events-auto rounded-b-2xl">
-          <span className="text-[9.5px] tracked text-white/70">{product.origin}</span>
+        <div className="absolute bottom-0 left-0 right-0 z-20 flex items-center justify-end bg-ink text-white py-3 px-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 pointer-events-auto rounded-b-2xl">
           <button
             type="button"
             onClick={() => {

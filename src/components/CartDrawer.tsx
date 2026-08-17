@@ -32,14 +32,18 @@ export function CartDrawer() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isOpen) document.body.style.overflow = "hidden";
-    else {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
       document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
       // Reset step when drawer closes
       if (!orderSuccess) setStep("cart");
     }
     return () => {
       document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
     };
   }, [isOpen, orderSuccess]);
 
@@ -132,7 +136,10 @@ export function CartDrawer() {
         onClick={handleClose}
         className="absolute inset-0 bg-ink/40 backdrop-blur-sm animate-overlay-in"
       />
-      <aside className="absolute right-0 top-0 h-full w-full max-w-[470px] bg-background flex flex-col animate-drawer-in shadow-2xl">
+      <aside
+        data-lenis-prevent
+        className="absolute right-0 top-0 h-full max-h-full w-full max-w-[470px] bg-background flex flex-col animate-drawer-in shadow-2xl overflow-hidden z-10 overscroll-contain"
+      >
         <div className="p-6 border-b border-border flex justify-between items-center bg-cream/30">
           <h3 className="text-[11px] tracked font-semibold uppercase tracking-wider flex items-center gap-2">
             <ShoppingBag size={14} className="text-clay" />
@@ -151,7 +158,10 @@ export function CartDrawer() {
 
         {/* Order Success State */}
         {orderSuccess ? (
-          <div className="flex-1 flex flex-col items-center justify-center p-10 text-center">
+          <div
+            data-lenis-prevent
+            className="flex-1 overflow-y-auto min-h-0 flex flex-col items-center justify-center p-10 text-center overscroll-contain"
+          >
             <div className="w-16 h-16 rounded-full bg-clay/10 text-clay grid place-items-center mb-6">
               <CheckCircle2 size={36} />
             </div>
@@ -191,7 +201,10 @@ export function CartDrawer() {
                   </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-6">
+                <div
+                  data-lenis-prevent
+                  className="flex-1 overflow-y-auto min-h-0 p-6 overscroll-contain"
+                >
                   {items.length === 0 ? (
                     <div className="text-center py-20">
                       <p className="font-display italic text-2xl mb-3">Your harvest bag is empty</p>
@@ -216,7 +229,7 @@ export function CartDrawer() {
                             <div className="flex-1 min-w-0">
                               <h4 className="text-sm font-medium leading-snug">{product.name}</h4>
                               <p className="text-[10.5px] tracked text-muted-foreground mt-1">
-                                {product.serving} · {product.origin}
+                                {product.serving}
                               </p>
                               <div className="flex justify-between items-end mt-4">
                                 <div className="flex items-center border border-border">
@@ -309,7 +322,10 @@ export function CartDrawer() {
             {/* Step 2: Shipping Address Form */}
             {step === "address" && (
               <>
-                <div className="flex-1 overflow-y-auto p-6 space-y-5">
+                <div
+                  data-lenis-prevent
+                  className="flex-1 overflow-y-auto min-h-0 p-6 space-y-5 overscroll-contain"
+                >
                   <div className="flex items-center gap-2 text-[10px] tracked text-muted-foreground uppercase mb-2">
                     <MapPin size={13} className="text-clay" /> Delivery Details
                   </div>
@@ -410,7 +426,10 @@ export function CartDrawer() {
             {/* Step 3: Order Confirmation */}
             {step === "confirm" && (
               <>
-                <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                <div
+                  data-lenis-prevent
+                  className="flex-1 overflow-y-auto min-h-0 p-6 space-y-6 overscroll-contain"
+                >
                   {/* Delivery Address Summary */}
                   <div className="bg-cream/50 p-4 border border-border/60 space-y-1">
                     <div className="flex items-center justify-between mb-2">

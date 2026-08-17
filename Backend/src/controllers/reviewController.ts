@@ -59,13 +59,12 @@ export const createReview = async (req: Request, res: Response): Promise<void> =
       product = await Product.create({
         slug: productSlug,
         name: formattedName,
-        tagline: "Grade A1 · Single-Origin",
+        tagline: "Cold-Stored · Natural Harvest",
         price: 1199,
         category: "nuts",
         images: [],
         description: "Viśvam Harvest Organic Dry Fruit Selection",
         serving: "500g",
-        origin: "India",
       });
     }
 

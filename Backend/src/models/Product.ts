@@ -12,9 +12,7 @@ export interface IProduct extends Document {
   images: string[];
   description: string;
   serving: string;
-  origin: string;
   prepMinutes?: number;
-  grade?: string;
   benefits?: string[];
   bestseller?: boolean;
   isNewProduct?: boolean;
@@ -71,16 +69,9 @@ const ProductSchema = new Schema<IProduct>(
       type: String,
       required: true,
     },
-    origin: {
-      type: String,
-      required: true,
-    },
     prepMinutes: {
       type: Number,
       default: 0,
-    },
-    grade: {
-      type: String,
     },
     benefits: {
       type: [String],

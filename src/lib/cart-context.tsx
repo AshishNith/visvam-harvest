@@ -54,7 +54,6 @@ function sanitizeCartItem(item: any): CartItem | null {
         images: Array.isArray(item.images) ? item.images : [],
         description: item.description || "",
         serving: item.serving || "",
-        origin: item.origin || "",
       },
       qty: typeof item.qty === "number" && item.qty > 0 ? item.qty : 1,
     };
