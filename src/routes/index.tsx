@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
       {
         name: "keywords",
         content:
-          "buy dry fruits online, premium almonds India, W240 cashews online, Kashmiri walnuts, dry fruit gift boxes, fresh dates online, Viśvam harvest",
+          "buy dry fruits online, premium almonds India, W240 cashews online, Kashmiri walnuts, dry fruit gift boxes, fresh dates online, Viśvam",
       },
       { property: "og:title", content: "Viśvam — Premium Dry Fruits & Handpicked Nuts" },
       {

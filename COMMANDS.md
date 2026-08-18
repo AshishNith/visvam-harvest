@@ -1,6 +1,6 @@
-# Viśvam Harvest — Developer Commands Cheat Sheet
+# Viśvam — Developer Commands Cheat Sheet
 
-This document contains all useful CLI commands and workflows for managing the **Viśvam Harvest** full-stack application (Frontend, Backend API, and Admin Panel).
+This document contains all useful CLI commands and workflows for managing the **Viśvam** full-stack application (Frontend, Backend API, and Admin Panel).
 
 ---
 

@@ -27,7 +27,7 @@ const REELS: Reel[] = [
     caption: "Handpicking single-origin snow walnuts from high altitude valleys. 🏔️✨",
     likes: "2.8k",
     comments: "142",
-    tag: "Viśvam Harvest",
+    tag: "Viśvam",
     instagramUrl: INSTAGRAM_URL,
   },
   {

@@ -74,7 +74,7 @@ app.use(apiLimiter);
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
-    message: "Welcome to Viśvam Harvest API",
+    message: "Welcome to Viśvam API",
     capacity: "5,000 Concurrent Active Users Ready",
     endpoints: {
       health: "/api/v1/health",
@@ -91,7 +91,7 @@ app.get("/api/v1/health", (req, res) => {
   res.status(200).json({
     status: "ok",
     timestamp: new Date().toISOString(),
-    service: "Viśvam Harvest Backend API",
+    service: "Viśvam Backend API",
     capacity: "5,000 Concurrent Active Users Ready",
     version: "1.0.0",
   });

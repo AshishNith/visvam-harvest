@@ -51,7 +51,7 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
 
     res.status(201).json({
       success: true,
-      message: "Account created successfully! Welcome to Viśvam Harvest.",
+      message: "Account created successfully! Welcome to Viśvam.",
       data: {
         _id: user._id,
         name: user.name,

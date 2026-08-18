@@ -35,7 +35,7 @@ export const submitInquiry = async (req: Request, res: Response): Promise<void> 
 
     res.status(201).json({
       success: true,
-      message: "Thank you for reaching out to Viśvam Harvest. Our concierge will contact you shortly.",
+      message: "Thank you for reaching out to Viśvam. Our concierge will contact you shortly.",
       data: {
         id: inquiry._id,
         createdAt: inquiry.createdAt,

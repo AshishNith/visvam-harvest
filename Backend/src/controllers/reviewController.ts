@@ -63,7 +63,7 @@ export const createReview = async (req: Request, res: Response): Promise<void> =
         price: 1199,
         category: "nuts",
         images: [],
-        description: "Viśvam Harvest Organic Dry Fruit Selection",
+        description: "Viśvam Organic Dry Fruit Selection",
         serving: "500g",
       });
     }

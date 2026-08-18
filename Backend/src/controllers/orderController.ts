@@ -42,7 +42,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       sanitizedOrderItems.push({
         product: productObjId,
         slug: item.slug || item.product || "product",
-        name: item.name || "Viśvam Harvest Item",
+        name: item.name || "Viśvam Item",
         qty: Math.max(1, Number(item.qty) || 1),
         price: Number(item.price) || 0,
         image: typeof item.image === "string" ? item.image : (Array.isArray(item.images) ? item.images[0] : "") || "",

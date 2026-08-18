@@ -6,12 +6,6 @@ import { subscribeNewsletterToBackend } from "@/lib/api";
 import logoEmblem from "@/assets/Visvam Logo.png";
 import logoWordmark from "@/assets/Visvam Logo_Wordmark.png";
 
-const HARVEST_GUARANTEES = [
-  { id: "100-natural", name: "100% Handpicked & Natural", detail: "Zero artificial preservatives, colorings or added oil" },
-  { id: "nitrogen-fresh", name: "Nitrogen-Flushed Packaging", detail: "Locks in natural oils, aroma and peak fresh crunch" },
-  { id: "direct-trade", name: "Direct Harvest Sourcing", detail: "Fair trade partnerships with premier global farms" },
-];
-
 export function Footer() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -71,25 +65,13 @@ export function Footer() {
             </form>
           </div>
 
-          <div className="grid grid-cols-3 gap-10">
+          <div className="grid grid-cols-2 gap-10 sm:gap-16">
             <div className="space-y-4">
               <h6 className="text-[10px] tracked font-semibold uppercase">Shop Now</h6>
               <ul className="space-y-2.5 text-[11px]">
                 <li><Link to="/nuts" className="hover:text-clay transition">Nuts & Dried Fruits</Link></li>
                 <li><Link to="/gourmet" className="hover:text-clay transition">Gourmet</Link></li>
                 <li><Link to="/gifting" className="hover:text-clay transition">Gifting</Link></li>
-              </ul>
-            </div>
-            <div className="space-y-4">
-              <h6 className="text-[10px] tracked font-semibold uppercase">Our Promise</h6>
-              <ul className="space-y-2.5 text-[11px]">
-                {HARVEST_GUARANTEES.map((l) => (
-                  <li key={l.id} className="text-muted-foreground">
-                    <span className="text-ink font-medium">{l.name}</span>
-                    <br />
-                    {l.detail}
-                  </li>
-                ))}
               </ul>
             </div>
             <div className="space-y-4">
@@ -127,7 +109,7 @@ export function Footer() {
             />
           </Link>
           <div className="text-[9px] tracked text-muted-foreground text-center">
-            © 2026 Viśvam — Cold-stored, single-origin nuts and organic dried fruits.
+            © 2026 Viśvam
           </div>
           <div className="flex items-center gap-6 text-[10px] tracked">
             <Link to="/privacy" className="hover:text-clay transition">Privacy</Link>

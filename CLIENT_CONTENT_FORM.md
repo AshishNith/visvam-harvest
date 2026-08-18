@@ -1,4 +1,4 @@
-# 🌾 Viśvam Harvest — Client Website Content & Data Customization Template
+# 🌾 Viśvam — Client Website Content & Data Customization Template
 
 > **Instructions for the Client:**
 > Please fill out or update the bracketed `[ ]` text in each section below. Once completed, return this document to us so we can populate your website with your exact products, pricing, branding text, and photos.
@@ -7,15 +7,15 @@
 
 ## 1. Brand & Store Information
 
-* **Brand Name**: `[ Viśvam Harvest ]`
+* **Brand Name**: `[ Viśvam ]`
 * **Brand Subtitle**: `[ Royal Dry Fruits & Nuts ]`
-* **Contact Email**: `[ contact@visvamharvest.com ]`
+* **Contact Email**: `[ contact@visvam.in ]`
 * **Contact Phone / WhatsApp**: `[ +1 (555) 019-2834 ]`
 * **Store Location / Origin Tag**: `[ 100% Handpicked Sourcing ]`
 * **Free Shipping Threshold ($)**: `[ $50.00 ]`
 * **Social Media Links**:
-  * Instagram: `[ https://instagram.com/visvamharvest ]`
-  * LinkedIn / Facebook: `[ https://linkedin.com/company/visvamharvest ]`
+  * Instagram: `[ https://instagram.com/visvam.in ]`
+  * LinkedIn / Facebook: `[ https://linkedin.com/company/visvam ]`
 
 ---
 
@@ -26,7 +26,7 @@
   > `[ Harvested for oil maturity. Handpicked for royal crunch. ]`
 * **Hero Subtitle**:
   > `[ Single-origin California almonds, W240 cashews, organic Afghani figs, and Kashmiri snow walnuts delivered in nitrogen-sealed packaging. ]`
-* **Primary Button Text**: `[ Shop All Harvest ]`
+* **Primary Button Text**: `[ Shop All Products ]`
 * **Secondary Button Text**: `[ Gift Collections ]`
 
 ---
@@ -64,220 +64,37 @@
 
 ---
 
-## 5. Product Catalog (13 Products)
+## 5. Product Categories & Schema Configuration
 
-> For each product, please specify the name, category, price, net weight, origin, benefits, and brief description.
-
----
-
-### Category A: Nuts & Kernels
-
-#### Product 1: California Jumbo Almonds
-* **Name**: `[ California Jumbo Almonds (Badam) ]`
-* **Tagline**: `[ Grade A1 · California Orchards · Cold-Stored ]`
-* **Price**: `[ $14.50 ]`
-* **Pack Size / Serving**: `[ 500g Pouch ]`
-* **Origin**: `[ California, USA ]`
-* **Grade**: `[ Jumbo A1 ]`
-* **Badge**: `[ Bestseller ]`
-* **Wellness Benefits**:
-  1. `[ Rich in Vitamin E ]`
-  2. `[ Heart Healthy ]`
-  3. `[ High Plant Protein ]`
-* **Description**:
-  > `[ Hand-selected jumbo whole almonds harvested at peak oil maturity. Gently air-dried and nitrogen-sealed to retain natural crunch, vitamin E, and sweet buttery flavor. ]`
-
-#### Product 2: King W240 Whole Cashews
-* **Name**: `[ King W240 Whole Cashews (Kaju) ]`
-* **Tagline**: `[ W240 King Size · Mangaluru Origin · Slow-Roasted ]`
-* **Price**: `[ $16.90 ]`
-* **Pack Size / Serving**: `[ 500g Jar ]`
-* **Origin**: `[ Mangaluru, India ]`
-* **Grade**: `[ W240 Whole ]`
-* **Badge**: `[ Premium Grade ]`
-* **Wellness Benefits**:
-  1. `[ Rich in Magnesium ]`
-  2. `[ Zero Cholesterol ]`
-  3. `[ Creamy Crunch ]`
-* **Description**:
-  > `[ Extra-large W240 whole cashew kernels renowned for their rich creaminess and smooth bite. Naturally sun-dried and lightly batch-roasted without artificial oils. ]`
-
-#### Product 3: Kashmiri Extra-Light Walnuts
-* **Name**: `[ Kashmiri Extra-Light Walnuts (Akhrot) ]`
-* **Tagline**: `[ Extra-Light Halves · Single-Origin Kashmir · Brain Food ]`
-* **Price**: `[ $18.50 ]`
-* **Pack Size / Serving**: `[ 500g Box ]`
-* **Origin**: `[ Anantnag, Kashmir ]`
-* **Grade**: `[ Snow Light Halves ]`
-* **Badge**: `[ New Harvest ]`
-* **Wellness Benefits**:
-  1. `[ High Omega-3 ALA ]`
-  2. `[ Memory Support ]`
-  3. `[ 100% Organic ]`
-* **Description**:
-  > `[ Hand-extracted half kernels from wild Kashmiri walnut groves. Naturally sweet with zero bitterness, packed with heart-healthy Omega-3 ALA fatty acids. ]`
-
-#### Product 4: Roasted & Salted Pistachios
-* **Name**: `[ Roasted & Salted Pistachios (Pista) ]`
-* **Tagline**: `[ Jumbo Shells · Himalayan Pink Salt · Wood-Fired ]`
-* **Price**: `[ $15.80 ]`
-* **Pack Size / Serving**: `[ 500g Pouch ]`
-* **Origin**: `[ Kerman Valley ]`
-* **Grade**: `[ Jumbo 20/22 ]`
-* **Badge**: `[ Crowd Favourite ]`
-* **Wellness Benefits**:
-  1. `[ High Fiber ]`
-  2. `[ Potassium Rich ]`
-  3. `[ Low Calorie Snack ]`
-* **Description**:
-  > `[ Naturally opened jumbo pistachios slow-roasted over wood embers and lightly dusted with unrefined pink salt crystals. Easy to shell and intensely flavorful. ]`
-
-#### Product 5: Royal Iranian Mamra Almonds
-* **Name**: `[ Royal Iranian Mamra Almonds ]`
-* **Tagline**: `[ 50%+ Natural Oil · Wild Mountain Harvest ]`
-* **Price**: `[ $28.00 ]`
-* **Pack Size / Serving**: `[ 500g Tin ]`
-* **Origin**: `[ Chaharmahal, Iran ]`
-* **Grade**: `[ Authentic Mamra ]`
-* **Badge**: `[ Superfood ]`
-* **Wellness Benefits**:
-  1. `[ 50%+ Natural Oil ]`
-  2. `[ Brain Boost ]`
-  3. `[ Rich Antioxidants ]`
-* **Description**:
-  > `[ The undisputed king of almonds. Cultivated in mineral-rich mountain soil, Mamra almonds possess over 50% natural almond oil content for unmatched brain & wellness benefits. ]`
+> **Note for Client:** You can directly create, edit, upload product photos, set prices, and manage inventory for all individual products through your dedicated **Viśvam Admin Panel**. 
+> 
+> Below are the main product categories configured in the store, followed by the **Product Data Schema** (all details captured for every product). If you need any custom fields added, removed, or modified, please specify your requests below.
 
 ---
 
-### Category B: Dried Fruits & Dates
-
-#### Product 6: Afghani Organic Dried Figs
-* **Name**: `[ Afghani Organic Dried Figs (Anjeer) ]`
-* **Tagline**: `[ Sun-Dried Garlands · Soft Honey Core · Zero Sugar Added ]`
-* **Price**: `[ $19.20 ]`
-* **Pack Size / Serving**: `[ 500g Pack ]`
-* **Origin**: `[ Kandahar, Afghanistan ]`
-* **Grade**: `[ Grade A Garland ]`
-* **Badge**: `[ High Fiber ]`
-* **Wellness Benefits**:
-  1. `[ Digestive Wellness ]`
-  2. `[ Rich Calcium Source ]`
-  3. `[ Natural Sweetener ]`
-* **Description**:
-  > `[ Hand-strung dried figs harvested from Kandahar orchards. Naturally sun-dried until the natural fruit sugars caramelize into a soft, honey-like center rich in dietary fiber. ]`
-
-#### Product 7: Royal Medjool King Dates
-* **Name**: `[ Royal Medjool King Dates (Khajoor) ]`
-* **Tagline**: `[ Large Soft Medjool · Rich Caramel Bite · Mineral Rich ]`
-* **Price**: `[ $17.50 ]`
-* **Pack Size / Serving**: `[ 500g Box ]`
-* **Origin**: `[ Jericho Oasis ]`
-* **Grade**: `[ Super Jumbo ]`
-* **Badge**: `[ Organic ]`
-* **Wellness Benefits**:
-  1. `[ Instant Energy Boost ]`
-  2. `[ High Iron ]`
-  3. `[ Zero Additives ]`
-* **Description**:
-  > `[ Known as the fruit of kings. Abundantly plump, soft, and moist Medjool dates with a rich caramel texture. Perfect as a natural pre-workout energy boost. ]`
-
-#### Product 8: Long Green Seedless Kishmish
-* **Name**: `[ Long Green Seedless Kishmish ]`
-* **Tagline**: `[ Shade-Dried Long Berries · Sweet & Tangy · Iron Rich ]`
-* **Price**: `[ $11.40 ]`
-* **Pack Size / Serving**: `[ 500g Pouch ]`
-* **Origin**: `[ Herat, Afghanistan ]`
-* **Grade**: `[ Long Green A+ ]`
-* **Badge**: `[ Juicy ]`
-* **Wellness Benefits**:
-  1. `[ High Iron ]`
-  2. `[ Blood Health ]`
-  3. `[ Natural Energy ]`
-* **Description**:
-  > `[ Slender long green raisins shade-dried in traditional earthen Kishmish Khana rooms to preserve their vivid green hue, tart acidity, and high antioxidant profile. ]`
-
-#### Product 9: Wild Cranberry & Blueberry Mix
-* **Name**: `[ Wild Cranberry & Blueberry Mix ]`
-* **Tagline**: `[ Whole Ruby Cranberries · Wild Blueberries · Low Sugar ]`
-* **Price**: `[ $16.00 ]`
-* **Pack Size / Serving**: `[ 400g Jar ]`
-* **Origin**: `[ Pacific Northwest ]`
-* **Grade**: `[ Wild Harvest ]`
-* **Badge**: `[ Immunity ]`
-* **Wellness Benefits**:
-  1. `[ Rich in Polyphenols ]`
-  2. `[ Urinary Health ]`
-  3. `[ Vibrant Taste ]`
-* **Description**:
-  > `[ A vibrant berry blend of dark wild blueberries and succulent whole red cranberries. Lightly sweetened with natural apple juice concentrate for daily immunity support. ]`
+### 5.1 Store Product Categories
+* **Category 1**: `[ Nuts & Dried Fruits ]` (`/nuts`)
+* **Category 2**: `[ Gourmet ]` (`/gourmet`)
+* **Category 3**: `[ Gifting ]` (`/gifting`)
 
 ---
 
-### Category C: Exotic Seeds & Mixes
+### 5.2 Product Data Schema (Field Details Collected Per Product)
 
-#### Product 10: Raw Queensland Macadamia Nuts
-* **Name**: `[ Raw Queensland Macadamia Nuts ]`
-* **Tagline**: `[ Whole Creamy Style 1 · Cold-Shelled · Keto Friendly ]`
-* **Price**: `[ $24.50 ]`
-* **Pack Size / Serving**: `[ 400g Glass Jar ]`
-* **Origin**: `[ Queensland, Australia ]`
-* **Grade**: `[ Style 1 Whole ]`
-* **Badge**: `[ Exotic ]`
-* **Wellness Benefits**:
-  1. `[ Keto Approved ]`
-  2. `[ Monounsaturated Fats ]`
-  3. `[ Silky Texture ]`
-* **Description**:
-  > `[ Silky, buttery macadamia nut halves and wholes harvested in subterranean Australian soil. Unmatched rich texture with ultra-healthy keto-friendly monounsaturated fats. ]`
-
-#### Product 11: 7-in-1 Roasted Superseeds Mix
-* **Name**: `[ 7-in-1 Roasted Superseeds Wellness Mix ]`
-* **Tagline**: `[ Pumpkin, Sunflower, Flax, Chia, Sesame, Watermelon & Hemp ]`
-* **Price**: `[ $12.80 ]`
-* **Pack Size / Serving**: `[ 500g Pouch ]`
-* **Origin**: `[ Craft Roasted ]`
-* **Grade**: `[ 7-Seed Synergy ]`
-* **Badge**: `[ Daily Wellness ]`
-* **Wellness Benefits**:
-  1. `[ Plant Protein ]`
-  2. `[ Zinc & Magnesium ]`
-  3. `[ Zero Oil Roasted ]`
-* **Description**:
-  > `[ A nutrient-dense blend of 7 super seeds lightly dry-roasted with Himalayan pink salt. Packed with plant protein, magnesium, zinc, and dietary fiber for effortless health. ]`
-
----
-
-### Category D: Gift Boxes & Combos
-
-#### Product 12: Royal Heritage 4-in-1 Gift Box
-* **Name**: `[ Royal Heritage 4-in-1 Dry Fruit Gift Box ]`
-* **Tagline**: `[ Jumbo Almonds · W240 Cashews · Light Walnuts · Pista ]`
-* **Price**: `[ $49.00 ]`
-* **Pack Size / Serving**: `[ 1kg Luxury Gift Box ]`
-* **Origin**: `[ Curated Collection ]`
-* **Grade**: `[ Heritage Gift Edition ]`
-* **Badge**: `[ Festive Favorite ]`
-* **Wellness Benefits**:
-  1. `[ Vacuum Sealed Freshness ]`
-  2. `[ Custom Ribbon Included ]`
-  3. `[ 100% Organic Selection ]`
-* **Description**:
-  > `[ An opulent handcrafted rigid gift box featuring four individually vacuum-sealed compartments of our finest Jumbo Almonds, W240 Cashews, Walnut Halves, and Roasted Pistachios. ]`
-
-#### Product 13: Festive Nut & Berry Celebration Box
-* **Name**: `[ Festive Nut & Berry Celebration Collection ]`
-* **Tagline**: `[ Mamra Almonds · Medjool Dates · Wild Berries · Anjeer ]`
-* **Price**: `[ $56.00 ]`
-* **Pack Size / Serving**: `[ 1.2kg Gold Tin ]`
-* **Origin**: `[ Grand Selection ]`
-* **Grade**: `[ Royal Edition ]`
-* **Badge**: `[ Luxury Edition ]`
-* **Wellness Benefits**:
-  1. `[ Gold Embossed Tin ]`
-  2. `[ Air-tight Lock ]`
-  3. `[ Guaranteed Premium Grade ]`
-* **Description**:
-  > `[ The ultimate celebratory dry fruit collection. Includes Iranian Mamra Almonds, Royal Medjool King Dates, Dried Kandahar Figs, and Wild Berry Mix housed in an embossed metallic tin. ]`
+| Field Name | Data Type | Example Value | Custom Field Change Request |
+| :--- | :--- | :--- | :--- |
+| **Product Name** | Text | `California Jumbo Almonds (Badam)` | `[ Default ]` |
+| **Tagline** | Short Text | `Grade A1 · California Orchards` | `[ Default ]` |
+| **Category** | Dropdown | `Nuts & Dried Fruits` / `Gourmet` / `Gifting` | `[ Default ]` |
+| **Price ($/₹)** | Number | `14.50` | `[ Default ]` |
+| **Pack Size / Serving** | Short Text | `500g Pouch` / `1kg Tin` | `[ Default ]` |
+| **Origin** | Short Text | `California, USA` / `Kashmir, India` | `[ Default ]` |
+| **Grade / Quality** | Short Text | `Jumbo A1` / `W240 Whole` | `[ Default ]` |
+| **Badge Label** | Tag | `Bestseller`, `New Arrival`, `Luxury Edition` | `[ Default ]` |
+| **Wellness Benefits** | List (3 points) | `1. Rich in Vitamin E, 2. Heart Healthy` | `[ Default ]` |
+| **Product Description** | Paragraph | Detailed product story & tasting notes | `[ Default ]` |
+| **Product Images** | Image Upload | High-res product shots (up to 4 images) | `[ Default ]` |
+| **Stock Inventory** | Number | Total available stock quantity | `[ Default ]` |
 
 ---
 
@@ -303,8 +120,46 @@
 
 ---
 
-## 7. Customer Support & Policies
+## 7. Footer & Brand Links
 
-* **Delivery Policy Text**: `[ Express courier dispatch within 24 hours. Free shipping over $50. ]`
-* **Return / Quality Guarantee**: `[ 100% Freshness Guarantee. Full replacement if sealed quality does not meet your standard. ]`
-* **Copyright Footer Text**: `[ © 2026 Viśvam Harvest — Cold-stored, single-origin nuts and organic dried fruits. ]`
+* **Copyright Footer Text**: `[ © 2026 Viśvam ]`
+* **Newsletter Signup Headline**: `[ Letters from Viśvam. ]`
+* **Newsletter Subtitle**: `[ Be the first to hear about new arrivals, seasonal releases, and first word on anything worth knowing. ]`
+
+---
+
+## 8. Legal, Policy & Support Pages Content
+
+> *Please fill in the full text or specific clauses you wish to display on each legal and support page. If left unchanged, standard default policy text will be used.*
+
+### 8.1 Privacy Policy Page (`/privacy`)
+* **Effective Date**: `[ January 1, 2026 ]`
+* **Data Collection Clause**:
+  > `[ Enter your custom Privacy Policy / Data Collection details here ]`
+* **Cookie & Analytics Policy**:
+  > `[ Enter cookie policy and analytics details here ]`
+
+### 8.2 Terms & Conditions Page (`/terms`)
+* **Effective Date**: `[ January 1, 2026 ]`
+* **Terms of Service Content**:
+  > `[ Enter your Terms & Conditions, pricing policies, and governing law here ]`
+
+### 8.3 Return & Refund Policy Page (`/returns`)
+* **Return Window (Days)**: `[ 7 Days ]`
+* **Eligible Conditions**:
+  > `[ Specify criteria for returns/replacements (e.g., damaged seal, incorrect item) ]`
+* **Refund Process**:
+  > `[ Specify refund processing time and payout method ]`
+
+### 8.4 Shipping & Delivery Page (`/shipping`)
+* **Standard Shipping Time**: `[ 3 - 5 Business Days ]`
+* **Express Shipping Option**: `[ 1 - 2 Business Days ]`
+* **Shipping Charges / Rules**:
+  > `[ Enter free shipping threshold, regional restrictions, and delivery partners ]`
+
+### 8.5 Contact Support Page (`/contact`)
+* **Support Email**: `[ support@visvam.in ]`
+* **Support Phone / WhatsApp**: `[ +1 (555) 019-2834 ]`
+* **Operating Hours**: `[ Mon - Sat, 9:00 AM - 6:00 PM EST ]`
+* **Physical Address**: `[ Enter business address / registered entity location ]`
+
