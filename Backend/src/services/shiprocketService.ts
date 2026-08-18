@@ -13,7 +13,7 @@ interface CachedToken {
 
 let cachedAuthToken: CachedToken | null = null;
 
-const SHIPROCKET_API_BASE = "https://apiv2.shiprocket.in/v2/console";
+const SHIPROCKET_API_BASE = "https://apiv2.shiprocket.in/v1/external";
 
 export class ShiprocketService {
   private static getConfig(): ShiprocketAuthConfig {
@@ -44,7 +44,7 @@ export class ShiprocketService {
     }
 
     try {
-      const response = await fetch("https://apiv2.shiprocket.in/v2/auth/login", {
+      const response = await fetch("https://apiv2.shiprocket.in/v1/external/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
