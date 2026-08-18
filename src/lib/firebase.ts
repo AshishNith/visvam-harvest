@@ -16,14 +16,16 @@ const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID?.trim() || "";
 const storageBucket = import.meta.env.VITE_FIREBASE_STORAGE_BUCKET?.trim() || "";
 const messagingSenderId = import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID?.trim() || "";
 const appId = import.meta.env.VITE_FIREBASE_APP_ID?.trim() || "";
+const measurementId = import.meta.env.VITE_FIREBASE_MEASUREMENT_ID?.trim() || "";
 
 const firebaseConfig = {
-  apiKey: apiKey || "AIzaSyDummyKeyForVisvamHarvest2026",
-  authDomain: authDomain || "visvam-harvest.firebaseapp.com",
-  projectId: projectId || "visvam-harvest",
-  storageBucket: storageBucket || "visvam-harvest.appspot.com",
-  messagingSenderId: messagingSenderId || "1029384756",
-  appId: appId || "1:1029384756:web:abcdef123456",
+  apiKey: apiKey || "AIzaSyAsOXcpbOtJ9jwvasK3a3Cqtw98LWJBkG0",
+  authDomain: authDomain || "visvam-1be38.firebaseapp.com",
+  projectId: projectId || "visvam-1be38",
+  storageBucket: storageBucket || "visvam-1be38.firebasestorage.app",
+  messagingSenderId: messagingSenderId || "495648080259",
+  appId: appId || "1:495648080259:web:505eca258f514f76c076b6",
+  measurementId: measurementId || "G-Y0DY3H247Z",
 };
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
