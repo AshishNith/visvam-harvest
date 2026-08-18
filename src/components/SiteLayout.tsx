@@ -7,6 +7,7 @@ import { SmoothScroll } from "./SmoothScroll";
 import { Toaster } from "@/components/ui/sonner";
 
 import { WhatsAppButton } from "./WhatsAppButton";
+import { CookieBanner } from "./CookieBanner";
 
 export function SiteLayout({ children }: { children: ReactNode }) {
   return (
@@ -17,6 +18,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
         <Footer />
         <CartDrawer />
         <WhatsAppButton />
+        <CookieBanner />
         <ScrollProgress />
         <Toaster position="bottom-center" />
       </div>

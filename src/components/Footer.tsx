@@ -80,6 +80,7 @@ export function Footer() {
                 <li><Link to="/privacy" className="hover:text-clay transition">Privacy Policy</Link></li>
                 <li><Link to="/terms" className="hover:text-clay transition">Terms & Conditions</Link></li>
                 <li><Link to="/returns" className="hover:text-clay transition">Return & Refund Policy</Link></li>
+                <li><Link to="/cookies" className="hover:text-clay transition">Cookie Policy</Link></li>
                 <li><Link to="/shipping" className="hover:text-clay transition">Shipping & Delivery</Link></li>
                 <li><Link to="/contact" className="hover:text-clay transition">Contact Support</Link></li>
               </ul>
@@ -111,9 +112,16 @@ export function Footer() {
           <div className="text-[9px] tracked text-muted-foreground text-center">
             © 2026 Viśvam
           </div>
-          <div className="flex items-center gap-6 text-[10px] tracked">
+          <div className="flex flex-wrap items-center justify-center gap-6 text-[10px] tracked">
             <Link to="/privacy" className="hover:text-clay transition">Privacy</Link>
             <Link to="/terms" className="hover:text-clay transition">Terms</Link>
+            <Link to="/cookies" className="hover:text-clay transition">Cookie Notice</Link>
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent("visvam-open-cookie-settings"))}
+              className="hover:text-clay transition underline cursor-pointer"
+            >
+              Cookie Settings
+            </button>
             <Link to="/contact" className="hover:text-clay transition">Contact Us</Link>
           </div>
         </div>
