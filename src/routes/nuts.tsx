@@ -22,14 +22,14 @@ export const Route = createFileRoute("/nuts")({
         {
           name: "description",
           content:
-            "Buy California Jumbo Almonds, W240 Whole Cashews, Kashmiri Extra-Light Walnuts, Roasted Pistachios, and Organic Dried Fruits harvested at peak maturity.",
+            "Buy California Jumbo Almonds, W240 Whole Cashews, Kashmiri Extra-Light Walnuts, Roasted Pistachios, and Organic Dried Fruits sourced at peak maturity.",
         },
         {
           name: "keywords",
           content: "almonds online, cashews online, Kashmiri walnuts, roasted pistachios, buy dry fruits online, single origin nuts India",
         },
         { property: "og:title", content: "Nuts & Dried Fruits — Viśvam" },
-        { property: "og:description", content: "Cold-stored single-origin nuts harvested at peak maturity." },
+        { property: "og:description", content: "Cold-stored single-origin nuts sourced at peak maturity." },
         { property: "og:type", content: "website" },
         { property: "og:url", content: canonicalUrl },
         { property: "og:image", content: "https://visvam.in/Visvam-Logo.png" },

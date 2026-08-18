@@ -135,7 +135,7 @@ export function UserAccountModal({ isOpen, onClose }: UserAccountModalProps) {
               <User size={18} strokeWidth={1.5} />
             </div>
             <div>
-              <h3 className="font-display italic text-lg text-ink">Royal Harvest Account</h3>
+              <h3 className="font-display italic text-lg text-ink">Viśvam Royal Account</h3>
               <p className="text-[10px] tracked text-muted-foreground uppercase">Viśvam Member Portal</p>
             </div>
           </div>

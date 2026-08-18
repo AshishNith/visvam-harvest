@@ -27,7 +27,7 @@ export const subscribeNewsletter = async (req: Request, res: Response): Promise<
       if (existing.status === "subscribed") {
         res.status(200).json({
           success: true,
-          message: "You are already subscribed to the Royal Harvest Circle!",
+          message: "You are already subscribed to the Viśvam Royal Circle!",
         });
         return;
       }
@@ -40,7 +40,7 @@ export const subscribeNewsletter = async (req: Request, res: Response): Promise<
 
     res.status(201).json({
       success: true,
-      message: "Welcome to the Royal Harvest Circle! 10% discount code has been reserved for your email.",
+      message: "Welcome to the Viśvam Royal Circle! 10% discount code has been reserved for your email.",
     });
   } catch (error: any) {
     res.status(500).json({

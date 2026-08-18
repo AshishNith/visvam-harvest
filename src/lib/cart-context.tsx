@@ -145,7 +145,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
 
     if (sanitizedProduct.name) {
-      toast.success(`Added ${sanitizedProduct.name} to harvest bag`);
+      toast.success(`Added ${sanitizedProduct.name} to bag`);
     }
     if (openDrawer) {
       setIsOpen(true);

@@ -113,7 +113,7 @@ function OrderSuccessPage() {
 
             <div className="pt-4">
               <Link to="/nuts" className="text-xs text-clay underline hover:text-ink transition">
-                Continue Exploring Harvest Catalog
+                Continue Exploring Collection
               </Link>
             </div>
           </div>

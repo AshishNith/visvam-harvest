@@ -26,17 +26,17 @@ function NotFoundComponent() {
             ERROR 404 &bull; COLLECTION NOT FOUND
           </p>
           <h1 className="font-display italic text-5xl sm:text-6xl text-ink">
-            Harvest Path Lost
+            Page Not Found
           </h1>
           <p className="text-sm text-muted-foreground leading-relaxed max-w-md mx-auto">
-            The dry fruit selection or page you are looking for has been relocated or is unavailable in our current harvest.
+            The dry fruit selection or page you are looking for has been relocated or is currently unavailable.
           </p>
           <div className="pt-4 flex flex-wrap justify-center gap-4">
             <Link
               to="/"
               className="inline-flex items-center gap-2 bg-ink text-white px-8 py-3.5 text-[11px] font-medium tracked uppercase tracking-widest hover:bg-clay transition-colors"
             >
-              <span>Back to Harvest Home</span>
+              <span>Back to Home</span>
             </Link>
             <Link
               to="/nuts"

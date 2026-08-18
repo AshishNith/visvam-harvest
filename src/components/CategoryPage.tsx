@@ -69,9 +69,9 @@ export function CategoryPage({ category }: { category: Category }) {
           </p>
         </div>
         {loading ? (
-          <p className="font-display italic text-2xl text-center py-20 text-muted-foreground animate-pulse">Loading single-origin harvest from database...</p>
+          <p className="font-display italic text-2xl text-center py-20 text-muted-foreground animate-pulse">Loading single-origin collection...</p>
         ) : products.length === 0 ? (
-          <p className="font-display italic text-3xl text-center py-20">Fresh harvest coming soon.</p>
+          <p className="font-display italic text-3xl text-center py-20">Fresh collection coming soon.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
             {products.map((p) => (

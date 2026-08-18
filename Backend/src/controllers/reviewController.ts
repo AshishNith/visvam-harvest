@@ -59,7 +59,7 @@ export const createReview = async (req: Request, res: Response): Promise<void> =
       product = await Product.create({
         slug: productSlug,
         name: formattedName,
-        tagline: "Cold-Stored · Natural Harvest",
+        tagline: "Cold-Stored · Single Origin",
         price: 1199,
         category: "nuts",
         images: [],

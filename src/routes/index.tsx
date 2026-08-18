@@ -133,7 +133,7 @@ function Home() {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 border-b border-border/40 pb-5 gap-4">
             <div>
               <span className="text-[11px] sm:text-xs font-semibold text-clay uppercase tracked block mb-1">
-                Curated Single-Origin Harvest
+                Curated Single-Origin Selection
               </span>
               <h2 className="font-display italic text-3xl sm:text-4xl md:text-5xl">The Viśvam Bestsellers</h2>
             </div>
@@ -278,7 +278,7 @@ function Home() {
               <span className="font-display italic text-6xl">4.9</span>
               <span className="text-sm text-muted-foreground">/ 5</span>
             </div>
-            <p className="text-[10.5px] tracked">★★★★★ &nbsp;·&nbsp; 3,820 Verified Harvest Reviews</p>
+            <p className="text-[10.5px] tracked">★★★★★ &nbsp;·&nbsp; 3,820 Verified Customer Reviews</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[

@@ -230,7 +230,7 @@ function TenLayoutsPage() {
 
                   <div className="flex items-center gap-2 text-clay">
                     <Layers size={14} />
-                    <span className="text-[10px] uppercase font-bold tracking-wider">0{idx + 1} Harvest Selection</span>
+                    <span className="text-[10px] uppercase font-bold tracking-wider">0{idx + 1} Selection</span>
                   </div>
 
                   <h4 className="font-display text-4xl text-ink text-left">{p.name}</h4>
@@ -331,7 +331,7 @@ function TenLayoutsPage() {
               <div className="relative aspect-[16/10] rounded-2xl overflow-hidden bg-cream flex items-center justify-center">
                 <img src={bestsellers[0].images[0]} alt={bestsellers[0].name} className="w-full h-full object-cover object-center rounded-2xl" />
                 <span className="absolute top-3 left-3 bg-clay text-white text-[10px] px-3 py-1 rounded-full uppercase font-medium tracked">
-                  #1 Harvest Selection
+                  #1 Top Selection
                 </span>
               </div>
               <div className="space-y-2 text-left">
@@ -429,7 +429,7 @@ function TenLayoutsPage() {
 
             <div className="flex items-center gap-6">
               {[
-                { id: "all", label: "All Harvests" },
+                { id: "all", label: "All Collections" },
                 { id: "nuts", label: "Almonds & Cashews" },
                 { id: "dried", label: "Figs & Dates" },
               ].map((tab) => (
@@ -462,7 +462,7 @@ function TenLayoutsPage() {
                     <div className="relative aspect-[16/11] rounded-2xl overflow-hidden bg-cream mb-4 flex items-center justify-center">
                       <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover object-center rounded-2xl" />
                       <span className="absolute bottom-3 left-3 text-ink text-[10px] px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full font-semibold">
-                        ★ 4.9 Harvest Rating
+                        ★ 4.9 Rating
                       </span>
                     </div>
                     <div className="space-y-1.5 text-left">
@@ -491,7 +491,7 @@ function TenLayoutsPage() {
           <div className="flex items-center justify-between border-b border-border/40 pb-4 text-left">
             <div>
               <span className="text-xs font-semibold text-clay uppercase tracked">Option 06</span>
-              <h3 className="font-display text-3xl text-ink mt-0.5 text-left">Boutique Michelin Menu Catalog</h3>
+              <h3 className="font-display text-3xl text-ink mt-0.5 text-left">Boutique Menu Catalog</h3>
             </div>
             <span className="text-xs text-muted-foreground uppercase tracked">4 Selection Items</span>
           </div>
@@ -672,7 +672,7 @@ function TenLayoutsPage() {
           <div className="flex items-center justify-between border-b border-border/40 pb-4 text-left">
             <div>
               <span className="text-xs font-semibold text-clay uppercase tracked">Option 10</span>
-              <h3 className="font-display text-3xl text-ink mt-0.5 text-left">Build Your Harvest Bundle Multi-Picker</h3>
+              <h3 className="font-display text-3xl text-ink mt-0.5 text-left">Build Your Custom Bundle Multi-Picker</h3>
             </div>
             {bundleCount > 0 && (
               <span className="text-xs font-semibold text-clay uppercase tracked">

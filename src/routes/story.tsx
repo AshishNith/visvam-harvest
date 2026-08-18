@@ -31,7 +31,7 @@ export const Route = createFileRoute("/story")({
           content: "Viśvam farm story, single origin dry fruits, cold lock storage dry fruits, unadulterated nuts, Kashmiri walnut orchards",
         },
         { property: "og:title", content: "Our Farm Story — Viśvam" },
-        { property: "og:description", content: "Direct-from-orchard harvest of premium nuts and dried fruits." },
+        { property: "og:description", content: "Direct-from-orchard collection of premium nuts and dried fruits." },
         { property: "og:type", content: "website" },
         { property: "og:url", content: canonicalUrl },
         { property: "og:image", content: "https://visvam.in/Visvam-Logo.png" },
@@ -130,7 +130,7 @@ function Story() {
           to="/nuts"
           className="group inline-flex items-center gap-3 text-white text-[12px] font-medium tracked uppercase tracking-widest py-2 border-b-2 border-white/80 hover:text-clay hover:border-clay transition-all duration-300"
         >
-          <span>Explore Harvest Catalog</span>
+          <span>Explore Collection</span>
           <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
         </Link>
       </section>

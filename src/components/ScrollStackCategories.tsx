@@ -45,7 +45,7 @@ export function ScrollStackCategories() {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
           <div>
             <h2 className="font-display italic text-4xl sm:text-5xl lg:text-6xl text-ink">
-              The Harvest Categories
+              The Categories
             </h2>
           </div>
           <p className="text-xs text-muted-foreground max-w-xs leading-relaxed">

@@ -153,7 +153,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (syncRes.success && syncRes.data && syncRes.token) {
         const userData: AuthUser = {
           _id: syncRes.data._id,
-          name: syncRes.data.name || firebaseUser.displayName || "Harvest Member",
+          name: syncRes.data.name || firebaseUser.displayName || "Viśvam Member",
           email: syncRes.data.email || firebaseUser.email || "",
           role: syncRes.data.role || "user",
           phone: syncRes.data.phone,

@@ -56,7 +56,7 @@ function TermsAndConditions() {
             <section className="space-y-4">
               <h2 className="font-display italic text-2xl text-ink">3. Pricing & Orders</h2>
               <p className="text-muted-foreground">
-                All prices listed on the website are in local currency inclusive of applicable taxes unless stated otherwise. We reserve the right to accept or decline any order, or adjust product pricing and availability due to harvest supply fluctuations.
+                All prices listed on the website are in local currency inclusive of applicable taxes unless stated otherwise. We reserve the right to accept or decline any order, or adjust product pricing and availability due to seasonal supply fluctuations.
               </p>
             </section>
 

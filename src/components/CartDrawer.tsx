@@ -131,7 +131,7 @@ export function CartDrawer() {
   return (
     <div className="fixed inset-0 z-[100]">
       <button
-        aria-label="Close harvest bag"
+        aria-label="Close bag"
         onClick={handleClose}
         className="absolute inset-0 bg-ink/40 backdrop-blur-sm animate-overlay-in"
       />
@@ -142,7 +142,7 @@ export function CartDrawer() {
         <div className="p-6 border-b border-border flex justify-between items-center bg-cream/30">
           <h3 className="text-[11px] tracked font-semibold uppercase tracking-wider flex items-center gap-2">
             <ShoppingBag size={14} className="text-clay" />
-            {step === "cart" && `Harvest Bag (${items.length})`}
+            {step === "cart" && `Shopping Bag (${items.length})`}
             {step === "address" && "Shipping Address"}
             {step === "confirm" && "Order Summary"}
           </h3>
@@ -206,7 +206,7 @@ export function CartDrawer() {
                 >
                   {items.length === 0 ? (
                     <div className="text-center py-20">
-                      <p className="font-display italic text-2xl mb-3">Your harvest bag is empty</p>
+                      <p className="font-display italic text-2xl mb-3">Your bag is empty</p>
                       <p className="text-sm text-muted-foreground max-w-xs mx-auto">
                         Explore our handpicked almonds, W240 cashews, and Kashmiri walnuts to get started.
                       </p>

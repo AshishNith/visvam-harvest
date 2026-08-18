@@ -96,7 +96,7 @@ export const Route = createFileRoute("/menu/$slug")({
         { name: "description", content: description },
         {
           name: "keywords",
-          content: `${product?.name || "dry fruit"}, buy ${product?.name || "nuts"} online, Viśvam ${product?.category || "harvest"}, cold stored dry fruits India`,
+          content: `${product?.name || "dry fruit"}, buy ${product?.name || "nuts"} online, Viśvam ${product?.category || "dry fruits"}, cold stored dry fruits India`,
         },
         { property: "og:title", content: title },
         { property: "og:description", content: description },
@@ -406,7 +406,7 @@ function MenuItemPage() {
 
           <ul className="space-y-2 border-t border-border/70 pt-5">
             {[
-              "100% Handpicked & Cold-Stored Harvest",
+              "100% Handpicked & Cold-Stored Quality",
               "Nitrogen-Flushed Airtight Packaging",
               "Free Express Courier Shipping over ₹999",
             ].map((t) => (

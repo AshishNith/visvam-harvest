@@ -205,11 +205,11 @@ export function Header() {
             {/* Interactive Search Button */}
             <button
               onClick={() => setIsSearchOpen(true)}
-              aria-label="Search harvest catalog"
+              aria-label="Search catalog"
               className={`p-2 hover:text-clay transition-all rounded-xs ${
                 isScrolled ? "hover:bg-cream/60" : "hover:bg-white/10"
               } ${textColorClass}`}
-              title="Search harvest"
+              title="Search products"
             >
               <Search size={18} strokeWidth={1.4} />
             </button>

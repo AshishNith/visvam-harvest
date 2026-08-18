@@ -171,7 +171,7 @@ function CheckoutPage() {
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isAuthenticated) return toast.error("Please log in to place your order");
-    if (items.length === 0) return toast.error("Your harvest bag is empty");
+    if (items.length === 0) return toast.error("Your bag is empty");
     if (!validateAddress()) return;
 
     setSubmittingOrder(true);
@@ -421,7 +421,7 @@ function CheckoutPage() {
           </div>
         ) : items.length === 0 ? (
           <div className="py-20 text-center">
-            <p className="font-display italic text-2xl mb-2">Your harvest bag is empty</p>
+            <p className="font-display italic text-2xl mb-2">Your bag is empty</p>
             <p className="text-xs text-muted-foreground mb-6">Add dry fruits or gift boxes to your bag before checking out.</p>
             <Link to="/nuts" className="px-6 py-3 bg-ink text-white text-xs tracked uppercase font-medium">Browse Nuts & Dried Fruits</Link>
           </div>
@@ -592,7 +592,7 @@ function CheckoutPage() {
             <div className="lg:col-span-5 space-y-6">
               <div className="bg-cream/40 border border-border p-6 sticky top-28 space-y-5">
                 <h3 className="text-sm font-semibold uppercase tracking-wider flex items-center gap-2 text-ink border-b border-border pb-3">
-                  <ShoppingBag size={16} className="text-clay" /> Harvest Bag Items ({items.length})
+                  <ShoppingBag size={16} className="text-clay" /> Bag Items ({items.length})
                 </h3>
 
                 <ul className="space-y-4 max-h-80 overflow-y-auto pr-1">

@@ -73,7 +73,7 @@ export const products: Product[] = [
     tagline: "Extra-Light Halves · Brain Food",
     price: 1549,
     category: "nuts",
-    badge: "New Harvest",
+    badge: "New Arrival",
     images: [
       cImg("04_Walnuts_Akhrot/DSC00512.jpg"),
       cImg("04_Walnuts_Akhrot/DSC00564.jpg"),
@@ -107,7 +107,7 @@ export const products: Product[] = [
   {
     slug: "iranian-mamra-almonds",
     name: "Royal Iranian Mamra Almonds",
-    tagline: "50%+ Natural Oil · Wild Mountain Harvest",
+    tagline: "50%+ Natural Oil · Single-Origin Mountain Sourced",
     price: 2349,
     category: "nuts",
     badge: "Superfood",

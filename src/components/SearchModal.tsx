@@ -103,7 +103,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
             <div className="space-y-6">
               <div>
                 <p className="text-[10px] tracked text-muted-foreground mb-3 flex items-center gap-1.5">
-                  <Sparkles size={12} className="text-clay" /> Popular Harvest Searches
+                  <Sparkles size={12} className="text-clay" /> Popular Searches
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {POPULAR_TAGS.map((tag) => (
@@ -188,7 +188,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
             </div>
           ) : (
             <div className="text-center py-10">
-              <p className="font-display italic text-lg text-ink">No harvest items found</p>
+              <p className="font-display italic text-lg text-ink">No items found</p>
               <p className="text-xs text-muted-foreground mt-1">
                 Try searching for "Almonds", "Figs", "Cashews", or "Gift Boxes".
               </p>
