@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { useCart, formatPrice, type ShippingAddress } from "@/lib/cart-context";
 import { useAuth } from "@/lib/auth-context";
-import { submitOrderToBackend } from "@/lib/api";
+import { submitOrderToBackend, checkPincodeServiceability } from "@/lib/api";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/checkout")({
@@ -45,6 +45,44 @@ function CheckoutPage() {
   const [addressForm, setAddressForm] = useState<ShippingAddress>(shippingAddress);
   const [submittingOrder, setSubmittingOrder] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState<string | null>(null);
+
+  // Shiprocket Pincode Serviceability State
+  const [pincodeChecking, setPincodeChecking] = useState(false);
+  const [pincodeResult, setPincodeResult] = useState<{
+    isServiceable?: boolean;
+    etd?: string;
+    courierName?: string;
+    region?: string;
+  } | null>(null);
+
+  // Auto-check Shiprocket serviceability when 6-digit PIN code is entered
+  useEffect(() => {
+    const pin = addressForm.pincode ? addressForm.pincode.replace(/\D/g, "") : "";
+    if (pin.length === 6) {
+      let isCurrent = true;
+      setPincodeChecking(true);
+      checkPincodeServiceability(pin)
+        .then((res) => {
+          if (isCurrent && res.success) {
+            setPincodeResult({
+              isServiceable: res.isServiceable,
+              etd: res.etd || "2–3 Business Days",
+              courierName: res.courierName || "Blue Dart Air",
+              region: res.region,
+            });
+          }
+        })
+        .finally(() => {
+          if (isCurrent) setPincodeChecking(false);
+        });
+
+      return () => {
+        isCurrent = false;
+      };
+    } else {
+      setPincodeResult(null);
+    }
+  }, [addressForm.pincode]);
 
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
@@ -487,6 +525,31 @@ function CheckoutPage() {
                     />
                   </div>
                 </div>
+
+                {/* Shiprocket Delivery Estimation Badge */}
+                {pincodeChecking && (
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground bg-cream/50 p-2.5 rounded border border-border/60">
+                    <Loader2 size={13} className="animate-spin text-clay" />
+                    <span>Checking Shiprocket delivery serviceability...</span>
+                  </div>
+                )}
+
+                {pincodeResult && !pincodeChecking && (
+                  <div className="flex items-center justify-between p-3 rounded bg-emerald-50/70 border border-emerald-200 text-emerald-900 text-xs animate-in fade-in">
+                    <div className="flex items-center gap-2">
+                      <Truck size={15} className="text-emerald-700 shrink-0" />
+                      <div>
+                        <span className="font-semibold">Express Delivery: {pincodeResult.etd}</span>
+                        <span className="text-[10px] text-emerald-700 block">
+                          Dispatched via {pincodeResult.courierName} with live GPS tracking
+                        </span>
+                      </div>
+                    </div>
+                    <span className="text-[9px] uppercase font-bold font-mono bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">
+                      Available ✓
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Payment Selection */}

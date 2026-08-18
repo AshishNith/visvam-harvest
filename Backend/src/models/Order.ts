@@ -9,6 +9,22 @@ export interface IOrderItem {
   image: string;
 }
 
+export interface IShiprocketDetails {
+  orderId?: number;
+  shipmentId?: number;
+  awbCode?: string;
+  courierName?: string;
+  courierId?: number;
+  labelUrl?: string;
+  manifestUrl?: string;
+  invoiceUrl?: string;
+  trackingUrl?: string;
+  status?: string;
+  statusCode?: number;
+  lastTrackedAt?: Date;
+  etd?: string;
+}
+
 export interface IOrder extends Document {
   user?: mongoose.Types.ObjectId;
   guestEmail?: string;
@@ -19,7 +35,10 @@ export interface IOrder extends Document {
     fullName: string;
     address: string;
     city: string;
+    state?: string;
     postalCode: string;
+    phone?: string;
+    email?: string;
     country: string;
   };
   paymentMethod: string;
@@ -30,6 +49,7 @@ export interface IOrder extends Document {
   isPaid: boolean;
   paidAt?: Date;
   status: "Pending" | "Processing" | "Shipped" | "Completed" | "Cancelled";
+  shiprocket?: IShiprocketDetails;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -74,8 +94,11 @@ const OrderSchema = new Schema<IOrder>(
       fullName: String,
       address: String,
       city: String,
+      state: String,
       postalCode: String,
-      country: String,
+      phone: String,
+      email: String,
+      country: { type: String, default: "India" },
     },
     paymentMethod: {
       type: String,
@@ -116,6 +139,21 @@ const OrderSchema = new Schema<IOrder>(
       enum: ["Pending", "Processing", "Shipped", "Completed", "Cancelled"],
       default: "Pending",
       index: true,
+    },
+    shiprocket: {
+      orderId: Number,
+      shipmentId: Number,
+      awbCode: { type: String, index: true },
+      courierName: String,
+      courierId: Number,
+      labelUrl: String,
+      manifestUrl: String,
+      invoiceUrl: String,
+      trackingUrl: String,
+      status: String,
+      statusCode: Number,
+      lastTrackedAt: Date,
+      etd: String,
     },
   },
   {

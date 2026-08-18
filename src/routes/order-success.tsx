@@ -84,11 +84,20 @@ function OrderSuccessPage() {
 
             <div className="pt-4 border-t border-border/40 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
+                to="/track"
+                search={{ orderId: displayId }}
+                className="group inline-flex items-center gap-2 text-white bg-ink text-[11px] font-semibold uppercase tracking-widest py-3 px-6 hover:bg-clay transition-all duration-300 w-full sm:w-auto justify-center"
+              >
+                <Truck size={14} className="text-clay" />
+                <span>Track Live Shipment</span>
+              </Link>
+
+              <Link
                 to="/profile"
                 className="group inline-flex items-center gap-2 text-ink text-[11px] font-semibold uppercase tracking-widest py-3 px-6 border border-ink hover:bg-ink hover:text-white transition-all duration-300 w-full sm:w-auto justify-center"
               >
                 <Package size={14} />
-                <span>Track in My Orders</span>
+                <span>My Orders</span>
               </Link>
 
               <a
@@ -98,7 +107,7 @@ function OrderSuccessPage() {
                 className="group inline-flex items-center gap-2 text-white bg-[#25D366] text-[11px] font-semibold uppercase tracking-widest py-3 px-6 hover:brightness-105 transition-all duration-300 w-full sm:w-auto justify-center"
               >
                 <PhoneCall size={14} />
-                <span>Get WhatsApp Updates</span>
+                <span>WhatsApp Updates</span>
               </a>
             </div>
 

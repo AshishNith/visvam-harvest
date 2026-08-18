@@ -12,6 +12,7 @@ import newsletterRoutes from "./routes/newsletterRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import shippingRoutes from "./routes/shippingRoutes.js";
 
 import { checkDbConnection } from "./config/db.js";
 import { apiLimiter } from "./middleware/rateLimiter.js";
@@ -80,6 +81,7 @@ app.get("/", (req, res) => {
       health: "/api/v1/health",
       products: "/api/v1/products",
       orders: "/api/v1/orders",
+      shipping: "/api/v1/shipping",
       contact: "/api/v1/contact",
       newsletter: "/api/v1/newsletter",
     },
@@ -102,6 +104,7 @@ app.use("/api/v1", checkDbConnection);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/orders", orderRoutes);
+app.use("/api/v1/shipping", shippingRoutes);
 app.use("/api/v1/contact", inquiryRoutes);
 app.use("/api/v1/newsletter", newsletterRoutes);
 app.use("/api/v1/upload", uploadRoutes);

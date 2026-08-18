@@ -366,3 +366,46 @@ export async function changePassword(data: { currentPassword: string; newPasswor
     return { success: false, message: error.message || "Failed to change password" };
   }
 }
+
+// ─── Shiprocket Logistics API ─────────────────────────────────────
+export async function checkPincodeServiceability(pincode: string, weightKg: number = 0.5): Promise<{
+  success: boolean;
+  isServiceable?: boolean;
+  estimatedDays?: number;
+  etd?: string;
+  courierName?: string;
+  courierRate?: number;
+  region?: string;
+  availableCouriers?: Array<{ id: number; name: string; rate: number; etd: string; estimatedDays: number }>;
+  message?: string;
+}> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/shipping/check-serviceability`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pincode, weightKg }),
+    });
+    return await res.json();
+  } catch (error: any) {
+    return { success: false, message: error.message || "Could not check PIN code serviceability" };
+  }
+}
+
+export async function trackOrderShipment(awbOrOrderId: string): Promise<{
+  success: boolean;
+  awbCode?: string;
+  currentStatus?: string;
+  currentLocation?: string;
+  etd?: string;
+  courier?: string;
+  timeline?: Array<{ date: string; activity: string; location: string; completed?: boolean }>;
+  message?: string;
+}> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/shipping/track/${awbOrOrderId}`);
+    return await res.json();
+  } catch (error: any) {
+    return { success: false, message: error.message || "Failed to fetch live shipment tracking" };
+  }
+}
+

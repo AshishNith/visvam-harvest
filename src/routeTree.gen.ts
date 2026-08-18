@@ -29,6 +29,7 @@ import { Route as ReturnsRouteImport } from './routes/returns'
 import { Route as ShippingRouteImport } from './routes/shipping'
 import { Route as StoryRouteImport } from './routes/story'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as TrackRouteImport } from './routes/track'
 import { Route as MenuSlugRouteImport } from './routes/menu.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -131,6 +132,11 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TrackRoute = TrackRouteImport.update({
+  id: '/track',
+  path: '/track',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MenuSlugRoute = MenuSlugRouteImport.update({
   id: '/menu/$slug',
   path: '/menu/$slug',
@@ -158,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/shipping': typeof ShippingRoute
   '/story': typeof StoryRoute
   '/terms': typeof TermsRoute
+  '/track': typeof TrackRoute
   '/menu/$slug': typeof MenuSlugRoute
 }
 export interface FileRoutesByTo {
@@ -181,6 +188,7 @@ export interface FileRoutesByTo {
   '/shipping': typeof ShippingRoute
   '/story': typeof StoryRoute
   '/terms': typeof TermsRoute
+  '/track': typeof TrackRoute
   '/menu/$slug': typeof MenuSlugRoute
 }
 export interface FileRoutesById {
@@ -205,6 +213,7 @@ export interface FileRoutesById {
   '/shipping': typeof ShippingRoute
   '/story': typeof StoryRoute
   '/terms': typeof TermsRoute
+  '/track': typeof TrackRoute
   '/menu/$slug': typeof MenuSlugRoute
 }
 export interface FileRouteTypes {
@@ -230,6 +239,7 @@ export interface FileRouteTypes {
     | '/shipping'
     | '/story'
     | '/terms'
+    | '/track'
     | '/menu/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -253,6 +263,7 @@ export interface FileRouteTypes {
     | '/shipping'
     | '/story'
     | '/terms'
+    | '/track'
     | '/menu/$slug'
   id:
     | '__root__'
@@ -276,6 +287,7 @@ export interface FileRouteTypes {
     | '/shipping'
     | '/story'
     | '/terms'
+    | '/track'
     | '/menu/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -300,6 +312,7 @@ export interface RootRouteChildren {
   ShippingRoute: typeof ShippingRoute
   StoryRoute: typeof StoryRoute
   TermsRoute: typeof TermsRoute
+  TrackRoute: typeof TrackRoute
   MenuSlugRoute: typeof MenuSlugRoute
 }
 
@@ -445,6 +458,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/track': {
+      id: '/track'
+      path: '/track'
+      fullPath: '/track'
+      preLoaderRoute: typeof TrackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/menu/$slug': {
       id: '/menu/$slug'
       path: '/menu/$slug'
@@ -476,6 +496,7 @@ const rootRouteChildren: RootRouteChildren = {
   ShippingRoute: ShippingRoute,
   StoryRoute: StoryRoute,
   TermsRoute: TermsRoute,
+  TrackRoute: TrackRoute,
   MenuSlugRoute: MenuSlugRoute,
 }
 export const routeTree = rootRouteImport
