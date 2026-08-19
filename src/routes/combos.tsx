@@ -28,14 +28,14 @@ export const Route = createFileRoute("/combos")({
         {
           name: "description",
           content:
-            "Shop curated dry fruit combo packs, 4-in-1 luxury gift boxes, and festive corporate hampers with vacuum-sealed California almonds, cashews, and walnuts.",
+            "Shop curated dry fruit combo packs, 4-in-1 luxury gift boxes, and festive corporate hampers with California almonds, cashews, and walnuts.",
         },
         {
           name: "keywords",
           content: "dry fruit combos online, dry fruit gift box, festive hampers India, corporate dry fruit box, luxury combos Viśvam",
         },
         { property: "og:title", content: "Gift Boxes & Combos — Viśvam" },
-        { property: "og:description", content: "Opulent gift boxes with vacuum-sealed premium nuts and dried fruits." },
+        { property: "og:description", content: "Opulent gift boxes with premium nuts and dried fruits." },
         { property: "og:type", content: "website" },
         { property: "og:url", content: canonicalUrl },
         { property: "og:image", content: "https://visvam.in/Visvam-Logo.png" },

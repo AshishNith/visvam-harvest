@@ -79,9 +79,24 @@ function CookieNotice() {
 
             <section className="space-y-4">
               <h2 className="font-display italic text-2xl text-ink">Your Choices & Control</h2>
+              <div className="p-6 bg-cream/70 rounded-xl border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h3 className="font-semibold text-ink text-base mb-1">Cookie Preferences</h3>
+                  <p className="text-xs text-muted-foreground">
+                    Customize which cookies you want to allow on this browser.
+                  </p>
+                </div>
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent("visvam-open-cookie-settings"))}
+                  className="inline-flex items-center justify-center px-6 py-2.5 bg-ink text-white text-[11px] font-medium uppercase tracking-widest hover:bg-clay transition-all rounded-xs self-start sm:self-auto cursor-pointer"
+                >
+                  Manage Cookie Settings
+                </button>
+              </div>
+
               <ul className="list-disc pl-5 space-y-2 text-muted-foreground">
                 <li>On your first visit, our cookie banner lets you <strong>accept all</strong>, <strong>reject non-essential</strong>, or <strong>choose by category</strong>.</li>
-                <li>You can change your choice at any time using the <strong>Cookie Settings</strong> link in our footer.</li>
+                <li>You can update your choices anytime using the <strong>Manage Cookie Settings</strong> button above.</li>
                 <li>You can also manage or delete cookies through your web browser settings.</li>
                 <li>For Meta ads specifically, you can adjust your ad preferences within your Facebook and Instagram account settings.</li>
               </ul>

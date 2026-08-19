@@ -28,7 +28,7 @@ export const Route = createFileRoute("/track")({
       { title: "Track Your Order — Viśvam Logistics" },
       {
         name: "description",
-        content: "Track your Viśvam cold-chain dry fruit order in real-time with live Shiprocket express courier updates.",
+        content: "Track your Viśvam dry fruit order in real-time with live express courier updates.",
       },
     ],
   }),
@@ -182,11 +182,11 @@ function TrackOrderPage() {
                 </div>
               </div>
 
-              {/* Cold-Chain Assurance */}
+              {/* Packaging Reassurance */}
               <div className="p-4 bg-sand/30 border border-border/40 flex items-center gap-3 text-xs text-muted-foreground">
                 <ShieldCheck size={20} className="text-clay shrink-0" />
                 <p>
-                  Viśvam shipments are nitrogen-flushed and packed in airtight, temperature-stabilized pouches to ensure optimal freshness during transit.
+                  Viśvam shipments are securely packed in protective food-grade packaging to ensure safe transit.
                 </p>
               </div>
             </div>

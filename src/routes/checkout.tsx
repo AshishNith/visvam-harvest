@@ -28,7 +28,7 @@ export const Route = createFileRoute("/checkout")({
   component: CheckoutPage,
 });
 
-const FREE_SHIPPING_THRESHOLD = 999;
+const FREE_SHIPPING_THRESHOLD = 3499;
 
 function CheckoutPage() {
   const navigate = useNavigate();
@@ -223,7 +223,7 @@ function CheckoutPage() {
           Thank you for choosing Viśvam. Order reference: <strong className="text-ink font-mono">{orderSuccess}</strong>
         </p>
         <p className="text-xs text-muted-foreground max-w-md leading-relaxed mb-8">
-          Your order will be nitrogen-sealed in airtight cold-chain packaging and dispatched via priority courier. A tracking notification has been sent to your account email: <strong className="text-ink">{user?.email}</strong>.
+          Your order will be carefully packed and dispatched via priority courier. A tracking notification has been sent to your account email: <strong className="text-ink">{user?.email}</strong>.
         </p>
         <div className="flex gap-4 flex-wrap justify-center">
           <Link
@@ -634,7 +634,7 @@ function CheckoutPage() {
 
                 <div className="pt-2 text-[10px] text-muted-foreground space-y-1.5 border-t border-border/60">
                   <p className="flex items-center gap-2"><Truck size={12} className="text-clay" /> Dispatch within 24–48 Hours</p>
-                  <p className="flex items-center gap-2"><ShieldCheck size={12} className="text-clay" /> Nitrogen-Flushed Sealed Packaging</p>
+                  <p className="flex items-center gap-2"><ShieldCheck size={12} className="text-clay" /> Premium Packaging</p>
                 </div>
 
                 <div className="pt-4 border-t border-border/60">

@@ -34,7 +34,7 @@ export const products: Product[] = [
   {
     slug: "california-jumbo-almonds",
     name: "California Jumbo Almonds (Badam)",
-    tagline: "Cold-Stored · Nitrogen-Locked Freshness",
+    tagline: "Single-Origin · Hand-Selected",
     price: 1199,
     category: "nuts",
     badge: "Bestseller",
@@ -44,7 +44,7 @@ export const products: Product[] = [
       cImg("01_Almonds_Badam/DSC00418.jpg"),
     ],
     description:
-      "Hand-selected jumbo whole almonds harvested at peak oil maturity. Gently air-dried and nitrogen-sealed to retain natural crunch, vitamin E, and sweet buttery flavor.",
+      "Hand-selected jumbo whole almonds harvested at peak oil maturity. Gently air-dried and carefully packaged to retain natural crunch, vitamin E, and sweet buttery flavor.",
     serving: "500g Pouch",
     benefits: ["Rich in Vitamin E", "Heart Healthy", "High Plant Protein"],
     bestseller: true,
@@ -82,7 +82,7 @@ export const products: Product[] = [
     description:
       "Hand-extracted half kernels from wild Kashmiri walnut groves. Naturally sweet with zero bitterness, packed with heart-healthy Omega-3 ALA fatty acids.",
     serving: "500g Box",
-    benefits: ["High Omega-3 ALA", "Memory Support", "100% Organic"],
+    benefits: ["High Omega-3 ALA", "Memory Support", "Naturally Harvested"],
     bestseller: true,
     isNew: true,
   },
@@ -240,9 +240,9 @@ export const products: Product[] = [
       cImg("08_Assorted_Mix_and_Gift_Platters/DSC00766.jpg"),
     ],
     description:
-      "An opulent handcrafted rigid gift box featuring four individually vacuum-sealed compartments of our finest Jumbo Almonds, W240 Cashews, Walnut Halves, and Roasted Pistachios.",
+      "An opulent handcrafted rigid gift box featuring four distinct compartments of our finest Jumbo Almonds, W240 Cashews, Walnut Halves, and Roasted Pistachios.",
     serving: "1kg Luxury Gift Box",
-    benefits: ["Vacuum Sealed Freshness", "Custom Ribbon Included", "100% Organic Selection"],
+    benefits: ["Protective Packaging", "Custom Ribbon Included", "Curated Selection"],
     bestseller: true,
   },
   {
@@ -260,7 +260,7 @@ export const products: Product[] = [
     description:
       "The ultimate celebratory dry fruit collection. Includes Iranian Mamra Almonds, Royal Medjool King Dates, Dried Kandahar Figs, and Wild Berry Mix housed in an embossed metallic tin.",
     serving: "1.2kg Gold Tin",
-    benefits: ["Gold Embossed Tin", "Air-tight Lock", "Guaranteed Premium Grade"],
+    benefits: ["Gold Embossed Tin", "Refined Presentation", "Curated Grade"],
     isNew: true,
   },
 ];

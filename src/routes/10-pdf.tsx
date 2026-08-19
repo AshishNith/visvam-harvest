@@ -237,7 +237,7 @@ function TenLayoutsPage() {
                   <p className="text-sm text-muted-foreground leading-relaxed max-w-md text-left">{p.description}</p>
 
                   <div className="flex items-center gap-4 text-xs text-muted-foreground pt-1">
-                    <span className="inline-flex items-center gap-1.5"><ShieldCheck size={14} className="text-clay" /> Cold Lock 4°C</span>
+                    <span className="inline-flex items-center gap-1.5"><ShieldCheck size={14} className="text-clay" /> Single Origin</span>
                     <span className="inline-flex items-center gap-1.5"><Droplets size={14} className="text-clay" /> Grade A1</span>
                   </div>
 
@@ -340,7 +340,7 @@ function TenLayoutsPage() {
               </div>
 
               <div className="flex items-center gap-6 text-xs text-muted-foreground pt-1">
-                <span className="inline-flex items-center gap-1.5"><ShieldCheck size={14} className="text-clay" /> Cold Lock 4°C</span>
+                <span className="inline-flex items-center gap-1.5"><ShieldCheck size={14} className="text-clay" /> Single Origin</span>
                 <span className="inline-flex items-center gap-1.5"><Droplets size={14} className="text-clay" /> Grade A1</span>
               </div>
 

@@ -65,8 +65,8 @@ export function Footer() {
             </form>
           </div>
 
-          <div className="grid grid-cols-2 gap-10 sm:gap-16">
-            <div className="space-y-4">
+          <div className="flex flex-row gap-10 sm:gap-14 lg:gap-16 justify-start lg:justify-end">
+            <div className="space-y-4 min-w-[130px]">
               <h6 className="text-[10px] tracked font-semibold uppercase">Shop Now</h6>
               <ul className="space-y-2.5 text-[11px]">
                 <li><Link to="/nuts" className="hover:text-clay transition">Nuts & Dried Fruits</Link></li>
@@ -116,12 +116,6 @@ export function Footer() {
             <Link to="/privacy" className="hover:text-clay transition">Privacy</Link>
             <Link to="/terms" className="hover:text-clay transition">Terms</Link>
             <Link to="/cookies" className="hover:text-clay transition">Cookie Notice</Link>
-            <button
-              onClick={() => window.dispatchEvent(new CustomEvent("visvam-open-cookie-settings"))}
-              className="hover:text-clay transition underline cursor-pointer"
-            >
-              Cookie Settings
-            </button>
             <Link to="/contact" className="hover:text-clay transition">Contact Us</Link>
           </div>
         </div>

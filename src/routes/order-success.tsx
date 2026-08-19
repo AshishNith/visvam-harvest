@@ -62,16 +62,16 @@ function OrderSuccessPage() {
                 <p className="text-xs font-semibold text-ink">
                   {formatDate(deliveryMin)} – {formatDate(deliveryMax)}
                 </p>
-                <p className="text-[11px] text-muted-foreground">Cold-chain express courier dispatch</p>
+                <p className="text-[11px] text-muted-foreground">Express courier dispatch</p>
               </div>
 
               <div className="bg-background p-4 border border-border/40 space-y-1">
                 <div className="flex items-center gap-2 text-clay mb-2">
                   <ShieldCheck size={16} />
-                  <span className="text-[10px] font-mono uppercase font-bold tracking-wider">Packaging Guarantee</span>
+                  <span className="text-[10px] font-mono uppercase font-bold tracking-wider">Packaging</span>
                 </div>
-                <p className="text-xs font-semibold text-ink">Nitrogen Sealed at 4°C</p>
-                <p className="text-[11px] text-muted-foreground">Locks in peak natural oils & fresh crunch</p>
+                <p className="text-xs font-semibold text-ink">Bespoke Presentation</p>
+                <p className="text-[11px] text-muted-foreground">Carefully packed for protected transit</p>
               </div>
             </div>
 

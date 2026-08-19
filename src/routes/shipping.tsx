@@ -7,10 +7,10 @@ export const Route = createFileRoute("/shipping")({
       { title: "Shipping & Delivery Policy — Viśvam Logistics" },
       {
         name: "description",
-        content: "Read Viśvam's cold-chain shipping logistics, nitrogen-sealed packaging details, express delivery timelines, and tracking info across India.",
+        content: "Read Viśvam's shipping logistics, packaging details, express delivery timelines, and tracking info across India.",
       },
       { property: "og:title", content: "Shipping & Delivery Policy — Viśvam" },
-      { property: "og:description", content: "Cold-chain shipping policy and express courier delivery timelines across India." },
+      { property: "og:description", content: "Shipping policy and express courier delivery timelines across India." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://visvam.in/shipping" },
       { property: "og:image", content: "https://visvam.in/Visvam-Logo.png" },
@@ -40,16 +40,16 @@ function ShippingPolicy() {
 
           <div className="space-y-12 text-sm leading-relaxed text-foreground/90 max-w-3xl">
             <section className="space-y-4">
-              <h2 className="font-display italic text-2xl text-ink">1. Cold-Chain Preserved Packaging</h2>
+              <h2 className="font-display italic text-2xl text-ink">1. Packaging & Presentation</h2>
               <p className="text-muted-foreground">
-                Every order dispatched from Viśvam is nitrogen-flushed and vacuum-sealed in food-grade airtight pouches to lock in natural oils, aroma, and orchard-fresh crunch throughout transit.
+                Every order dispatched from Viśvam is packaged in food-grade pouches and presentation boxes to protect product quality throughout transit.
               </p>
             </section>
 
             <section className="space-y-4">
               <h2 className="font-display italic text-2xl text-ink">2. Dispatch & Delivery Timelines</h2>
               <p className="text-muted-foreground">
-                Orders are processed and dispatched from our cold-storage facility within 24 to 48 business hours. Standard express shipping typically delivers within 3 to 5 business days depending on your location.
+                Orders are processed and dispatched from our fulfillment facility within 24 to 48 business hours. Standard express shipping typically delivers within 3 to 5 business days depending on your location.
               </p>
             </section>
 

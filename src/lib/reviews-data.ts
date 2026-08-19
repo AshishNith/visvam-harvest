@@ -14,7 +14,7 @@ export const FALLBACK_REVIEWS: Record<string, ProductReview[]> = {
       userName: "Ananya Sharma",
       rating: 5,
       title: "Exceptionally fresh & jumbo size!",
-      comment: "These are truly jumbo sized. You can hear the crisp snap with every bite. Packed under nitrogen seal, so there is zero stale smell. Perfect for soaking overnight.",
+      comment: "These are truly jumbo sized. You can hear the crisp snap with every bite. Properly packed, so there is zero stale smell. Perfect for soaking overnight.",
       createdAt: new Date(Date.now() - 3 * 86400000).toISOString(),
     },
     {
@@ -53,7 +53,7 @@ export const FALLBACK_REVIEWS: Record<string, ProductReview[]> = {
       _id: "rev-almonds-6",
       userName: "Siddharth Varma",
       rating: 5,
-      title: "Nitrogen seal makes a huge difference",
+      title: "Quality packaging makes a huge difference",
       comment: "Arrived with the seal intact. Zero broken pieces in the 500g pouch. Highly recommended for daily wellness.",
       createdAt: new Date(Date.now() - 31 * 86400000).toISOString(),
     },
@@ -78,7 +78,7 @@ export const FALLBACK_REVIEWS: Record<string, ProductReview[]> = {
       userName: "Radhika Sen",
       rating: 4,
       title: "Very fresh and wholesome",
-      comment: "Good airtight zip-lock packaging. Almonds remained crisp throughout the month.",
+      comment: "Good quality zip-lock packaging. Almonds remained crisp throughout the month.",
       createdAt: new Date(Date.now() - 52 * 86400000).toISOString(),
     },
     {
@@ -243,8 +243,8 @@ export const FALLBACK_REVIEWS: Record<string, ProductReview[]> = {
       _id: "rev-walnuts-7",
       userName: "Manoj Swamy",
       rating: 5,
-      title: "Vacuum seal kept them super fresh",
-      comment: "Walnuts go rancid fast if exposed to air. Viśvam's nitrogen packaging keeps them crisp as day one.",
+      title: "Careful packaging kept them super fresh",
+      comment: "Walnuts go rancid fast if exposed to air. Viśvam's protective packaging keeps them crisp as day one.",
       createdAt: new Date(Date.now() - 42 * 86400000).toISOString(),
     },
     {
@@ -500,7 +500,7 @@ export const FALLBACK_REVIEWS: Record<string, ProductReview[]> = {
       _id: "rev-anjeer-5",
       userName: "Devendra Fadnavis",
       rating: 5,
-      title: "Airtight fresh seal",
+      title: "Fresh and soft texture",
       comment: "Figs stayed soft and moist throughout the month. Zero dust or hard stems.",
       createdAt: new Date(Date.now() - 28 * 86400000).toISOString(),
     },
@@ -1015,7 +1015,7 @@ export const FALLBACK_REVIEWS: Record<string, ProductReview[]> = {
       userName: "Mukesh Ambani",
       rating: 5,
       title: "Opulent executive corporate gifting",
-      comment: "Ordered 50 boxes for our executive partners. The emerald & gold presentation, magnetic closure, and nitrogen-sealed dry fruits made a lasting impression.",
+      comment: "Ordered 50 boxes for our executive partners. The emerald & gold presentation, magnetic closure, and curated dry fruits made a lasting impression.",
       createdAt: new Date(Date.now() - 4 * 86400000).toISOString(),
     },
     {
@@ -1047,7 +1047,7 @@ export const FALLBACK_REVIEWS: Record<string, ProductReview[]> = {
       userName: "Kumar Mangalam Birla",
       rating: 5,
       title: "Flawless packaging and freshness",
-      comment: "Vacuum sealed compartments ensure the nuts taste as fresh as the day they were harvested.",
+      comment: "Individual compartments ensure the nuts taste as fresh as the day they were harvested.",
       createdAt: new Date(Date.now() - 37 * 86400000).toISOString(),
     },
     {
@@ -1162,7 +1162,7 @@ export const FALLBACK_REVIEWS: Record<string, ProductReview[]> = {
       userName: "Karan Adani",
       rating: 5,
       title: "Top tier festive collection",
-      comment: "Impeccable vacuum sealing and fast delivery. Very satisfied.",
+      comment: "Impeccable packaging and fast delivery. Very satisfied.",
       createdAt: new Date(Date.now() - 70 * 86400000).toISOString(),
     },
     {

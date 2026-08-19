@@ -19,6 +19,18 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Baskerville Italic";
+  src: url("./assets/fonts/BaskervilleItalicBT.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Baskerville";
+  src: url("./assets/fonts/BaskervilleItalicBT.ttf") format("truetype");
+  font-display: swap;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -49,6 +61,7 @@
   --color-ring-offset-background: var(--background);
   --font-primary: "Athena", "EB Garamond", serif;
   --font-display: "Athena", "EB Garamond", serif;
+  --font-baskerville: "Baskerville Italic", "Athena", serif;
   --font-secondary: "Tenor Sans", "Inter", system-ui, sans-serif;
   --font-sans: "Tenor Sans", "Inter", system-ui, sans-serif;
   --radius-sm: 0.5rem;   /* 8px */
@@ -185,4 +198,8 @@
 }
 @utility animate-lane-pulse {
   animation: lane-pulse 1.8s ease-in-out infinite;
+}
+@utility font-baskerville {
+  font-family: "Baskerville Italic", "Baskerville", serif !important;
+  font-style: italic !important;
 }

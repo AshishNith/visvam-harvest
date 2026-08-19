@@ -35,7 +35,7 @@ export const productsData = [
       `${CDN}/01_Almonds_Badam/DSC00445.jpg`,
       `${CDN}/01_Almonds_Badam/DSC00418.jpg`,
     ],
-    description: "Hand-selected jumbo whole almonds harvested at peak oil maturity. Gently air-dried and nitrogen-sealed to retain natural crunch, vitamin E, and sweet buttery flavor.",
+    description: "Hand-selected jumbo whole almonds harvested at peak oil maturity. Gently air-dried and airtight-sealed to retain natural crunch, vitamin E, and sweet buttery flavor.",
     serving: "500g Pouch",
     origin: "California, USA",
     grade: "Jumbo A1",

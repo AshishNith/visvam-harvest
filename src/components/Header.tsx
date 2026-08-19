@@ -22,6 +22,7 @@ const rightLinks = [
 export function Header() {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
+  const isDarkHeroPage = location.pathname === "/" || location.pathname === "/nuts" || location.pathname === "/gourmet";
   const { count, openCart } = useCart();
   const { user, isAuthenticated } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -49,7 +50,7 @@ export function Header() {
 
   const textColorClass = isScrolled
     ? "text-ink"
-    : isHomePage
+    : isDarkHeroPage
     ? "text-white drop-shadow-sm"
     : "text-ink";
 
@@ -59,6 +60,8 @@ export function Header() {
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
           isScrolled
             ? "bg-background/95 backdrop-blur-sm shadow-md py-0"
+            : isDarkHeroPage
+            ? "bg-gradient-to-b from-black/50 via-black/20 to-transparent shadow-none border-none py-0"
             : "bg-transparent shadow-none border-none py-0"
         }`}
       >
@@ -87,7 +90,7 @@ export function Header() {
                   src={logoWordmark}
                   alt="Viśvam — Royal Dry Fruits & Nuts"
                   className={`h-7 sm:h-8 w-auto object-contain transition-all duration-300 rounded-none logo ${
-                    isHomePage ? "brightness-0 invert drop-shadow-md" : ""
+                    isDarkHeroPage ? "brightness-0 invert drop-shadow-md" : ""
                   }`}
                 />
               )}
@@ -105,7 +108,7 @@ export function Header() {
                   <Link
                     to={l.to}
                     className="flex items-center gap-1 hover:text-clay transition-colors relative after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[1.5px] after:bg-clay hover:after:w-full after:transition-all after:duration-300"
-                    activeProps={{ className: "text-clay font-semibold after:w-full" }}
+                    activeProps={{ className: isScrolled || !isDarkHeroPage ? "text-clay font-semibold after:w-full" : "text-white font-semibold after:w-full after:bg-white" }}
                   >
                     {l.label}
                     <ChevronDown size={11} className="text-current opacity-70 transition-transform duration-200 group-hover:rotate-180" />
@@ -113,12 +116,16 @@ export function Header() {
 
                   {/* Mega Menu Dropdown */}
                   {activeCategoryHover === l.category && (
-                    <div className={`absolute top-full left-0 bg-background/98 backdrop-blur-md shadow-lg p-3 animate-fade-up z-50 rounded-xs text-ink border border-border/40 ${
-                      l.category === "gifting" ? "w-40" : "w-72"
+                    <div className={`absolute top-full left-0 bg-background/98 backdrop-blur-md shadow-lg p-3 animate-fade-up z-50 rounded-sm text-ink border border-border/40 ${
+                      l.category === "gifting" || l.category === "gourmet" ? "w-48" : "w-72"
                     }`}>
                       {l.category === "gifting" ? (
-                        <p className="text-xs text-muted-foreground text-center py-1 font-sans">
+                        <p className="text-xs text-muted-foreground text-center py-2 font-sans font-medium whitespace-nowrap px-3">
                           Coming soon
+                        </p>
+                      ) : l.category === "gourmet" ? (
+                        <p className="text-xs text-muted-foreground text-center py-2 font-sans font-medium whitespace-nowrap px-3">
+                          Curating for you
                         </p>
                       ) : (
                         <>
@@ -179,7 +186,7 @@ export function Header() {
                   width={140}
                   height={48}
                   className={`h-9 sm:h-11 w-auto object-contain transition-all duration-300 group-hover:scale-105 rounded-none logo ${
-                    isHomePage ? "brightness-0 invert drop-shadow-md" : ""
+                    isDarkHeroPage ? "brightness-0 invert drop-shadow-md" : ""
                   }`}
                 />
               </div>
@@ -195,7 +202,7 @@ export function Header() {
                   key={l.to}
                   to={l.to}
                   className="hover:text-clay transition-colors relative after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[1.5px] after:bg-clay hover:after:w-full after:transition-all after:duration-300"
-                  activeProps={{ className: "text-clay font-semibold after:w-full" }}
+                  activeProps={{ className: isScrolled || !isDarkHeroPage ? "text-clay font-semibold after:w-full" : "text-white font-semibold after:w-full after:bg-white" }}
                 >
                   {l.label}
                 </Link>
@@ -205,7 +212,7 @@ export function Header() {
             {/* Interactive Search Button */}
             <button
               onClick={() => setIsSearchOpen(true)}
-              aria-label="Search catalog"
+              aria-label="Search collection"
               className={`p-2 hover:text-clay transition-all rounded-xs ${
                 isScrolled ? "hover:bg-cream/60" : "hover:bg-white/10"
               } ${textColorClass}`}
@@ -323,7 +330,7 @@ export function Header() {
               {/* Mobile Footer Info */}
               <div className="pt-4 flex items-center justify-between text-[10px] text-muted-foreground">
                 <span className="flex items-center gap-1">
-                  <MapPin size={11} className="text-clay" /> 100% Handpicked Sourcing
+                  <MapPin size={11} className="text-clay" /> Single-Origin Sourcing
                 </span>
                 <button
                   onClick={() => {

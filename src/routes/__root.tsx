@@ -42,7 +42,7 @@ function NotFoundComponent() {
               to="/nuts"
               className="inline-flex items-center gap-2 border border-ink text-ink px-8 py-3.5 text-[11px] font-medium tracked uppercase tracking-widest hover:bg-ink hover:text-white transition-colors"
             >
-              <span>Explore Nuts Catalog</span>
+              <span>Explore Nuts Collection</span>
             </Link>
           </div>
         </div>
@@ -156,12 +156,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Viśvam — cold-stored, single-origin dry fruits, jumbo almonds, W240 cashews, organic figs, dates and luxury gift hampers delivered in nitrogen-sealed packages.",
+          "Viśvam — single-origin dry fruits, jumbo almonds, W240 cashews, figs, dates and luxury gift hampers delivered nationwide.",
       },
       {
         name: "keywords",
         content:
-          "dry fruits, premium nuts, California almonds, W240 cashews, Kashmiri walnuts, organic figs, Medjool dates, luxury gift hampers, cold stored dry fruits, single origin nuts, buy dry fruits online India",
+          "dry fruits, premium nuts, California almonds, W240 cashews, Kashmiri walnuts, figs, Medjool dates, luxury gift hampers, single origin nuts, buy dry fruits online India",
       },
       { name: "author", content: "Viśvam" },
       { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" },

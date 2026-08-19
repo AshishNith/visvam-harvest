@@ -6,7 +6,7 @@ import { products } from "@/lib/products";
 import { submitOrderToBackend } from "@/lib/api";
 import { toast } from "sonner";
 
-const FREE_SHIPPING_THRESHOLD = 999;
+const FREE_SHIPPING_THRESHOLD = 3499;
 
 type CheckoutStep = "cart" | "address" | "confirm";
 
@@ -124,7 +124,18 @@ export function CartDrawer() {
     closeCart();
   };
 
-  const suggestions = products
+  const FREQUENT_SLUGS = [
+    "kashmiri-snow-walnuts",
+    "california-jumbo-almonds",
+    "king-w240-cashews",
+  ];
+
+  const prioritizedProducts = [
+    ...FREQUENT_SLUGS.map((slug) => products.find((p) => p.slug === slug)).filter((p): p is (typeof products)[0] => Boolean(p)),
+    ...products.filter((p) => !FREQUENT_SLUGS.includes(p.slug)),
+  ];
+
+  const suggestions = prioritizedProducts
     .filter((p) => !items.find((i) => i?.product?.slug === p?.slug))
     .slice(0, 3);
 
@@ -166,7 +177,7 @@ export function CartDrawer() {
             </div>
             <h3 className="font-display italic text-3xl mb-3">Order Confirmed!</h3>
             <p className="text-sm text-muted-foreground max-w-xs leading-relaxed mb-8">
-              Your premium dry fruits will be nitrogen-sealed and dispatched within 24-48 hours via express cold-chain courier.
+              Your order will be carefully packed and dispatched within 24-48 hours via express courier.
             </p>
             <button
               onClick={handleClose}
@@ -185,10 +196,12 @@ export function CartDrawer() {
                   <p className="text-[10.5px] tracked mb-2.5 flex items-center gap-2">
                     <Truck size={13} className="text-clay" />
                     {reached ? (
-                      <span className="font-semibold text-clay">Free express shipping unlocked!</span>
+                      <span className="font-semibold text-clay">Free shipping unlocked!</span>
+                    ) : subtotal === 0 ? (
+                      <span>Free shipping on orders above ₹3,499</span>
                     ) : (
                       <>
-                        Add <span className="font-semibold">{formatPrice(remaining)}</span> more for free express shipping
+                        Free shipping on orders above ₹3,499 · Add <span className="font-semibold">{formatPrice(remaining)}</span> more
                       </>
                     )}
                   </p>
@@ -311,9 +324,6 @@ export function CartDrawer() {
                     <span>Proceed to Checkout</span>
                     <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
                   </button>
-                  <p className="text-[9.5px] text-muted-foreground text-center tracking-wide">
-                    Nitrogen-flushed packaging · 100% Quality Guaranteed
-                  </p>
                 </div>
               </>
             )}

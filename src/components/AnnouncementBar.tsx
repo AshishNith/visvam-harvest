@@ -12,14 +12,14 @@ export function AnnouncementBar() {
         {/* Left Badge */}
         <div className="hidden md:flex items-center gap-2 text-ember font-medium tracked text-[9.5px]">
           <ShieldCheck size={13} className="text-clay shrink-0" />
-          <span>Cold-Chain Locked Sourcing</span>
+          <span>Single-Origin Sourced</span>
         </div>
 
         {/* Center Ticker / Message */}
         <div className="flex-1 flex items-center justify-center gap-2 text-center text-[10px] sm:text-[10.5px] font-sans font-normal tracking-wide text-sand/90">
           <Sparkles size={12} className="text-ember shrink-0 hidden sm:inline" />
           <span>
-            Complimentary Express Nitrogen Shipping on orders over <strong className="text-white font-medium">$50.00</strong> — Code:{" "}
+            Complimentary Express Shipping on orders over <strong className="text-white font-medium">₹3,499</strong> — Code:{" "}
             <span className="bg-clay/40 px-1.5 py-0.5 text-white font-mono text-[10px] tracking-widest border border-clay/60">
               ROYAL10
             </span>

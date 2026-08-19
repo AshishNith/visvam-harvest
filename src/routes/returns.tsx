@@ -4,13 +4,13 @@ import { SiteLayout } from "@/components/SiteLayout";
 export const Route = createFileRoute("/returns")({
   head: () => ({
     meta: [
-      { title: "Returns & Refund Policy — Viśvam Quality Guarantee" },
+      { title: "Returns & Refund Policy — Viśvam" },
       {
         name: "description",
         content: "Read Viśvam's Return & Refund Policy. Food hygiene standards, transit damage coverage, 48-hour claim process, and 5-7 day refund timelines.",
       },
       { property: "og:title", content: "Returns & Refund Policy — Viśvam" },
-      { property: "og:description", content: "Quality guarantee and claim procedure for Viśvam dry fruits and nuts." },
+      { property: "og:description", content: "Return policy and claim procedure for Viśvam dry fruits and nuts." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://visvam.in/returns" },
       { property: "og:image", content: "https://visvam.in/Visvam-Logo.png" },
@@ -28,7 +28,7 @@ function ReturnPolicy() {
         <div className="max-w-[1000px] mx-auto px-6">
           <div className="mb-16 border-b border-border/40 pb-10">
             <span className="text-[11px] font-mono text-clay uppercase tracking-widest font-semibold block mb-3">
-              FOOD HYGIENE & QUALITY GUARANTEE
+              FOOD HYGIENE & RETURN POLICY
             </span>
             <h1 className="font-display italic text-4xl sm:text-6xl text-ink">
               Returns & Refund Policy

@@ -10,7 +10,7 @@ export const Route = createFileRoute("/story")({
       "@context": "https://schema.org",
       "@type": "AboutPage",
       "name": "Our Farm Story — Viśvam",
-      "description": "Discover the heritage behind Viśvam: single-origin orchards, traditional sun-drying, cold storage preservation, and zero preservatives.",
+      "description": "Discover the heritage behind Viśvam: single-origin orchards, traditional sun-drying, and artisanal curation.",
       "url": canonicalUrl,
       "publisher": {
         "@type": "Organization",
@@ -24,11 +24,11 @@ export const Route = createFileRoute("/story")({
         {
           name: "description",
           content:
-            "Discover the heritage behind Viśvam: direct single-origin sourcing from California, Kashmir, & Kandahar, 4°C cold lock preservation, and zero added preservatives.",
+            "Discover the heritage behind Viśvam: direct single-origin sourcing from California, Kashmir, & Kandahar, and artisanal curation.",
         },
         {
           name: "keywords",
-          content: "Viśvam farm story, single origin dry fruits, cold lock storage dry fruits, unadulterated nuts, Kashmiri walnut orchards",
+          content: "Viśvam farm story, single origin dry fruits, artisanal nuts, Kashmiri walnut orchards",
         },
         { property: "og:title", content: "Our Farm Story — Viśvam" },
         { property: "og:description", content: "Direct-from-orchard collection of premium nuts and dried fruits." },
@@ -93,12 +93,12 @@ function Story() {
             </p>
           </div>
           <div>
-            <p className="text-[10px] tracked text-muted-foreground mb-4 uppercase tracking-wider">03 — Cold Lock Freshness</p>
+            <p className="text-[10px] tracked text-muted-foreground mb-4 uppercase tracking-wider">03 — Presentation</p>
             <h3 className="font-display italic text-3xl mb-4">
-              Nitrogen-Flushed Airtight Seals.
+              Mindful Presentation.
             </h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Upon harvest, every nut and dry fruit is stored under temperature-controlled 4°C conditions and sealed in nitrogen-flushed pouches to block oxidation, keeping every bite as crisp as harvest day.
+              Upon selection, every harvest is protected in thoughtfully designed packaging that honors its natural textures, flavors, and visual appeal.
             </p>
           </div>
         </div>
@@ -107,10 +107,10 @@ function Story() {
       <section className="bg-background py-24">
         <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
-            ["100%", "Single-origin orchards"],
-            ["50%+", "Natural oil in Mamra almonds"],
-            ["0%", "Added preservatives or oil"],
-            ["4°C", "Constant cold-chain storage"],
+            ["Direct", "Orchard relationships"],
+            ["Handpicked", "Sorted by grade & size"],
+            ["Sun-Dried", "Traditional natural curing"],
+            ["Artisanal", "Bespoke presentation packaging"],
           ].map(([k, v]) => (
             <div key={k} className="bg-cream/40 p-10 text-center rounded-sm">
               <p className="font-display italic text-5xl mb-3 text-ink">{k}</p>

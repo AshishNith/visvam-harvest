@@ -19,7 +19,7 @@ const reviewsByProduct: Record<string, ReviewTemplate[]> = {
       userName: "Ananya Sharma",
       rating: 5,
       title: "Exceptionally fresh & jumbo size!",
-      comment: "These are truly jumbo sized. You can hear the crisp snap with every bite. Packed under nitrogen seal, so there is zero stale smell. Perfect for soaking overnight.",
+      comment: "These are truly jumbo sized. You can hear the crisp snap with every bite. Packed under airtight seal, so there is zero stale smell. Perfect for soaking overnight.",
       daysAgo: 3,
     },
     {
@@ -53,7 +53,7 @@ const reviewsByProduct: Record<string, ReviewTemplate[]> = {
     {
       userName: "Siddharth Varma",
       rating: 5,
-      title: "Nitrogen seal makes a huge difference",
+      title: "Airtight seal makes a huge difference",
       comment: "Arrived with the seal intact. Zero broken pieces in the 500g pouch. Highly recommended for daily wellness.",
       daysAgo: 31,
     },
@@ -221,7 +221,7 @@ const reviewsByProduct: Record<string, ReviewTemplate[]> = {
       userName: "Manoj Swamy",
       rating: 5,
       title: "Vacuum seal kept them super fresh",
-      comment: "Walnuts go rancid fast if exposed to air. Viśvam's nitrogen packaging keeps them crisp as day one.",
+      comment: "Walnuts go rancid fast if exposed to air. Viśvam's airtight packaging keeps them crisp as day one.",
       daysAgo: 42,
     },
     {
@@ -899,7 +899,7 @@ const reviewsByProduct: Record<string, ReviewTemplate[]> = {
       userName: "Mukesh Ambani",
       rating: 5,
       title: "Opulent executive corporate gifting",
-      comment: "Ordered 50 boxes for our executive partners. The emerald & gold presentation, magnetic closure, and nitrogen-sealed dry fruits made a lasting impression.",
+      comment: "Ordered 50 boxes for our executive partners. The emerald & gold presentation, magnetic closure, and airtight-sealed dry fruits made a lasting impression.",
       daysAgo: 4,
     },
     {

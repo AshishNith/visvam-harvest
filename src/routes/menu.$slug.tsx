@@ -77,7 +77,7 @@ export const Route = createFileRoute("/menu/$slug")({
             {
               "@type": "ListItem",
               "position": 2,
-              "name": product.category ? product.category.toUpperCase() : "Catalog",
+              "name": product.category ? product.category.toUpperCase() : "Collection",
               "item": `https://visvam.in/${product.category || "nuts"}`
             },
             {
@@ -271,9 +271,19 @@ function MenuItemPage() {
     }
   };
 
-  const related = products
-    .filter((p) => p.category === product.category && p.slug !== product.slug)
-    .slice(0, 3);
+  const FREQUENT_SLUGS = [
+    "kashmiri-snow-walnuts",
+    "california-jumbo-almonds",
+    "king-w240-cashews",
+  ];
+
+  const frequentlyBoughtTogether = [
+    ...FREQUENT_SLUGS.filter((s) => s !== product.slug)
+      .map((s) => products.find((p) => p.slug === s))
+      .filter((p): p is Product => Boolean(p)),
+    ...products.filter((p) => p.slug !== product.slug && !FREQUENT_SLUGS.includes(p.slug)),
+  ].slice(0, 3);
+
   const categoryLabel =
     categories.find((c) => c.slug === product.category)?.label ?? product.category;
 
@@ -370,11 +380,11 @@ function MenuItemPage() {
           <div className="flex items-center gap-6 border-y border-border/70 py-3 mb-5 text-[10.5px] tracked text-muted-foreground flex-wrap">
             <div className="flex items-center gap-1.5">
               <ShieldCheck size={13} className="text-clay" />
-              <span>Cold Lock 4°C</span>
+              <span>Single Origin</span>
             </div>
             <div className="flex items-center gap-1.5">
               <Check size={13} className="text-clay" />
-              <span>Nitrogen Sealed</span>
+              <span>Hand-Selected</span>
             </div>
           </div>
 
@@ -406,9 +416,9 @@ function MenuItemPage() {
 
           <ul className="space-y-2 border-t border-border/70 pt-5">
             {[
-              "100% Handpicked & Cold-Stored Quality",
-              "Nitrogen-Flushed Airtight Packaging",
-              "Free Express Courier Shipping over ₹999",
+              "Direct Single-Origin Sourcing",
+              "Bespoke Presentation Packaging",
+              "Free shipping on orders above ₹3,499",
             ].map((t) => (
               <li key={t} className="flex gap-2.5 text-[11px] items-center text-muted-foreground">
                 <ShieldCheck size={13} className="text-clay shrink-0" />
@@ -418,6 +428,50 @@ function MenuItemPage() {
           </ul>
         </div>
       </section>
+
+      {/* Frequently Bought Together Section */}
+      {frequentlyBoughtTogether.length > 0 && (
+        <section className="max-w-[1200px] mx-auto px-6 py-12 border-t border-border">
+          <div className="mb-6">
+            <p className="text-[10px] tracked font-semibold uppercase text-clay mb-1">Recommended Pairings</p>
+            <h2 className="font-display italic text-2xl lg:text-3xl text-ink">
+              Frequently Bought Together
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {frequentlyBoughtTogether.map((item) => (
+              <div
+                key={item.slug}
+                className="bg-cream/40 border border-border/60 p-4 flex items-center gap-4 group hover:border-clay transition-all duration-300"
+              >
+                <Link to={`/menu/${item.slug}`} className="shrink-0">
+                  <img
+                    src={item.images?.[0] || ""}
+                    alt={item.name}
+                    className="w-16 h-20 object-cover bg-background border border-border/40 group-hover:scale-105 transition-transform duration-300"
+                  />
+                </Link>
+                <div className="flex-1 min-w-0">
+                  <Link
+                    to={`/menu/${item.slug}`}
+                    className="text-xs font-semibold text-ink hover:text-clay transition-colors block truncate"
+                  >
+                    {item.name}
+                  </Link>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{item.serving}</p>
+                  <p className="text-xs font-semibold text-ink mt-2 tabular-nums">{formatPrice(item.price)}</p>
+                </div>
+                <button
+                  onClick={() => add(item)}
+                  className="px-3 py-2 border border-ink text-[10px] tracked font-semibold uppercase hover:bg-ink hover:text-white transition-colors shrink-0 cursor-pointer"
+                >
+                  Add +
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Customer Reviews Section */}
       <section className="max-w-[1200px] mx-auto px-6 py-14 border-t border-border">

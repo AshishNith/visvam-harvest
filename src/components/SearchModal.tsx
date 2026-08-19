@@ -199,7 +199,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
         {/* Footer info */}
         <div className="px-6 py-3 bg-cream/80 border-t border-border text-[10px] text-muted-foreground flex justify-between items-center">
           <span>Press ESC or click outside to close</span>
-          <span className="text-clay font-medium">100% Handpicked Sourcing Guarantee</span>
+          <span className="text-clay font-medium">Single-Origin Handpicked Sourcing</span>
         </div>
       </div>
     </div>

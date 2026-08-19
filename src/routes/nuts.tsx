@@ -8,7 +8,7 @@ export const Route = createFileRoute("/nuts")({
       "@context": "https://schema.org",
       "@type": "CollectionPage",
       "name": "Nuts & Dried Fruits — Viśvam",
-      "description": "Handpicked California Jumbo Almonds, W240 Whole Cashews, Kashmiri Extra-Light Walnuts, Roasted Pistachios, and Organic Dried Fruits.",
+      "description": "Discover thoughtfully sourced dry fruits and nuts, designed for moments of calm, clarity, and understated indulgence.",
       "url": canonicalUrl,
       "publisher": {
         "@type": "Organization",
@@ -22,7 +22,7 @@ export const Route = createFileRoute("/nuts")({
         {
           name: "description",
           content:
-            "Buy California Jumbo Almonds, W240 Whole Cashews, Kashmiri Extra-Light Walnuts, Roasted Pistachios, and Organic Dried Fruits sourced at peak maturity.",
+            "Discover thoughtfully sourced dry fruits and nuts, designed for moments of calm, clarity, and understated indulgence.",
         },
         {
           name: "keywords",

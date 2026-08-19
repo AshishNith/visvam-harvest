@@ -25,7 +25,7 @@
 * **Hero Headline**:
   > `[ Harvested for oil maturity. Handpicked for royal crunch. ]`
 * **Hero Subtitle**:
-  > `[ Single-origin California almonds, W240 cashews, organic Afghani figs, and Kashmiri snow walnuts delivered in nitrogen-sealed packaging. ]`
+  > `[ Single-origin California almonds, W240 cashews, organic Afghani figs, and Kashmiri snow walnuts delivered in airtight sealed packaging. ]`
 * **Primary Button Text**: `[ Shop All Products ]`
 * **Secondary Button Text**: `[ Gift Collections ]`
 
@@ -46,7 +46,7 @@
    * **Description**: `[ 100% natural, non-GMO, zero artificial glazing or added oil. ]`
 
 4. **Pillar 04**:
-   * **Title**: `[ Nitrogen Flushed ]`
+   * **Title**: `[ Airtight Sealed ]`
    * **Description**: `[ Airtight sealed pouches for peak crunch upon delivery. ]`
 
 ---

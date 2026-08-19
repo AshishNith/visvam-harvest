@@ -154,8 +154,8 @@ function ContactUs() {
                   <Clock size={18} />
                 </div>
                 <div>
-                  <h5 className="text-xs font-semibold uppercase tracking-wider text-ink mb-1">Cold Storage Facility</h5>
-                  <p className="text-xs text-muted-foreground">4°C Temperature Controlled Logistics Center</p>
+                  <h5 className="text-xs font-semibold uppercase tracking-wider text-ink mb-1">Logistics & Operations</h5>
+                  <p className="text-xs text-muted-foreground">Fulfillment & Operations Center</p>
                 </div>
               </div>
             </div>
