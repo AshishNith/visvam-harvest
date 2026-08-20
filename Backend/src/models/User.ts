@@ -2,12 +2,13 @@ import mongoose, { Document, Schema } from "mongoose";
 
 export interface IUser extends Document {
   firebaseUid?: string;
-  email: string;
+  email?: string;
   name: string;
   role: "user" | "admin";
   password?: string;
   phone?: string;
   avatar?: string;
+  profileCompleted: boolean;
   address?: {
     street?: string;
     city?: string;
@@ -29,8 +30,8 @@ const UserSchema = new Schema<IUser>(
     },
     email: {
       type: String,
-      required: true,
       unique: true,
+      sparse: true,
       lowercase: true,
       trim: true,
       index: true,
@@ -52,11 +53,17 @@ const UserSchema = new Schema<IUser>(
     },
     phone: {
       type: String,
+      unique: true,
+      sparse: true,
       trim: true,
     },
     avatar: {
       type: String,
       default: "",
+    },
+    profileCompleted: {
+      type: Boolean,
+      default: false,
     },
     address: {
       street: String,

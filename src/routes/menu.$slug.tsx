@@ -1,10 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { ProductCard } from "@/components/ProductCard";
 import { useCart, formatPrice } from "@/lib/cart-context";
 import { useAuth } from "@/lib/auth-context";
-import { getProductBySlug, products, categories, type Product } from "@/lib/products";
+import { getProductBySlug, products, categories, type Product, type IProductVariant } from "@/lib/products";
 import { fetchProductBySlugFromBackend, fetchProductReviews, submitReview } from "@/lib/api";
 import { Check, ShieldCheck, MapPin, Award, ArrowRight, Star, Loader2, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
@@ -174,6 +174,39 @@ function MenuItemPage() {
   const { user, isAuthenticated } = useAuth();
   const [active, setActive] = useState(0);
 
+  // Variant & Customizations selection state
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
+    const initial: Record<string, string> = {};
+    if (initialProduct?.hasVariants && initialProduct.variants && initialProduct.variants.length > 0) {
+      const def = initialProduct.variants.find((v) => v.isDefault) || initialProduct.variants[0];
+      if (def?.options) return { ...def.options };
+    }
+    if (initialProduct?.variantAttributes) {
+      initialProduct.variantAttributes.forEach((attr) => {
+        if (attr.values && attr.values[0]) {
+          initial[attr.name] = attr.values[0];
+        }
+      });
+    }
+    return initial;
+  });
+
+  // Active Variant Memo
+  const activeVariant: IProductVariant | null = useMemo(() => {
+    if (!product?.hasVariants || !product?.variants || product.variants.length === 0) {
+      return null;
+    }
+    const matched = product.variants.find((v) => {
+      if (!v.options) return false;
+      return Object.entries(selectedOptions).every(([key, val]) => v.options[key] === val);
+    });
+    return matched || product.variants.find((v) => v.isDefault) || product.variants[0] || null;
+  }, [product, selectedOptions]);
+
+  const effectivePrice = activeVariant ? activeVariant.price : product.price;
+  const effectiveMrp = activeVariant ? activeVariant.mrp : undefined;
+  const effectiveStock = activeVariant ? activeVariant.stock : product.stock;
+
   // Reviews state
   const [reviews, setReviews] = useState<any[]>([]);
   const [avgRating, setAvgRating] = useState(0);
@@ -191,6 +224,12 @@ function MenuItemPage() {
     setProduct(initialProduct);
     setActive(0);
     setShowAllReviews(false);
+    if (initialProduct?.hasVariants && initialProduct.variants && initialProduct.variants.length > 0) {
+      const def = initialProduct.variants.find((v) => v.isDefault) || initialProduct.variants[0];
+      if (def?.options) {
+        setSelectedOptions({ ...def.options });
+      }
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [initialProduct]);
 
@@ -209,6 +248,12 @@ function MenuItemPage() {
               images: hasLocalImages ? prev.images : (data.images && data.images.length > 0 ? data.images : prev.images),
             };
           });
+          if (data.hasVariants && data.variants && data.variants.length > 0) {
+            const def = data.variants.find((v: any) => v.isDefault) || data.variants[0];
+            if (def?.options) {
+              setSelectedOptions((prev) => ({ ...def.options, ...prev }));
+            }
+          }
         }
       });
     }
@@ -283,6 +328,10 @@ function MenuItemPage() {
       .filter((p): p is Product => Boolean(p)),
     ...products.filter((p) => p.slug !== product.slug && !FREQUENT_SLUGS.includes(p.slug)),
   ].slice(0, 3);
+
+  const related = products
+    .filter((p) => p.category === product.category && p.slug !== product.slug)
+    .slice(0, 3);
 
   const categoryLabel =
     categories.find((c) => c.slug === product.category)?.label ?? product.category;
@@ -372,21 +421,77 @@ function MenuItemPage() {
             </div>
           )}
           
-          <div className="flex items-baseline gap-3 mb-5">
-            <span className="text-2xl font-display italic tabular-nums text-ink">{formatPrice(product.price)}</span>
-            <span className="text-[10.5px] tracked text-muted-foreground">({product.serving})</span>
+          <div className="flex items-baseline gap-3 mb-4 flex-wrap">
+            <span className="text-2xl font-display italic tabular-nums text-ink">{formatPrice(effectivePrice)}</span>
+            {effectiveMrp && effectiveMrp > effectivePrice && (
+              <span className="text-sm font-display line-through text-muted-foreground tabular-nums">
+                {formatPrice(effectiveMrp)}
+              </span>
+            )}
+            {effectiveMrp && effectiveMrp > effectivePrice && (
+              <span className="text-[10px] font-mono uppercase bg-clay/10 text-clay px-2 py-0.5 rounded font-semibold">
+                Save {Math.round(((effectiveMrp - effectivePrice) / effectiveMrp) * 100)}%
+              </span>
+            )}
+            <span className="text-[10.5px] tracked text-muted-foreground">
+              ({activeVariant?.title || product.serving})
+            </span>
           </div>
 
-          <div className="flex items-center gap-6 border-y border-border/70 py-3 mb-5 text-[10.5px] tracked text-muted-foreground flex-wrap">
-            <div className="flex items-center gap-1.5">
-              <ShieldCheck size={13} className="text-clay" />
-              <span>Single Origin</span>
+          {/* Variant / Customization Options Selector */}
+          {product.hasVariants && product.variantAttributes && product.variantAttributes.length > 0 && (
+            <div className="space-y-4 mb-5 border-y border-border/70 py-4">
+              {product.variantAttributes.map((attr) => {
+                const currentVal = selectedOptions[attr.name] || attr.values[0];
+                return (
+                  <div key={attr.name} className="space-y-2">
+                    <div className="flex items-center justify-between text-[11px] font-mono">
+                      <span className="font-semibold uppercase tracking-wider text-ink">
+                        {attr.name}: <span className="text-clay font-normal">{currentVal}</span>
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {attr.values.map((val) => {
+                        const isSelected = currentVal === val;
+                        return (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() =>
+                              setSelectedOptions((prev) => ({
+                                ...prev,
+                                [attr.name]: val,
+                              }))
+                            }
+                            className={`px-3.5 py-1.5 text-xs font-mono tracking-tight transition-all duration-200 border rounded ${
+                              isSelected
+                                ? "bg-ink text-sand border-ink font-semibold shadow-xs"
+                                : "bg-cream/50 text-ink/80 border-border/80 hover:border-ink/50 hover:bg-sand/40"
+                            }`}
+                          >
+                            {val}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-            <div className="flex items-center gap-1.5">
-              <Check size={13} className="text-clay" />
-              <span>Hand-Selected</span>
+          )}
+
+          {!product.hasVariants && (
+            <div className="flex items-center gap-6 border-y border-border/70 py-3 mb-5 text-[10.5px] tracked text-muted-foreground flex-wrap">
+              <div className="flex items-center gap-1.5">
+                <ShieldCheck size={13} className="text-clay" />
+                <span>Single Origin</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Check size={13} className="text-clay" />
+                <span>Hand-Selected</span>
+              </div>
             </div>
-          </div>
+          )}
 
           <p className="text-xs text-muted-foreground leading-relaxed mb-5">
             {product.description}
@@ -405,12 +510,24 @@ function MenuItemPage() {
             </div>
           )}
 
+          {/* Stock availability notice */}
+          {effectiveStock !== undefined && effectiveStock > 0 && effectiveStock <= 10 && (
+            <p className="text-[11px] font-mono text-amber-800 mb-3 flex items-center gap-1">
+              <span className="inline-block w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+              Only {effectiveStock} units left in stock — order soon
+            </p>
+          )}
+
           <button
-            onClick={() => add(product)}
-            disabled={product.stock !== undefined && product.stock <= 0}
-            className="group inline-flex items-center gap-3 text-ink text-[12px] font-medium tracked uppercase tracking-widest py-2.5 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 mb-6 self-start disabled:opacity-40 disabled:cursor-not-allowed"
+            onClick={() => add(product, true, activeVariant || undefined)}
+            disabled={effectiveStock !== undefined && effectiveStock <= 0}
+            className="group inline-flex items-center gap-3 text-ink text-[12px] font-medium tracked uppercase tracking-widest py-2.5 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 mb-6 self-start disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
           >
-            <span>{product.stock !== undefined && product.stock <= 0 ? 'Out of Stock' : `Add to Viśvam Bag — ${formatPrice(product.price)}`}</span>
+            <span>
+              {effectiveStock !== undefined && effectiveStock <= 0
+                ? "Out of Stock"
+                : `Add to Viśvam Bag — ${formatPrice(effectivePrice)}`}
+            </span>
             <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
           </button>
 
@@ -444,7 +561,7 @@ function MenuItemPage() {
                 key={item.slug}
                 className="bg-cream/40 border border-border/60 p-4 flex items-center gap-4 group hover:border-clay transition-all duration-300"
               >
-                <Link to={`/menu/${item.slug}`} className="shrink-0">
+                <Link to="/menu/$slug" params={{ slug: item.slug }} className="shrink-0">
                   <img
                     src={item.images?.[0] || ""}
                     alt={item.name}
@@ -453,7 +570,8 @@ function MenuItemPage() {
                 </Link>
                 <div className="flex-1 min-w-0">
                   <Link
-                    to={`/menu/${item.slug}`}
+                    to="/menu/$slug"
+                    params={{ slug: item.slug }}
                     className="text-xs font-semibold text-ink hover:text-clay transition-colors block truncate"
                   >
                     {item.name}

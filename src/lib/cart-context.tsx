@@ -1,8 +1,13 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 import { toast } from "sonner";
-import type { Product } from "./products";
+import type { Product, IProductVariant } from "./products";
 
-export type CartItem = { product: Product; qty: number };
+export type CartItem = {
+  product: Product;
+  qty: number;
+  selectedVariant?: IProductVariant;
+  cartKey: string;
+};
 
 export type ShippingAddress = {
   fullName: string;
@@ -18,9 +23,9 @@ type CartCtx = {
   isOpen: boolean;
   openCart: () => void;
   closeCart: () => void;
-  add: (p: Product, openDrawer?: boolean) => void;
-  remove: (slug: string) => void;
-  setQty: (slug: string, qty: number) => void;
+  add: (p: Product, openDrawer?: boolean, selectedVariant?: IProductVariant) => void;
+  remove: (cartKey: string) => void;
+  setQty: (cartKey: string, qty: number) => void;
   clearCart: () => void;
   subtotal: number;
   count: number;
@@ -40,6 +45,11 @@ const EMPTY_ADDRESS: ShippingAddress = {
 const CART_STORAGE_KEY = "visvam_cart_items";
 const ADDRESS_STORAGE_KEY = "visvam_shipping_address";
 
+export function getCartItemKey(slug: string, variant?: IProductVariant): string {
+  if (!variant) return slug;
+  return `${slug}__${variant.sku || variant.title || "default"}`;
+}
+
 function sanitizeCartItem(item: any): CartItem | null {
   if (!item) return null;
   // If item itself is a product (old storage format), wrap it
@@ -56,10 +66,13 @@ function sanitizeCartItem(item: any): CartItem | null {
         serving: item.serving || "",
       },
       qty: typeof item.qty === "number" && item.qty > 0 ? item.qty : 1,
+      cartKey: item.slug,
     };
   }
-  // Modern format: { product: {...}, qty: 1 }
+  // Modern format: { product: {...}, qty: 1, selectedVariant?: {...}, cartKey?: string }
   if (item.product && typeof item.product === "object" && item.product.slug) {
+    const variant = item.selectedVariant && typeof item.selectedVariant === "object" ? item.selectedVariant : undefined;
+    const cartKey = item.cartKey || getCartItemKey(item.product.slug, variant);
     return {
       product: {
         ...item.product,
@@ -67,6 +80,8 @@ function sanitizeCartItem(item: any): CartItem | null {
         price: typeof item.product.price === "number" ? item.product.price : 0,
       },
       qty: typeof item.qty === "number" && item.qty > 0 ? item.qty : 1,
+      selectedVariant: variant,
+      cartKey,
     };
   }
   return null;
@@ -125,7 +140,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     saveAddressToStorage(addr);
   }, []);
 
-  const add = useCallback((p: Product, openDrawer = false) => {
+  const add = useCallback((p: Product, openDrawer = false, selectedVariant?: IProductVariant) => {
     if (!p || !p.slug) return;
     const sanitizedProduct: Product = {
       ...p,
@@ -133,19 +148,37 @@ export function CartProvider({ children }: { children: ReactNode }) {
       images: Array.isArray(p.images) && p.images.length > 0 ? p.images : [""],
     };
 
+    const targetKey = getCartItemKey(sanitizedProduct.slug, selectedVariant);
+
     setItems((prev) => {
       const validPrev = prev.filter((i) => i && i.product && i.product.slug);
-      const existing = validPrev.find((i) => i.product.slug === sanitizedProduct.slug);
+      const existing = validPrev.find(
+        (i) => i.cartKey === targetKey || (!i.cartKey && i.product.slug === targetKey)
+      );
       if (existing) {
         return validPrev.map((i) =>
-          i.product.slug === sanitizedProduct.slug ? { ...i, qty: i.qty + 1 } : i
+          (i.cartKey === targetKey || (!i.cartKey && i.product.slug === targetKey))
+            ? { ...i, qty: i.qty + 1 }
+            : i
         );
       }
-      return [...validPrev, { product: sanitizedProduct, qty: 1 }];
+      return [
+        ...validPrev,
+        {
+          product: sanitizedProduct,
+          qty: 1,
+          selectedVariant,
+          cartKey: targetKey,
+        },
+      ];
     });
 
-    if (sanitizedProduct.name) {
-      toast.success(`Added ${sanitizedProduct.name} to bag`);
+    const itemLabel = selectedVariant
+      ? `${sanitizedProduct.name} (${selectedVariant.title})`
+      : sanitizedProduct.name;
+
+    if (itemLabel) {
+      toast.success(`Added ${itemLabel} to bag`);
     }
     if (openDrawer) {
       setIsOpen(true);
@@ -153,17 +186,39 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const remove = useCallback(
-    (slug: string) =>
-      setItems((p) => p.filter((i) => i && i.product && i.product.slug !== slug)),
+    (cartKeyOrSlug: string) =>
+      setItems((p) =>
+        p.filter(
+          (i) =>
+            i &&
+            i.product &&
+            i.cartKey !== cartKeyOrSlug &&
+            i.product.slug !== cartKeyOrSlug
+        )
+      ),
     []
   );
 
-  const setQty = useCallback((slug: string, qty: number) => {
+  const setQty = useCallback((cartKeyOrSlug: string, qty: number) => {
     if (qty <= 0) {
-      return setItems((p) => p.filter((i) => i && i.product && i.product.slug !== slug));
+      return setItems((p) =>
+        p.filter(
+          (i) =>
+            i &&
+            i.product &&
+            i.cartKey !== cartKeyOrSlug &&
+            i.product.slug !== cartKeyOrSlug
+        )
+      );
     }
     setItems((p) =>
-      p.map((i) => (i && i.product && i.product.slug === slug ? { ...i, qty } : i))
+      p.map((i) =>
+        i &&
+        i.product &&
+        (i.cartKey === cartKeyOrSlug || (!i.cartKey && i.product.slug === cartKeyOrSlug))
+          ? { ...i, qty }
+          : i
+      )
     );
   }, []);
 
@@ -172,7 +227,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try { localStorage.removeItem(CART_STORAGE_KEY); } catch { /* ignore */ }
   }, []);
 
-  const subtotal = items.reduce((s, i) => s + (i?.product?.price || 0) * (i?.qty || 0), 0);
+  const subtotal = items.reduce((s, i) => {
+    const unitPrice = i?.selectedVariant?.price ?? i?.product?.price ?? 0;
+    return s + unitPrice * (i?.qty || 0);
+  }, 0);
   const count = items.reduce((s, i) => s + (i?.qty || 0), 0);
 
   return (

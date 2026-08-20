@@ -10,13 +10,14 @@ import {
   ArrowLeft,
   Loader2,
   User,
-  Lock,
+  Phone,
   Mail,
 } from "lucide-react";
 import { useCart, formatPrice, type ShippingAddress } from "@/lib/cart-context";
 import { useAuth } from "@/lib/auth-context";
 import { submitOrderToBackend, checkPincodeServiceability } from "@/lib/api";
 import { toast } from "sonner";
+import type { ConfirmationResult } from "@/lib/firebase";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -33,14 +34,17 @@ const FREE_SHIPPING_THRESHOLD = 3499;
 function CheckoutPage() {
   const navigate = useNavigate();
   const { items, subtotal, clearCart, shippingAddress, setShippingAddress } = useCart();
-  const { user, isAuthenticated, isLoading: authLoading, login, register, loginWithGoogle } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading, loginWithGoogle, sendEmailLink, sendPhoneOTP, verifyPhoneOTP } = useAuth();
 
-  const [authTab, setAuthTab] = useState<"login" | "register">("login");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  // Checkout inline auth state
+  const [authMethod, setAuthMethod] = useState<"phone" | "email">("phone");
+  const [authStep, setAuthStep] = useState<"input" | "otp" | "email-sent">("input");
+  const [authEmail, setAuthEmail] = useState("");
+  const [authPhone, setAuthPhone] = useState("");
+  const [authOtp, setAuthOtp] = useState("");
   const [authSubmitting, setAuthSubmitting] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
 
   const [addressForm, setAddressForm] = useState<ShippingAddress>(shippingAddress);
   const [submittingOrder, setSubmittingOrder] = useState(false);
@@ -93,10 +97,69 @@ function CheckoutPage() {
       } else {
         toast.error(res.message);
       }
-    } catch {
-      toast.error("Google sign-in failed. Please try again.");
+    } catch (err: any) {
+      toast.error(err?.message || String(err));
     } finally {
       setGoogleLoading(false);
+    }
+  };
+
+  const handleSendPhoneOTP = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const phone = authPhone.trim();
+    if (!phone) return toast.error("Please enter your phone number");
+    const formattedPhone = phone.startsWith("+") ? phone : `+91${phone.replace(/\s/g, "")}`;
+    setAuthSubmitting(true);
+    try {
+      const res = await sendPhoneOTP(formattedPhone, "checkout-recaptcha");
+      if (res.success && res.confirmationResult) {
+        setConfirmationResult(res.confirmationResult);
+        setAuthStep("otp");
+        toast.success("OTP sent to your phone!");
+      } else {
+        toast.error(res.message);
+      }
+    } catch (err: any) {
+      toast.error(err?.message || String(err));
+    } finally {
+      setAuthSubmitting(false);
+    }
+  };
+
+  const handleVerifyOTP = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!authOtp || authOtp.length < 6 || !confirmationResult) return;
+    setAuthSubmitting(true);
+    try {
+      const res = await verifyPhoneOTP(confirmationResult, authOtp);
+      if (res.success) {
+        toast.success(res.message);
+      } else {
+        toast.error(res.message);
+      }
+    } catch (err: any) {
+      toast.error(err?.message || String(err));
+    } finally {
+      setAuthSubmitting(false);
+    }
+  };
+
+  const handleSendEmailLink = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!authEmail.trim()) return toast.error("Please enter your email");
+    setAuthSubmitting(true);
+    try {
+      const res = await sendEmailLink(authEmail.trim());
+      if (res.success) {
+        setAuthStep("email-sent");
+        toast.success(res.message);
+      } else {
+        toast.error(res.message);
+      }
+    } catch (err: any) {
+      toast.error(err?.message || String(err));
+    } finally {
+      setAuthSubmitting(false);
     }
   };
 
@@ -115,46 +178,6 @@ function CheckoutPage() {
   const shippingPrice = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : 79;
   const taxPrice = Math.round(subtotal * 0.05);
   const totalPrice = subtotal + shippingPrice + taxPrice;
-
-  // Handle JWT Login
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || !password) return toast.error("Please enter email and password");
-    setAuthSubmitting(true);
-    try {
-      const res = await login(email, password);
-      if (res.success) {
-        toast.success(res.message);
-        setEmail(""); setPassword("");
-      } else {
-        toast.error(res.message);
-      }
-    } catch {
-      toast.error("Login failed. Please try again.");
-    } finally {
-      setAuthSubmitting(false);
-    }
-  };
-
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || !password || !name) return toast.error("Please fill in all fields");
-    if (password.length < 6) return toast.error("Password must be at least 6 characters");
-    setAuthSubmitting(true);
-    try {
-      const res = await register(name, email, password);
-      if (res.success) {
-        toast.success(res.message);
-        setEmail(""); setPassword(""); setName("");
-      } else {
-        toast.error(res.message);
-      }
-    } catch {
-      toast.error("Registration failed. Please try again.");
-    } finally {
-      setAuthSubmitting(false);
-    }
-  };
 
   // Validate Address
   const validateAddress = (): boolean => {
@@ -178,13 +201,16 @@ function CheckoutPage() {
     try {
       setShippingAddress(addressForm);
 
-      const orderItems = items.map(({ product, qty }) => ({
+      const orderItems = items.map(({ product, qty, selectedVariant }) => ({
         product: product._id || product.slug,
         slug: product.slug,
         name: product.name,
         qty,
-        price: product.price,
+        price: selectedVariant?.price ?? product.price,
         image: product.images[0] || "",
+        variantTitle: selectedVariant?.title,
+        variantSku: selectedVariant?.sku,
+        selectedOptions: selectedVariant?.options,
       }));
 
       const res = await submitOrderToBackend({
@@ -273,95 +299,102 @@ function CheckoutPage() {
         ) : !isAuthenticated ? (
           /* Auth Required Gate */
           <div className="max-w-md mx-auto bg-cream/40 border border-border p-8 shadow-sm text-center my-8">
+            <div id="checkout-recaptcha" />
             <div className="w-12 h-12 rounded-full bg-clay/10 text-clay grid place-items-center mx-auto mb-4">
               <User size={24} />
             </div>
             <h2 className="font-display italic text-2xl mb-2">Sign In to Checkout</h2>
             <p className="text-xs text-muted-foreground mb-6">
-              Log in or create an account to complete your order and track deliveries.
+              Verify your identity to complete your order and track deliveries.
             </p>
 
             <button
               type="button"
               onClick={handleGoogleSignIn}
               disabled={googleLoading}
-              className="w-full py-3 px-4 border border-border bg-background hover:bg-cream/60 transition-colors flex items-center justify-center gap-3 text-xs font-semibold text-ink shadow-2xs mb-6 disabled:opacity-50"
+              className="w-full py-3 px-4 border border-border bg-background hover:bg-cream/60 transition-colors flex items-center justify-center gap-3 text-xs font-semibold text-ink shadow-2xs mb-5 disabled:opacity-50"
             >
               {googleLoading ? (
                 <Loader2 size={16} className="animate-spin text-clay" />
               ) : (
                 <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
-                  <path
-                    fill="#4285F4"
-                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                  />
-                  <path
-                    fill="#34A853"
-                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                  />
-                  <path
-                    fill="#FBBC05"
-                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-                  />
-                  <path
-                    fill="#EA4335"
-                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-                  />
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
                 </svg>
               )}
               <span>Continue with Google</span>
             </button>
 
-            <div className="relative my-5">
+            <div className="relative my-4">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-border/70" />
               </div>
               <div className="relative flex justify-center text-[9px] uppercase tracking-widest">
-                <span className="bg-cream/40 px-2 text-muted-foreground font-semibold">Or with Email</span>
+                <span className="bg-cream/40 px-2 text-muted-foreground font-semibold">Or continue with</span>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 border-b border-border text-xs font-semibold mb-6">
+            {/* Method Toggle */}
+            <div className="grid grid-cols-2 border border-border mb-5 text-[10.5px] tracked font-medium text-center">
               <button
-                onClick={() => setAuthTab("login")}
-                className={`py-2.5 border-b-2 ${authTab === "login" ? "border-clay text-clay" : "border-transparent text-muted-foreground"}`}
+                onClick={() => { setAuthMethod("phone"); setAuthStep("input"); }}
+                className={`py-2.5 transition-colors flex items-center justify-center gap-1.5 ${
+                  authMethod === "phone" ? "bg-ink text-white" : "bg-background text-muted-foreground hover:text-ink"
+                }`}
               >
-                Sign In
+                <Phone size={13} /> Phone OTP
               </button>
               <button
-                onClick={() => setAuthTab("register")}
-                className={`py-2.5 border-b-2 ${authTab === "register" ? "border-clay text-clay" : "border-transparent text-muted-foreground"}`}
+                onClick={() => { setAuthMethod("email"); setAuthStep("input"); }}
+                className={`py-2.5 transition-colors flex items-center justify-center gap-1.5 ${
+                  authMethod === "email" ? "bg-ink text-white" : "bg-background text-muted-foreground hover:text-ink"
+                }`}
               >
-                Create Account
+                <Mail size={13} /> Email Link
               </button>
             </div>
 
-            {authTab === "login" ? (
-              <form onSubmit={handleLogin} className="space-y-4 text-left">
+            {authStep === "input" && authMethod === "phone" && (
+              <form onSubmit={handleSendPhoneOTP} className="space-y-4 text-left">
                 <div>
-                  <label className="block text-[10px] tracked text-muted-foreground uppercase mb-1">Email</label>
+                  <label className="block text-[10px] tracked text-muted-foreground uppercase mb-1">Phone Number</label>
+                  <div className="relative flex">
+                    <span className="inline-flex items-center px-3 text-xs text-muted-foreground border border-r-0 border-border bg-cream/50 font-mono">+91</span>
+                    <input
+                      type="tel"
+                      value={authPhone}
+                      onChange={(e) => setAuthPhone(e.target.value.replace(/[^\d\s]/g, ""))}
+                      placeholder="98765 43210"
+                      maxLength={12}
+                      className="flex-1 px-3 py-2.5 text-xs border border-border focus:border-clay outline-none bg-transparent"
+                      required
+                    />
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  disabled={authSubmitting}
+                  className="w-full py-3 bg-ink text-white text-xs tracked font-semibold uppercase hover:bg-clay transition-colors flex items-center justify-center gap-2"
+                >
+                  {authSubmitting ? <Loader2 size={14} className="animate-spin" /> : <>Send OTP <ArrowRight size={14} /></>}
+                </button>
+              </form>
+            )}
+
+            {authStep === "input" && authMethod === "email" && (
+              <form onSubmit={handleSendEmailLink} className="space-y-4 text-left">
+                <div>
+                  <label className="block text-[10px] tracked text-muted-foreground uppercase mb-1">Email Address</label>
                   <div className="relative">
                     <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                     <input
                       type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="user@example.com"
-                      className="w-full pl-9 pr-3 py-2 text-xs border border-border bg-background outline-none focus:border-clay"
-                      required
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-[10px] tracked text-muted-foreground uppercase mb-1">Password</label>
-                  <div className="relative">
-                    <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••"
-                      className="w-full pl-9 pr-3 py-2 text-xs border border-border bg-background outline-none focus:border-clay"
+                      value={authEmail}
+                      onChange={(e) => setAuthEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      className="w-full pl-9 pr-3 py-2.5 text-xs border border-border focus:border-clay outline-none bg-transparent"
                       required
                     />
                   </div>
@@ -371,52 +404,47 @@ function CheckoutPage() {
                   disabled={authSubmitting}
                   className="w-full py-3 bg-ink text-white text-xs tracked font-semibold uppercase hover:bg-clay transition-colors flex items-center justify-center gap-2"
                 >
-                  {authSubmitting ? <Loader2 size={14} className="animate-spin" /> : "Sign In & Proceed"}
+                  {authSubmitting ? <Loader2 size={14} className="animate-spin" /> : <>Send Magic Link <ArrowRight size={14} /></>}
                 </button>
               </form>
-            ) : (
-              <form onSubmit={handleRegister} className="space-y-4 text-left">
-                <div>
-                  <label className="block text-[10px] tracked text-muted-foreground uppercase mb-1">Full Name</label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Your Name"
-                    className="w-full px-3 py-2 text-xs border border-border bg-background outline-none focus:border-clay"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] tracked text-muted-foreground uppercase mb-1">Email</label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="user@example.com"
-                    className="w-full px-3 py-2 text-xs border border-border bg-background outline-none focus:border-clay"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] tracked text-muted-foreground uppercase mb-1">Password (min 6 chars)</label>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full px-3 py-2 text-xs border border-border bg-background outline-none focus:border-clay"
-                    required
-                  />
-                </div>
+            )}
+
+            {authStep === "otp" && (
+              <form onSubmit={handleVerifyOTP} className="space-y-4">
+                <p className="text-[11px] text-muted-foreground mb-2">Enter the 6-digit code sent to <strong className="text-ink">+91 {authPhone}</strong></p>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={authOtp}
+                  onChange={(e) => setAuthOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  placeholder="------"
+                  className="w-full max-w-[220px] mx-auto block text-center text-2xl font-mono tracking-[0.6em] py-3 border-b-2 border-border focus:border-clay outline-none bg-transparent placeholder:text-border"
+                  autoComplete="one-time-code"
+                />
                 <button
                   type="submit"
-                  disabled={authSubmitting}
-                  className="w-full py-3 bg-ink text-white text-xs tracked font-semibold uppercase hover:bg-clay transition-colors flex items-center justify-center gap-2"
+                  disabled={authSubmitting || authOtp.length < 6}
+                  className="w-full py-3 bg-ink text-white text-xs tracked font-semibold uppercase hover:bg-clay transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
                 >
-                  {authSubmitting ? <Loader2 size={14} className="animate-spin" /> : "Register & Proceed"}
+                  {authSubmitting ? <Loader2 size={14} className="animate-spin" /> : <>Verify & Continue <ArrowRight size={14} /></>}
+                </button>
+                <button type="button" onClick={() => { setAuthStep("input"); setAuthOtp(""); }} className="text-[10px] text-clay hover:underline">
+                  Change number
                 </button>
               </form>
+            )}
+
+            {authStep === "email-sent" && (
+              <div className="space-y-3">
+                <div className="w-12 h-12 mx-auto bg-cream border border-clay/30 flex items-center justify-center">
+                  <Mail size={20} className="text-clay" />
+                </div>
+                <p className="text-[11px] text-muted-foreground">Check your inbox at <strong className="text-ink">{authEmail}</strong> for a sign-in link.</p>
+                <button onClick={() => { setAuthStep("input"); setAuthEmail(""); }} className="text-[10px] text-clay hover:underline">
+                  Use a different method
+                </button>
+              </div>
             )}
           </div>
         ) : items.length === 0 ? (
@@ -596,16 +624,29 @@ function CheckoutPage() {
                 </h3>
 
                 <ul className="space-y-4 max-h-80 overflow-y-auto pr-1">
-                  {items.map(({ product, qty }) => {
+                  {items.map(({ product, qty, selectedVariant, cartKey }) => {
                     if (!product) return null;
+                    const itemPrice = selectedVariant?.price ?? product.price ?? 0;
+                    const key = cartKey || product.slug;
                     return (
-                      <li key={product.slug || Math.random()} className="flex items-center gap-3 text-xs">
-                        <img src={product.images?.[0] || ""} alt={product.name || "Product"} className="w-12 h-14 object-cover bg-cream shrink-0 border border-border/50" />
+                      <li key={key} className="flex items-center gap-3 text-xs">
+                        <img
+                          src={selectedVariant?.image || product.images?.[0] || ""}
+                          alt={product.name || "Product"}
+                          className="w-12 h-14 object-cover bg-cream shrink-0 border border-border/50"
+                        />
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-ink truncate">{product.name}</p>
-                          <p className="text-[10px] text-muted-foreground">{product.serving} · Qty: {qty}</p>
+                          <p className="text-[10px] text-muted-foreground">
+                            {selectedVariant ? (
+                              <span className="text-clay font-mono">{selectedVariant.title}</span>
+                            ) : (
+                              product.serving
+                            )}{" "}
+                            · Qty: {qty}
+                          </p>
                         </div>
-                        <span className="font-semibold tabular-nums text-ink">{formatPrice((product.price || 0) * qty)}</span>
+                        <span className="font-semibold tabular-nums text-ink">{formatPrice(itemPrice * qty)}</span>
                       </li>
                     );
                   })}

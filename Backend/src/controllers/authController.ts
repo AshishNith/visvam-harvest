@@ -13,63 +13,9 @@ const generateToken = (userId: string, role: string): string => {
   } as jwt.SignOptions);
 };
 
-// @desc    Register a new user (JWT-based)
-// @route   POST /api/v1/auth/register
-// @access  Public
-export const registerUser = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { name, email, password, phone } = req.body;
-
-    if (!name || !email || !password) {
-      res.status(400).json({ success: false, message: "Please provide name, email, and password" });
-      return;
-    }
-
-    if (password.length < 6) {
-      res.status(400).json({ success: false, message: "Password must be at least 6 characters" });
-      return;
-    }
-
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
-    if (existingUser) {
-      res.status(400).json({ success: false, message: "An account with this email already exists" });
-      return;
-    }
-
-    const salt = await bcrypt.genSalt(12);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const user = await User.create({
-      name,
-      email: email.toLowerCase(),
-      password: hashedPassword,
-      phone,
-      role: "user",
-    });
-
-    const token = generateToken(String(user._id), user.role);
-
-    res.status(201).json({
-      success: true,
-      message: "Account created successfully! Welcome to Viśvam.",
-      data: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        phone: user.phone,
-      },
-      token,
-    });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-// @desc    Login user (JWT-based)
-// @desc    Login user & get token
+// @desc    Login user with email+password (Admin-only fallback)
 // @route   POST /api/v1/auth/login
-// @access  Public
+// @access  Public (kept for admin panel login)
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
@@ -91,6 +37,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         email: "admin@visvam.com",
         password: hashedPassword,
         role: "admin",
+        profileCompleted: true,
       });
       user = (await User.findById(newAdmin._id).select("+password")) as any;
     }
@@ -117,6 +64,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         email: user.email,
         role: user.role,
         phone: user.phone,
+        profileCompleted: user.profileCompleted,
       },
       token,
     });
@@ -126,7 +74,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// @desc    Sync user after Firebase login/signup
+// @desc    Sync user after Firebase login/signup (OTP, Google, Email Link)
 // @route   POST /api/v1/auth/sync
 // @access  Protected
 export const syncUser = async (req: Request, res: Response): Promise<void> => {
@@ -135,33 +83,57 @@ export const syncUser = async (req: Request, res: Response): Promise<void> => {
     const { name, phone, address, avatar } = authReq.body;
     const firebaseUid = authReq.firebaseUser?.uid || authReq.user?.firebaseUid;
     const email = authReq.firebaseUser?.email || authReq.user?.email;
+    const firebasePhone = authReq.firebaseUser?.phone_number || phone;
     const firebaseName = authReq.firebaseUser?.name || authReq.user?.name;
     const firebaseAvatar = authReq.firebaseUser?.picture || authReq.firebaseUser?.photoURL || avatar;
 
-    if (!firebaseUid && !email) {
+    console.log("🔐 [Auth Sync Request]:", {
+      firebaseUid,
+      email,
+      phone: firebasePhone,
+      name: name || firebaseName,
+    });
+
+    if (!firebaseUid && !email && !firebasePhone) {
+      console.warn("⚠️ [Auth Sync Warning]: User identity missing from token");
       res.status(400).json({ success: false, message: "User identity missing from token" });
       return;
     }
 
-    let user = await User.findOne({ $or: [{ firebaseUid }, { email }] });
+    // Build lookup query — find user by firebaseUid, email, or phone
+    const orConditions: any[] = [];
+    if (firebaseUid) orConditions.push({ firebaseUid });
+    if (email) orConditions.push({ email });
+    if (firebasePhone) orConditions.push({ phone: firebasePhone });
+
+    let user = orConditions.length > 0
+      ? await User.findOne({ $or: orConditions })
+      : null;
 
     if (user) {
+      // Update existing user with any new data
       if (!user.firebaseUid && firebaseUid) user.firebaseUid = firebaseUid;
+      if (!user.email && email) user.email = email;
+      if (!user.phone && firebasePhone) user.phone = firebasePhone;
       if (name) user.name = name;
-      if (phone) user.phone = phone;
       if (address) user.address = address;
       if (firebaseAvatar) user.avatar = firebaseAvatar;
       await user.save();
+      console.log(`✅ [Auth Sync]: Updated existing user ${user.name} (${user._id})`);
     } else {
+      // Create new user — use whatever identity we have
+      const displayName = name || firebaseName || (email ? email.split("@")[0] : firebasePhone || "Viśvam Customer");
       user = await User.create({
         firebaseUid,
-        email,
-        name: name || firebaseName || email?.split("@")[0] || "Viśvam Customer",
-        phone,
+        email: email || undefined,
+        phone: firebasePhone || undefined,
+        name: displayName,
         avatar: firebaseAvatar || "",
         address,
         role: "user",
+        profileCompleted: false,
       });
+      console.log(`🎉 [Auth Sync]: Created new user ${user.name} (${user._id})`);
     }
 
     const token = generateToken(String(user._id), user.role);
@@ -169,11 +141,60 @@ export const syncUser = async (req: Request, res: Response): Promise<void> => {
     res.status(200).json({
       success: true,
       message: `Welcome, ${user.name}!`,
-      data: user,
+      data: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        avatar: user.avatar,
+        address: user.address,
+        profileCompleted: user.profileCompleted,
+      },
       token,
     });
   } catch (error: any) {
+    console.error("❌ [Auth Sync Error]:", error);
     res.status(500).json({ success: false, message: error.message || "Failed to sync account" });
+  }
+};
+
+// @desc    Complete user profile (post-login details collection)
+// @route   POST /api/v1/auth/complete-profile
+// @access  Protected
+export const completeProfile = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const authReq = req as AuthenticatedRequest;
+    if (!authReq.user) {
+      res.status(404).json({ success: false, message: "User not found" });
+      return;
+    }
+
+    const { name, phone, address } = authReq.body;
+
+    if (name) authReq.user.name = name;
+    if (phone) authReq.user.phone = phone;
+    if (address) authReq.user.address = { ...authReq.user.address, ...address };
+    authReq.user.profileCompleted = true;
+
+    const updatedUser = await authReq.user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Profile completed successfully!",
+      data: {
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        phone: updatedUser.phone,
+        role: updatedUser.role,
+        avatar: updatedUser.avatar,
+        address: updatedUser.address,
+        profileCompleted: updatedUser.profileCompleted,
+      },
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message || "Failed to complete profile" });
   }
 };
 
@@ -222,7 +243,7 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
   }
 };
 
-// @desc    Change user password
+// @desc    Change user password (kept for admin accounts)
 // @route   PUT /api/v1/auth/change-password
 // @access  Protected
 export const changePassword = async (req: Request, res: Response): Promise<void> => {
@@ -346,4 +367,3 @@ export const deleteUserByAdmin = async (req: Request, res: Response): Promise<vo
     res.status(500).json({ success: false, message: error.message });
   }
 };
-

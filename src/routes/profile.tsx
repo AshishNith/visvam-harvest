@@ -3,7 +3,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   User,
   Package,
-  Lock,
   ArrowLeft,
   Loader2,
   CheckCircle2,
@@ -20,7 +19,7 @@ import {
 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { useAuth } from "@/lib/auth-context";
-import { fetchMyOrders, changePassword as apiChangePassword } from "@/lib/api";
+import { fetchMyOrders } from "@/lib/api";
 import { formatPrice } from "@/lib/cart-context";
 import { toast } from "sonner";
 
@@ -34,7 +33,7 @@ export const Route = createFileRoute("/profile")({
   component: ProfilePage,
 });
 
-type ProfileTab = "info" | "orders" | "password";
+type ProfileTab = "info" | "orders";
 
 const statusColors: Record<string, string> = {
   Pending: "bg-amber-100 text-amber-800 border-amber-200",
@@ -72,11 +71,7 @@ function ProfilePage() {
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
 
-  // Password
-  const [currentPw, setCurrentPw] = useState("");
-  const [newPw, setNewPw] = useState("");
-  const [confirmPw, setConfirmPw] = useState("");
-  const [pwSaving, setPwSaving] = useState(false);
+
 
   // Init profile form
   useEffect(() => {
@@ -139,27 +134,7 @@ function ProfilePage() {
     }
   };
 
-  const handleChangePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!currentPw || !newPw) return toast.error("Please fill in all fields");
-    if (newPw.length < 6) return toast.error("New password must be at least 6 characters");
-    if (newPw !== confirmPw) return toast.error("New passwords do not match");
 
-    setPwSaving(true);
-    try {
-      const res = await apiChangePassword({ currentPassword: currentPw, newPassword: newPw });
-      if (res.success) {
-        toast.success("Password changed successfully!");
-        setCurrentPw(""); setNewPw(""); setConfirmPw("");
-      } else {
-        toast.error(res.message);
-      }
-    } catch {
-      toast.error("Failed to change password");
-    } finally {
-      setPwSaving(false);
-    }
-  };
 
   const handleSignOut = () => {
     logout();
@@ -227,7 +202,7 @@ function ProfilePage() {
           </div>
 
           {/* Tabs */}
-          <div className="grid grid-cols-3 border-b border-border text-[11px] tracked font-medium text-center mb-8">
+          <div className="grid grid-cols-2 border-b border-border text-[11px] tracked font-medium text-center mb-8">
             <button
               onClick={() => setTab("info")}
               className={`py-3 transition-colors border-b-2 flex items-center justify-center gap-2 ${
@@ -247,16 +222,6 @@ function ProfilePage() {
               }`}
             >
               <Package size={14} /> My Orders
-            </button>
-            <button
-              onClick={() => setTab("password")}
-              className={`py-3 transition-colors border-b-2 flex items-center justify-center gap-2 ${
-                tab === "password"
-                  ? "border-clay text-clay font-semibold"
-                  : "border-transparent text-muted-foreground hover:text-ink"
-              }`}
-            >
-              <Lock size={14} /> Security
             </button>
           </div>
 
@@ -518,68 +483,7 @@ function ProfilePage() {
             </div>
           )}
 
-          {tab === "password" && (
-            <form onSubmit={handleChangePassword} className="max-w-lg space-y-5">
-              <div>
-                <label className="block text-[10px] tracked text-muted-foreground uppercase mb-1">
-                  Current Password
-                </label>
-                <div className="relative">
-                  <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <input
-                    type="password"
-                    value={currentPw}
-                    onChange={(e) => setCurrentPw(e.target.value)}
-                    placeholder="Enter current password"
-                    className="w-full pl-9 pr-3 py-2.5 text-xs border border-border focus:border-clay outline-none bg-transparent"
-                    required
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-[10px] tracked text-muted-foreground uppercase mb-1">
-                  New Password (min 6 characters)
-                </label>
-                <div className="relative">
-                  <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <input
-                    type="password"
-                    value={newPw}
-                    onChange={(e) => setNewPw(e.target.value)}
-                    placeholder="Enter new password"
-                    minLength={6}
-                    className="w-full pl-9 pr-3 py-2.5 text-xs border border-border focus:border-clay outline-none bg-transparent"
-                    required
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-[10px] tracked text-muted-foreground uppercase mb-1">
-                  Confirm New Password
-                </label>
-                <div className="relative">
-                  <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <input
-                    type="password"
-                    value={confirmPw}
-                    onChange={(e) => setConfirmPw(e.target.value)}
-                    placeholder="Re-enter new password"
-                    minLength={6}
-                    className="w-full pl-9 pr-3 py-2.5 text-xs border border-border focus:border-clay outline-none bg-transparent"
-                    required
-                  />
-                </div>
-              </div>
-              <button
-                type="submit"
-                disabled={pwSaving}
-                className="inline-flex items-center gap-2 bg-ink text-white px-6 py-3 text-xs tracked font-semibold uppercase hover:bg-clay transition-colors disabled:opacity-50"
-              >
-                {pwSaving ? <Loader2 size={14} className="animate-spin" /> : <ShieldCheck size={14} />}
-                Update Password
-              </button>
-            </form>
-          )}
+
         </div>
       </div>
     </SiteLayout>

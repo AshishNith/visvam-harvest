@@ -18,7 +18,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Viśvam — Premium Dry Fruits & Handpicked Nuts | Buy Online India" },
+      { title: "Viśvam — Everyday indulgence in the finest dry fruits & nuts" },
       {
         name: "description",
         content:
@@ -29,7 +29,7 @@ export const Route = createFileRoute("/")({
         content:
           "buy dry fruits online, premium almonds India, W240 cashews online, Kashmiri walnuts, dry fruit gift boxes, fresh dates online, Viśvam",
       },
-      { property: "og:title", content: "Viśvam — Premium Dry Fruits & Handpicked Nuts" },
+      { property: "og:title", content: "Viśvam — Everyday indulgence in the finest dry fruits & nuts" },
       {
         property: "og:description",
         content: "Single-origin dry fruits, jumbo nuts, and handcrafted royal gift hampers.",
@@ -38,7 +38,7 @@ export const Route = createFileRoute("/")({
       { property: "og:url", content: "https://visvam.in/" },
       { property: "og:image", content: "https://visvam.in/Visvam-Logo.png" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Viśvam — Premium Dry Fruits & Handpicked Nuts" },
+      { name: "twitter:title", content: "Viśvam — Everyday indulgence in the finest dry fruits & nuts" },
       { name: "twitter:image", content: "https://visvam.in/Visvam-Logo.png" },
     ],
     links: [{ rel: "canonical", href: "https://visvam.in/" }],

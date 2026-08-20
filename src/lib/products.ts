@@ -1,5 +1,22 @@
 export type Category = "gourmet" | "nuts" | "gifting";
 
+export interface IVariantAttribute {
+  name: string;
+  values: string[];
+}
+
+export interface IProductVariant {
+  _id?: string;
+  sku?: string;
+  title: string;
+  options: Record<string, string>;
+  price: number;
+  mrp?: number;
+  stock: number;
+  image?: string;
+  isDefault?: boolean;
+}
+
 export type Product = {
   _id?: string;
   slug: string;
@@ -16,6 +33,9 @@ export type Product = {
   bestseller?: boolean;
   isNew?: boolean;
   isNewProduct?: boolean;
+  hasVariants?: boolean;
+  variantAttributes?: IVariantAttribute[];
+  variants?: IProductVariant[];
 };
 
 const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "dvwpxb2oa";
@@ -35,7 +55,7 @@ export const products: Product[] = [
     slug: "california-jumbo-almonds",
     name: "California Jumbo Almonds (Badam)",
     tagline: "Single-Origin · Hand-Selected",
-    price: 1199,
+    price: 649,
     category: "nuts",
     badge: "Bestseller",
     images: [
@@ -48,12 +68,52 @@ export const products: Product[] = [
     serving: "500g Pouch",
     benefits: ["Rich in Vitamin E", "Heart Healthy", "High Plant Protein"],
     bestseller: true,
+    hasVariants: true,
+    variantAttributes: [
+      { name: "Grade", values: ["Standard Jumbo", "Reserve Super Jumbo"] },
+      { name: "Weight", values: ["250g", "500g"] },
+    ],
+    variants: [
+      {
+        sku: "ALM-STD-250",
+        title: "Standard Jumbo · 250g",
+        options: { Grade: "Standard Jumbo", Weight: "250g" },
+        price: 649,
+        mrp: 699,
+        stock: 60,
+        isDefault: true,
+      },
+      {
+        sku: "ALM-STD-500",
+        title: "Standard Jumbo · 500g",
+        options: { Grade: "Standard Jumbo", Weight: "500g" },
+        price: 1199,
+        mrp: 1299,
+        stock: 50,
+      },
+      {
+        sku: "ALM-RSV-250",
+        title: "Reserve Super Jumbo · 250g",
+        options: { Grade: "Reserve Super Jumbo", Weight: "250g" },
+        price: 749,
+        mrp: 799,
+        stock: 40,
+      },
+      {
+        sku: "ALM-RSV-500",
+        title: "Reserve Super Jumbo · 500g",
+        options: { Grade: "Reserve Super Jumbo", Weight: "500g" },
+        price: 1399,
+        mrp: 1499,
+        stock: 30,
+      },
+    ],
   },
   {
     slug: "king-w240-cashews",
     name: "King W240 Whole Cashews (Kaju)",
     tagline: "W240 King Size · Slow-Roasted",
-    price: 1399,
+    price: 749,
     category: "nuts",
     badge: "Premium Grade",
     images: [
@@ -66,6 +126,46 @@ export const products: Product[] = [
     serving: "500g Jar",
     benefits: ["Rich in Magnesium", "Zero Cholesterol", "Creamy Crunch"],
     bestseller: true,
+    hasVariants: true,
+    variantAttributes: [
+      { name: "Grade", values: ["Bold", "Extra Bold"] },
+      { name: "Weight", values: ["250g", "500g"] },
+    ],
+    variants: [
+      {
+        sku: "CSH-BLD-250",
+        title: "Bold · 250g",
+        options: { Grade: "Bold", Weight: "250g" },
+        price: 749,
+        mrp: 799,
+        stock: 50,
+        isDefault: true,
+      },
+      {
+        sku: "CSH-BLD-500",
+        title: "Bold · 500g",
+        options: { Grade: "Bold", Weight: "500g" },
+        price: 1399,
+        mrp: 1499,
+        stock: 45,
+      },
+      {
+        sku: "CSH-XBLD-250",
+        title: "Extra Bold · 250g",
+        options: { Grade: "Extra Bold", Weight: "250g" },
+        price: 849,
+        mrp: 899,
+        stock: 35,
+      },
+      {
+        sku: "CSH-XBLD-500",
+        title: "Extra Bold · 500g",
+        options: { Grade: "Extra Bold", Weight: "500g" },
+        price: 1599,
+        mrp: 1699,
+        stock: 25,
+      },
+    ],
   },
   {
     slug: "kashmiri-snow-walnuts",

@@ -38,42 +38,6 @@ function authHeaders(): Record<string, string> {
 }
 
 // ─── Auth API ────────────────────────────────────────────────────
-export async function registerUser(data: { name: string; email: string; password: string; phone?: string }) {
-  try {
-    const res = await fetch(`${API_BASE_URL}/auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    const json = await res.json();
-    if (json.success && json.token) {
-      setAuthToken(json.token);
-      setStoredUser(json.data);
-    }
-    return json;
-  } catch (error: any) {
-    return { success: false, message: error.message || "Registration failed" };
-  }
-}
-
-export async function loginUser(data: { email: string; password: string }) {
-  try {
-    const res = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    const json = await res.json();
-    if (json.success && json.token) {
-      setAuthToken(json.token);
-      setStoredUser(json.data);
-    }
-    return json;
-  } catch (error: any) {
-    return { success: false, message: error.message || "Login failed" };
-  }
-}
-
 export async function getUserProfile() {
   try {
     const res = await fetch(`${API_BASE_URL}/auth/profile`, { headers: authHeaders() });
@@ -103,6 +67,20 @@ export async function syncFirebaseUserWithBackend(idToken: string, extraData?: {
     return { success: false, message: error.message || "Failed to sync Firebase user" };
   }
 }
+
+export async function completeUserProfile(data: { name?: string; phone?: string; address?: any }) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/auth/complete-profile`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify(data),
+    });
+    return await res.json();
+  } catch (error: any) {
+    return { success: false, message: error.message || "Failed to complete profile" };
+  }
+}
+
 
 // ─── Products API ────────────────────────────────────────────────
 export interface FetchProductsParams {
@@ -170,6 +148,9 @@ export interface SubmitOrderData {
     qty: number;
     price: number;
     image?: string;
+    variantTitle?: string;
+    variantSku?: string;
+    selectedOptions?: Record<string, string>;
   }[];
   shippingAddress: ShippingAddress;
   guestEmail?: string;

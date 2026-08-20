@@ -2,6 +2,23 @@ import mongoose, { Document, Schema } from "mongoose";
 
 export type ProductCategory = "gourmet" | "nuts" | "gifting" | "dried-fruits" | "exotic-seeds" | "combos";
 
+export interface IVariantAttribute {
+  name: string;
+  values: string[];
+}
+
+export interface IProductVariant {
+  _id?: string;
+  sku?: string;
+  title: string;
+  options: Record<string, string>;
+  price: number;
+  mrp?: number;
+  stock: number;
+  image?: string;
+  isDefault?: boolean;
+}
+
 export interface IProduct extends Document {
   slug: string;
   name: string;
@@ -19,6 +36,9 @@ export interface IProduct extends Document {
   stock: number;
   rating: number;
   numReviews: number;
+  hasVariants?: boolean;
+  variantAttributes?: IVariantAttribute[];
+  variants?: IProductVariant[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -100,6 +120,28 @@ const ProductSchema = new Schema<IProduct>(
       type: Number,
       default: 0,
     },
+    hasVariants: {
+      type: Boolean,
+      default: false,
+    },
+    variantAttributes: [
+      {
+        name: { type: String, required: true },
+        values: [{ type: String, required: true }],
+      },
+    ],
+    variants: [
+      {
+        sku: { type: String, trim: true },
+        title: { type: String, required: true },
+        options: { type: Map, of: String },
+        price: { type: Number, required: true, min: 0 },
+        mrp: { type: Number },
+        stock: { type: Number, default: 0 },
+        image: { type: String },
+        isDefault: { type: Boolean, default: false },
+      },
+    ],
   },
   {
     timestamps: true,

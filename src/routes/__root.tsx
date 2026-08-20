@@ -13,7 +13,7 @@ import appCss from "../styles.css?url";
 import visvamLogo from "../assets/Visvam Logo.png";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CartProvider } from "../lib/cart-context";
-import { AuthProvider } from "../lib/auth-context";
+import { AuthProvider, useAuth } from "../lib/auth-context";
 
 import { SiteLayout } from "../components/SiteLayout";
 
@@ -115,7 +115,7 @@ const organizationSchema = {
       "@type": "WebSite",
       "@id": "https://visvam.in/#website",
       "url": "https://visvam.in",
-      "name": "Viśvam — Premium Dry Fruits & Handpicked Nuts",
+      "name": "Viśvam — Everyday indulgence in the finest dry fruits & nuts",
       "description": "Cold-stored, single-origin dry fruits, jumbo almonds, W240 cashews, organic figs, dates and luxury gift hampers.",
       "publisher": {
         "@id": "https://visvam.in/#organization"
@@ -152,7 +152,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Viśvam — Premium Dry Fruits & Handpicked Nuts" },
+      { title: "Viśvam — Everyday indulgence in the finest dry fruits & nuts" },
       {
         name: "description",
         content:
@@ -169,7 +169,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         ? [{ name: "google-site-verification", content: googleSiteVerification }]
         : []),
       { property: "og:site_name", content: "Viśvam" },
-      { property: "og:title", content: "Viśvam — Premium Dry Fruits & Handpicked Nuts" },
+      { property: "og:title", content: "Viśvam — Everyday indulgence in the finest dry fruits & nuts" },
       {
         property: "og:description",
         content: "Single-origin almonds, cashews, walnuts, dates and handcrafted luxury gift boxes.",
@@ -181,7 +181,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:locale", content: "en_IN" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@visvam" },
-      { name: "twitter:title", content: "Viśvam — Premium Dry Fruits & Handpicked Nuts" },
+      { name: "twitter:title", content: "Viśvam — Everyday indulgence in the finest dry fruits & nuts" },
       {
         name: "twitter:description",
         content: "Cold-stored, single-origin dry fruits and royal gift hampers.",
@@ -244,6 +244,51 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function EmailLinkHandler() {
+  const { verifyEmailLink } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkEmailLink = async () => {
+      if (typeof window === "undefined") return;
+      const { isSignInWithEmailLink } = await import("../lib/firebase");
+      const { auth } = await import("../lib/firebase");
+
+      if (isSignInWithEmailLink(auth, window.location.href)) {
+        const res = await verifyEmailLink();
+        if (res.success) {
+          const { toast } = await import("sonner");
+          toast.success(res.message);
+        } else if (res.message !== "Not an email sign-in link") {
+          const { toast } = await import("sonner");
+          toast.error(res.message);
+        }
+      }
+    };
+    checkEmailLink();
+  }, [verifyEmailLink, router]);
+
+  return null;
+}
+
+function ProfileCompletionRedirect() {
+  const { isAuthenticated, isLoading, needsProfileCompletion } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoading) return;
+    if (isAuthenticated && needsProfileCompletion) {
+      const currentPath = typeof window !== "undefined" ? window.location.pathname : "/";
+      // Only redirect if not already on complete-profile page
+      if (currentPath !== "/complete-profile") {
+        router.navigate({ to: "/complete-profile" });
+      }
+    }
+  }, [isAuthenticated, isLoading, needsProfileCompletion, router]);
+
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
@@ -251,6 +296,8 @@ function RootComponent() {
       <AuthProvider>
         <CartProvider>
           <PageLoader />
+          <EmailLinkHandler />
+          <ProfileCompletionRedirect />
           <Outlet />
         </CartProvider>
       </AuthProvider>

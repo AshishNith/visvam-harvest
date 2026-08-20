@@ -5,6 +5,18 @@ import type { Product } from "@/lib/products";
 
 export function ProductCard({ product }: { product: Product }) {
   const { add } = useCart();
+
+  const hasVariants = Boolean(product.hasVariants && product.variants && product.variants.length > 0);
+  const variantPrices = hasVariants ? (product.variants || []).map((v) => v.price).filter((p) => p > 0) : [];
+  const minPrice = variantPrices.length > 0 ? Math.min(...variantPrices) : product.price;
+  const maxPrice = variantPrices.length > 0 ? Math.max(...variantPrices) : product.price;
+  const isMultiPriced = minPrice < maxPrice;
+
+  // Options summary string (e.g. "Bold / Extra Bold · 250g / 500g")
+  const optionsSummary = hasVariants && product.variantAttributes?.length
+    ? product.variantAttributes.map((a) => a.values.join("/")).join(" · ")
+    : null;
+
   return (
     <article className="group flex flex-col">
       <div className="relative aspect-[3/4] mb-5 overflow-hidden bg-cream/70 rounded-2xl">
@@ -52,21 +64,32 @@ export function ProductCard({ product }: { product: Product }) {
           </div>
         )}
         <div className="absolute top-3 right-3 z-10 bg-black/60 backdrop-blur-sm text-white text-[9px] px-2.5 py-1 tracked pointer-events-none rounded-full">
-          {product.serving}
+          {hasVariants ? "Customisable" : product.serving}
         </div>
         <div className="absolute bottom-0 left-0 right-0 z-20 flex items-center justify-end bg-ink text-white py-3 px-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 pointer-events-auto rounded-b-2xl">
-          <button
-            type="button"
-            onClick={() => {
-              if (product.stock !== undefined && product.stock <= 0) return;
-              add(product);
-            }}
-            disabled={product.stock !== undefined && product.stock <= 0}
-            className="group/btn inline-flex items-center gap-1.5 text-[10px] tracked font-medium uppercase text-white hover:text-clay transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            <span>{product.stock !== undefined && product.stock <= 0 ? 'Sold out' : 'Add to bag'}</span>
-            <ArrowRight size={11} className="group-hover/btn:translate-x-1 transition-transform duration-300 text-clay" />
-          </button>
+          {hasVariants ? (
+            <Link
+              to="/menu/$slug"
+              params={{ slug: product.slug }}
+              className="group/btn inline-flex items-center gap-1.5 text-[10px] tracked font-medium uppercase text-white hover:text-clay transition-all duration-300"
+            >
+              <span>Choose Options</span>
+              <ArrowRight size={11} className="group-hover/btn:translate-x-1 transition-transform duration-300 text-clay" />
+            </Link>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                if (product.stock !== undefined && product.stock <= 0) return;
+                add(product);
+              }}
+              disabled={product.stock !== undefined && product.stock <= 0}
+              className="group/btn inline-flex items-center gap-1.5 text-[10px] tracked font-medium uppercase text-white hover:text-clay transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <span>{product.stock !== undefined && product.stock <= 0 ? 'Sold out' : 'Add to bag'}</span>
+              <ArrowRight size={11} className="group-hover/btn:translate-x-1 transition-transform duration-300 text-clay" />
+            </button>
+          )}
         </div>
       </div>
       <div className="space-y-1.5 flex-1 flex flex-col justify-between">
@@ -77,10 +100,23 @@ export function ProductCard({ product }: { product: Product }) {
             </Link>
           </h4>
           <p className="text-[10.5px] text-muted-foreground tracked mt-1 line-clamp-1">{product.tagline}</p>
+          {optionsSummary && (
+            <p className="text-[9.5px] font-mono text-clay/90 mt-1 line-clamp-1">
+              {optionsSummary}
+            </p>
+          )}
         </div>
         <div className="pt-2 flex justify-between items-baseline mt-2">
-          <span className="text-sm font-semibold tabular-nums">{formatPrice(product.price)}</span>
-          <span className="text-[9px] tracked text-muted-foreground">{product.serving}</span>
+          <span className="text-sm font-semibold tabular-nums">
+            {isMultiPriced ? (
+              <span>From {formatPrice(minPrice)}</span>
+            ) : (
+              formatPrice(minPrice)
+            )}
+          </span>
+          <span className="text-[9px] tracked text-muted-foreground">
+            {hasVariants ? `${product.variants?.length} Options` : product.serving}
+          </span>
         </div>
       </div>
     </article>

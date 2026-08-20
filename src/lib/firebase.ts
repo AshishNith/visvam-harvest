@@ -7,7 +7,13 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink,
   type User,
+  type ConfirmationResult,
 } from "firebase/auth";
 
 const apiKey = import.meta.env.VITE_FIREBASE_API_KEY?.trim() || "";
@@ -32,13 +38,26 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 
+// Action code settings for email link sign-in
+export const emailLinkActionCodeSettings = {
+  // URL to redirect back to after email link click
+  url: typeof window !== "undefined" ? window.location.origin + "/" : "https://visvam.in/",
+  handleCodeInApp: true,
+};
+
 export {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   firebaseSignOut,
   onAuthStateChanged,
   signInWithPopup,
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink,
   User,
+  ConfirmationResult,
 };
 
 export async function getIdToken(): Promise<string | null> {

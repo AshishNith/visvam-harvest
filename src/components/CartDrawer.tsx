@@ -87,13 +87,16 @@ export function CartDrawer() {
     if (items.length === 0) return;
     setCheckingOut(true);
     try {
-      const orderItems = items.map(({ product, qty }) => ({
+      const orderItems = items.map(({ product, qty, selectedVariant }) => ({
         product: product._id || product.slug,
         slug: product.slug,
         name: product.name,
         qty,
-        price: product.price,
+        price: selectedVariant?.price ?? product.price,
         image: product.images[0] || "",
+        variantTitle: selectedVariant?.title,
+        variantSku: selectedVariant?.sku,
+        selectedOptions: selectedVariant?.options,
       }));
 
       const res = await submitOrderToBackend({
@@ -219,19 +222,18 @@ export function CartDrawer() {
                 >
                   {items.length === 0 ? (
                     <div className="text-center py-20">
-                      <p className="font-display italic text-2xl mb-3">Your bag is empty</p>
-                      <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-                        Explore our handpicked almonds, W240 cashews, and Kashmiri walnuts to get started.
-                      </p>
+                      <p className="font-display italic text-2xl">Your bag is empty</p>
                     </div>
                   ) : (
                     <ul className="space-y-8">
-                      {items.map(({ product, qty }) => {
+                      {items.map(({ product, qty, selectedVariant, cartKey }) => {
                         if (!product) return null;
+                        const itemPrice = selectedVariant?.price ?? product.price ?? 0;
+                        const key = cartKey || product.slug;
                         return (
-                          <li key={product.slug || Math.random()} className="flex gap-5">
+                          <li key={key} className="flex gap-5">
                             <img
-                              src={product.images?.[0] || ""}
+                              src={selectedVariant?.image || product.images?.[0] || ""}
                               alt={product.name || "Product"}
                               width={96}
                               height={120}
@@ -241,31 +243,35 @@ export function CartDrawer() {
                             <div className="flex-1 min-w-0">
                               <h4 className="text-sm font-medium leading-snug">{product.name}</h4>
                               <p className="text-[10.5px] tracked text-muted-foreground mt-1">
-                                {product.serving}
+                                {selectedVariant ? (
+                                  <span className="font-mono text-clay font-medium">{selectedVariant.title}</span>
+                                ) : (
+                                  product.serving
+                                )}
                               </p>
                               <div className="flex justify-between items-end mt-4">
                                 <div className="flex items-center border border-border">
                                   <button
-                                    onClick={() => product.slug && setQty(product.slug, qty - 1)}
-                                    className="px-2.5 py-1.5 hover:bg-cream"
+                                    onClick={() => setQty(key, qty - 1)}
+                                    className="px-2.5 py-1.5 hover:bg-cream cursor-pointer"
                                     aria-label="Decrease quantity"
                                   >
                                     <Minus size={11} strokeWidth={1.5} />
                                   </button>
                                   <span className="px-3 text-xs tabular-nums font-medium">{qty}</span>
                                   <button
-                                    onClick={() => product.slug && setQty(product.slug, qty + 1)}
-                                    className="px-2.5 py-1.5 hover:bg-cream"
+                                    onClick={() => setQty(key, qty + 1)}
+                                    className="px-2.5 py-1.5 hover:bg-cream cursor-pointer"
                                     aria-label="Increase quantity"
                                   >
                                     <Plus size={11} strokeWidth={1.5} />
                                   </button>
                                 </div>
                                 <div className="text-right">
-                                  <p className="text-sm font-semibold tabular-nums">{formatPrice((product.price || 0) * qty)}</p>
+                                  <p className="text-sm font-semibold tabular-nums">{formatPrice(itemPrice * qty)}</p>
                                   <button
-                                    onClick={() => product.slug && remove(product.slug)}
-                                    className="text-[9.5px] tracked text-muted-foreground underline mt-1 hover:text-clay transition-colors"
+                                    onClick={() => remove(key)}
+                                    className="text-[9.5px] tracked text-muted-foreground underline mt-1 hover:text-clay transition-colors cursor-pointer"
                                   >
                                     Remove
                                   </button>
@@ -457,16 +463,29 @@ export function CartDrawer() {
                   <div>
                     <h5 className="text-[10px] tracked font-semibold uppercase text-muted-foreground mb-3">Order Items ({items.length})</h5>
                     <ul className="space-y-3">
-                      {items.map(({ product, qty }) => (
-                        <li key={product.slug} className="flex items-center gap-3 text-xs">
-                          <img src={product.images?.[0] || ""} alt={product.name} className="w-10 h-10 object-cover bg-cream shrink-0" />
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium truncate">{product.name}</p>
-                            <p className="text-[10px] text-muted-foreground">Qty: {qty}</p>
-                          </div>
-                          <span className="font-semibold tabular-nums shrink-0">{formatPrice(product.price * qty)}</span>
-                        </li>
-                      ))}
+                      {items.map(({ product, qty, selectedVariant, cartKey }) => {
+                        const itemPrice = selectedVariant?.price ?? product.price ?? 0;
+                        const key = cartKey || product.slug;
+                        return (
+                          <li key={key} className="flex items-center gap-3 text-xs">
+                            <img
+                              src={selectedVariant?.image || product.images?.[0] || ""}
+                              alt={product.name}
+                              className="w-10 h-10 object-cover bg-cream shrink-0"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium truncate">{product.name}</p>
+                              <p className="text-[10px] text-muted-foreground">
+                                {selectedVariant ? (
+                                  <span className="text-clay font-mono">{selectedVariant.title} · </span>
+                                ) : null}
+                                Qty: {qty}
+                              </p>
+                            </div>
+                            <span className="font-semibold tabular-nums shrink-0">{formatPrice(itemPrice * qty)}</span>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
 

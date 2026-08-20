@@ -1,12 +1,15 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface IOrderItem {
-  product: mongoose.Types.ObjectId;
+  product?: mongoose.Types.ObjectId;
   slug: string;
   name: string;
   qty: number;
   price: number;
   image: string;
+  variantTitle?: string;
+  variantSku?: string;
+  selectedOptions?: Record<string, string>;
 }
 
 export interface IShiprocketDetails {
@@ -78,6 +81,9 @@ const OrderSchema = new Schema<IOrder>(
         qty: { type: Number, required: true, min: 1 },
         price: { type: Number, required: true },
         image: { type: String, default: "" },
+        variantTitle: { type: String },
+        variantSku: { type: String },
+        selectedOptions: { type: Map, of: String },
       },
     ],
     pickupLane: {

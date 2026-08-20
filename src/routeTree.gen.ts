@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as R10PdfRouteImport } from './routes/10-pdf'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CombosRouteImport } from './routes/combos'
+import { Route as CompleteProfileRouteImport } from './routes/complete-profile'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as DomainGuideRouteImport } from './routes/domain-guide'
@@ -50,6 +51,11 @@ const CheckoutRoute = CheckoutRouteImport.update({
 const CombosRoute = CombosRouteImport.update({
   id: '/combos',
   path: '/combos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompleteProfileRoute = CompleteProfileRouteImport.update({
+  id: '/complete-profile',
+  path: '/complete-profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -148,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/10-pdf': typeof R10PdfRoute
   '/checkout': typeof CheckoutRoute
   '/combos': typeof CombosRoute
+  '/complete-profile': typeof CompleteProfileRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/domain-guide': typeof DomainGuideRoute
@@ -172,6 +179,7 @@ export interface FileRoutesByTo {
   '/10-pdf': typeof R10PdfRoute
   '/checkout': typeof CheckoutRoute
   '/combos': typeof CombosRoute
+  '/complete-profile': typeof CompleteProfileRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/domain-guide': typeof DomainGuideRoute
@@ -197,6 +205,7 @@ export interface FileRoutesById {
   '/10-pdf': typeof R10PdfRoute
   '/checkout': typeof CheckoutRoute
   '/combos': typeof CombosRoute
+  '/complete-profile': typeof CompleteProfileRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/domain-guide': typeof DomainGuideRoute
@@ -223,6 +232,7 @@ export interface FileRouteTypes {
     | '/10-pdf'
     | '/checkout'
     | '/combos'
+    | '/complete-profile'
     | '/contact'
     | '/cookies'
     | '/domain-guide'
@@ -247,6 +257,7 @@ export interface FileRouteTypes {
     | '/10-pdf'
     | '/checkout'
     | '/combos'
+    | '/complete-profile'
     | '/contact'
     | '/cookies'
     | '/domain-guide'
@@ -271,6 +282,7 @@ export interface FileRouteTypes {
     | '/10-pdf'
     | '/checkout'
     | '/combos'
+    | '/complete-profile'
     | '/contact'
     | '/cookies'
     | '/domain-guide'
@@ -296,6 +308,7 @@ export interface RootRouteChildren {
   R10PdfRoute: typeof R10PdfRoute
   CheckoutRoute: typeof CheckoutRoute
   CombosRoute: typeof CombosRoute
+  CompleteProfileRoute: typeof CompleteProfileRoute
   ContactRoute: typeof ContactRoute
   CookiesRoute: typeof CookiesRoute
   DomainGuideRoute: typeof DomainGuideRoute
@@ -344,6 +357,13 @@ declare module '@tanstack/react-router' {
       path: '/combos'
       fullPath: '/combos'
       preLoaderRoute: typeof CombosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/complete-profile': {
+      id: '/complete-profile'
+      path: '/complete-profile'
+      fullPath: '/complete-profile'
+      preLoaderRoute: typeof CompleteProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -480,6 +500,7 @@ const rootRouteChildren: RootRouteChildren = {
   R10PdfRoute: R10PdfRoute,
   CheckoutRoute: CheckoutRoute,
   CombosRoute: CombosRoute,
+  CompleteProfileRoute: CompleteProfileRoute,
   ContactRoute: ContactRoute,
   CookiesRoute: CookiesRoute,
   DomainGuideRoute: DomainGuideRoute,
