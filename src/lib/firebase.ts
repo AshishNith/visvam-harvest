@@ -36,6 +36,21 @@ const firebaseConfig = {
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 export const auth = getAuth(app);
+
+// In local development, bypass reCAPTCHA app verification for test phone numbers
+if (typeof window !== "undefined") {
+  const isLocal =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1" ||
+    window.location.hostname.startsWith("192.168.") ||
+    window.location.hostname.endsWith(".local");
+  if (isLocal && import.meta.env.DEV) {
+    try {
+      auth.settings.appVerificationDisabledForTesting = true;
+    } catch {}
+  }
+}
+
 export const googleProvider = new GoogleAuthProvider();
 
 // Action code settings for email link sign-in
