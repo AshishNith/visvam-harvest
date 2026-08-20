@@ -172,16 +172,31 @@ function Home() {
                 {/* Price & Standard Website Button */}
                 <div className="pt-3 border-t border-border/30 flex items-center justify-between mt-auto">
                   <div>
-                    <span className="text-[10px] text-muted-foreground block">{p.serving}</span>
-                    <span className="text-base font-bold text-ink">{formatPrice(p.price)}</span>
+                    <span className="text-[10px] text-muted-foreground block">{p.hasVariants ? "Customisable" : p.serving}</span>
+                    <span className="text-base font-bold text-ink">
+                      {p.hasVariants && p.variants && p.variants.length > 0
+                        ? `From ${formatPrice(Math.min(...p.variants.map((v) => v.price)))}`
+                        : formatPrice(p.price)}
+                    </span>
                   </div>
-                  <button
-                    onClick={() => add(p)}
-                    className="group/btn inline-flex items-center gap-2 text-ink text-[11px] font-medium tracked uppercase tracking-widest py-1.5 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 cursor-pointer"
-                  >
-                    <span>Add to Bag</span>
-                    <ArrowRight size={13} className="group-hover/btn:translate-x-1 transition-transform duration-300 text-clay" />
-                  </button>
+                  {p.hasVariants ? (
+                    <Link
+                      to="/menu/$slug"
+                      params={{ slug: p.slug }}
+                      className="group/btn inline-flex items-center gap-2 text-ink text-[11px] font-medium tracked uppercase tracking-widest py-1.5 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 cursor-pointer"
+                    >
+                      <span>Choose Options</span>
+                      <ArrowRight size={13} className="group-hover/btn:translate-x-1 transition-transform duration-300 text-clay" />
+                    </Link>
+                  ) : (
+                    <button
+                      onClick={() => add(p)}
+                      className="group/btn inline-flex items-center gap-2 text-ink text-[11px] font-medium tracked uppercase tracking-widest py-1.5 border-b-2 border-ink hover:text-clay hover:border-clay transition-all duration-300 cursor-pointer"
+                    >
+                      <span>Add to Bag</span>
+                      <ArrowRight size={13} className="group-hover/btn:translate-x-1 transition-transform duration-300 text-clay" />
+                    </button>
+                  )}
                 </div>
               </div>
             ))}

@@ -204,7 +204,7 @@ export function UserAccountModal({ isOpen, onClose }: UserAccountModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/60 backdrop-blur-sm animate-overlay-in"
@@ -212,7 +212,7 @@ export function UserAccountModal({ isOpen, onClose }: UserAccountModalProps) {
       />
 
       {/* Container */}
-      <div className="relative w-full max-w-md bg-background border border-border shadow-2xl z-10 overflow-hidden animate-fade-up">
+      <div className="relative w-full max-w-md max-h-[90dvh] overflow-y-auto bg-background border border-border shadow-2xl z-10 animate-fade-up rounded-2xl">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-border bg-cream/40">
           <div className="flex items-center gap-2.5">

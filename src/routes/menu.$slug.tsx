@@ -340,19 +340,19 @@ function MenuItemPage() {
 
   return (
     <SiteLayout>
-      <div className="max-w-[1200px] mx-auto px-6 pt-24">
-        <nav className="text-[10px] tracked text-muted-foreground flex gap-2 items-center">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 pt-20 sm:pt-24">
+        <nav className="text-[10px] tracked text-muted-foreground flex gap-2 items-center flex-wrap">
           <Link to="/" className="hover:text-clay">Home</Link>
           <span>/</span>
           <Link to={`/${product.category}` as "/nuts"} className="hover:text-clay">
             {categoryLabel}
           </Link>
           <span>/</span>
-          <span className="text-ink font-medium">{product.name}</span>
+          <span className="text-ink font-medium truncate max-w-[200px] sm:max-w-none">{product.name}</span>
         </nav>
       </div>
 
-      <section className="max-w-[1200px] mx-auto px-6 py-8 grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-14 items-start">
+      <section className="max-w-[1200px] mx-auto px-4 sm:px-6 py-6 sm:py-8 grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14 items-start">
         {/* Left Column: Product Image Gallery */}
         <div className="max-w-lg mx-auto w-full">
           <div className="bg-cream relative overflow-hidden aspect-square border border-border/40 max-h-[460px] rounded-lg">

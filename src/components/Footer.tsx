@@ -31,12 +31,12 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-cream pt-24 pb-12">
-      <div className="max-w-[1400px] mx-auto px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 mb-20">
+    <footer className="bg-cream pt-14 sm:pt-24 pb-10 sm:pb-12">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 sm:gap-20 mb-12 sm:mb-20">
           <div className="max-w-md">
-            <h3 className="font-display italic text-3xl mb-6">Letters from Viśvam.</h3>
-            <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
+            <h3 className="font-display italic text-2xl sm:text-3xl mb-4 sm:mb-6">Letters from Viśvam.</h3>
+            <p className="text-xs sm:text-sm text-muted-foreground mb-6 sm:mb-8 leading-relaxed">
               Be the first to hear about new arrivals, seasonal releases, and first word on anything worth knowing.
             </p>
             <form className="flex border-b border-ink" onSubmit={handleSubscribe}>

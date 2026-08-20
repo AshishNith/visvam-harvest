@@ -270,16 +270,16 @@ function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background pt-28 pb-20 px-4 md:px-8">
+    <div className="min-h-screen bg-background pt-20 sm:pt-28 pb-16 sm:pb-20 px-3.5 sm:px-6 md:px-8">
       <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-4 border-b border-border">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8 pb-4 border-b border-border">
           <div className="flex items-center gap-3">
             <Link to="/" className="text-muted-foreground hover:text-ink transition-colors" title="Back to Home">
               <ArrowLeft size={18} />
             </Link>
             <div>
-              <h1 className="font-display italic text-3xl text-ink">Secure Express Checkout</h1>
-              <p className="text-[11px] tracked uppercase text-muted-foreground">Encrypted JWT Authentication & Priority Delivery</p>
+              <h1 className="font-display italic text-2xl sm:text-3xl text-ink">Secure Express Checkout</h1>
+              <p className="text-[10px] sm:text-[11px] tracked uppercase text-muted-foreground">Encrypted Authentication & Priority Delivery</p>
             </div>
           </div>
           <Link
@@ -298,7 +298,7 @@ function CheckoutPage() {
           </div>
         ) : !isAuthenticated ? (
           /* Auth Required Gate */
-          <div className="max-w-md mx-auto bg-cream/40 border border-border p-8 shadow-sm text-center my-8">
+          <div className="max-w-md mx-auto bg-cream/40 border border-border p-5 sm:p-8 shadow-sm text-center my-6 sm:my-8 rounded-2xl">
             <div id="checkout-recaptcha" />
             <div className="w-12 h-12 rounded-full bg-clay/10 text-clay grid place-items-center mx-auto mb-4">
               <User size={24} />

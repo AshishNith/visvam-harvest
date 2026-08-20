@@ -31,6 +31,11 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeCategoryHover, setActiveCategoryHover] = useState<string | null>(null);
 
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
+
   // Add scroll listener for elevation (throttled with rAF to avoid 60+ re-renders/sec)
   useEffect(() => {
     let rafId = 0;
@@ -269,81 +274,88 @@ export function Header() {
 
         {/* Responsive Mobile Drawer Navigation */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden bg-background shadow-xl animate-fade-up text-ink">
-            <div className="px-6 py-4 space-y-4">
-              <div className="flex items-center justify-center py-2">
-                <img src={logoEmblem} alt="Viśvam Emblem" className="h-10 w-auto object-contain" />
-              </div>
-              {/* Quick Search Bar inside Mobile Menu */}
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  setIsSearchOpen(true);
-                }}
-                className="w-full flex items-center gap-3 px-4 py-2.5 bg-cream/50 text-xs text-muted-foreground text-left"
-              >
-                <Search size={14} className="text-clay" />
-                <span>Search almonds, cashews, figs...</span>
-              </button>
-
-              {/* Mobile Links */}
-              <div className="flex flex-col space-y-3 pt-2">
-                <Link
-                  to="/nuts"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-xs font-medium tracked uppercase py-2 hover:text-clay flex items-center justify-between"
-                >
-                  <span>Nuts & Dried Fruits</span>
-                  <ArrowRight size={14} className="text-clay" />
-                </Link>
-
-                <Link
-                  to="/gourmet"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-xs font-medium tracked uppercase py-2 hover:text-clay flex items-center justify-between"
-                >
-                  <span>Gourmet</span>
-                  <ArrowRight size={14} className="text-clay" />
-                </Link>
-
-                <Link
-                  to="/gifting"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-xs font-medium tracked uppercase py-2 hover:text-clay flex items-center justify-between text-clay font-semibold"
-                >
-                  <span className="flex items-center gap-2">
-                    <Sparkles size={13} /> Gifting & Hampers
-                  </span>
-                  <ArrowRight size={14} />
-                </Link>
-
-                <Link
-                  to="/story"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-xs font-medium tracked uppercase py-2 hover:text-clay flex items-center justify-between"
-                >
-                  <span>Our Sourcing Story</span>
-                  <ArrowRight size={14} />
-                </Link>
-              </div>
-
-              {/* Mobile Footer Info */}
-              <div className="pt-4 flex items-center justify-between text-[10px] text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <MapPin size={11} className="text-clay" /> Single-Origin Sourcing
-                </span>
+          <>
+            <div
+              className="fixed inset-0 top-20 bg-black/50 backdrop-blur-xs z-30 lg:hidden animate-overlay-in"
+              onClick={() => setIsMobileMenuOpen(false)}
+              aria-label="Close menu backdrop"
+            />
+            <div className="relative z-40 lg:hidden bg-background border-b border-border shadow-2xl animate-fade-up text-ink max-h-[calc(100dvh-5rem)] overflow-y-auto">
+              <div className="px-5 py-5 space-y-4">
+                <div className="flex items-center justify-center py-1">
+                  <img src={logoEmblem} alt="Viśvam Emblem" className="h-9 w-auto object-contain" />
+                </div>
+                {/* Quick Search Bar inside Mobile Menu */}
                 <button
                   onClick={() => {
                     setIsMobileMenuOpen(false);
-                    setIsAccountOpen(true);
+                    setIsSearchOpen(true);
                   }}
-                  className="text-clay font-semibold underline uppercase tracking-wider"
+                  className="w-full flex items-center gap-3 px-4 py-3 bg-cream/70 border border-border/60 text-xs text-muted-foreground text-left rounded-xl"
                 >
-                  Sign In
+                  <Search size={15} className="text-clay" />
+                  <span>Search almonds, cashews, figs...</span>
                 </button>
+
+                {/* Mobile Links */}
+                <div className="flex flex-col space-y-2 pt-1 divide-y divide-border/30">
+                  <Link
+                    to="/nuts"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="text-xs font-medium tracked uppercase py-3 hover:text-clay flex items-center justify-between"
+                  >
+                    <span>Nuts & Dried Fruits</span>
+                    <ArrowRight size={14} className="text-clay" />
+                  </Link>
+
+                  <Link
+                    to="/gourmet"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="text-xs font-medium tracked uppercase py-3 hover:text-clay flex items-center justify-between"
+                  >
+                    <span>Gourmet</span>
+                    <ArrowRight size={14} className="text-clay" />
+                  </Link>
+
+                  <Link
+                    to="/gifting"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="text-xs font-medium tracked uppercase py-3 hover:text-clay flex items-center justify-between text-clay font-semibold"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Sparkles size={13} /> Gifting & Hampers
+                    </span>
+                    <ArrowRight size={14} />
+                  </Link>
+
+                  <Link
+                    to="/story"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="text-xs font-medium tracked uppercase py-3 hover:text-clay flex items-center justify-between"
+                  >
+                    <span>Our Sourcing Story</span>
+                    <ArrowRight size={14} />
+                  </Link>
+                </div>
+
+                {/* Mobile Footer Info */}
+                <div className="pt-3 border-t border-border/50 flex items-center justify-between text-[10px] text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <MapPin size={11} className="text-clay" /> Single-Origin Sourcing
+                  </span>
+                  <button
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      setIsAccountOpen(true);
+                    }}
+                    className="text-clay font-semibold underline uppercase tracking-wider p-1"
+                  >
+                    {isAuthenticated ? "My Account" : "Sign In"}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          </>
         )}
       </header>
 

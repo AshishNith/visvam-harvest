@@ -66,15 +66,15 @@ export function ProductCard({ product }: { product: Product }) {
         <div className="absolute top-3 right-3 z-10 bg-black/60 backdrop-blur-sm text-white text-[9px] px-2.5 py-1 tracked pointer-events-none rounded-full">
           {hasVariants ? "Customisable" : product.serving}
         </div>
-        <div className="absolute bottom-0 left-0 right-0 z-20 flex items-center justify-end bg-ink text-white py-3 px-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 pointer-events-auto rounded-b-2xl">
+        <div className="absolute bottom-0 left-0 right-0 z-20 flex items-center justify-end bg-ink/90 backdrop-blur-xs text-white py-2.5 px-3.5 sm:py-3 sm:px-4 sm:translate-y-full sm:group-hover:translate-y-0 transition-transform duration-300 pointer-events-auto rounded-b-2xl">
           {hasVariants ? (
             <Link
               to="/menu/$slug"
               params={{ slug: product.slug }}
-              className="group/btn inline-flex items-center gap-1.5 text-[10px] tracked font-medium uppercase text-white hover:text-clay transition-all duration-300"
+              className="group/btn inline-flex items-center gap-1.5 text-[10px] tracked font-medium uppercase text-white hover:text-sand transition-all duration-300"
             >
               <span>Choose Options</span>
-              <ArrowRight size={11} className="group-hover/btn:translate-x-1 transition-transform duration-300 text-clay" />
+              <ArrowRight size={11} className="group-hover/btn:translate-x-1 transition-transform duration-300 text-sand" />
             </Link>
           ) : (
             <button
@@ -84,10 +84,10 @@ export function ProductCard({ product }: { product: Product }) {
                 add(product);
               }}
               disabled={product.stock !== undefined && product.stock <= 0}
-              className="group/btn inline-flex items-center gap-1.5 text-[10px] tracked font-medium uppercase text-white hover:text-clay transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="group/btn inline-flex items-center gap-1.5 text-[10px] tracked font-medium uppercase text-white hover:text-sand transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <span>{product.stock !== undefined && product.stock <= 0 ? 'Sold out' : 'Add to bag'}</span>
-              <ArrowRight size={11} className="group-hover/btn:translate-x-1 transition-transform duration-300 text-clay" />
+              <ArrowRight size={11} className="group-hover/btn:translate-x-1 transition-transform duration-300 text-sand" />
             </button>
           )}
         </div>
