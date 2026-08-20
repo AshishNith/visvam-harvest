@@ -145,7 +145,7 @@ export const FALLBACK_REVIEWS: Record<string, ProductReview[]> = {
       userName: "Gautam Bose",
       rating: 5,
       title: "Large, buttery and fresh",
-      comment: "The crunch is gentle yet firm, exactly how freshly harvested W240 cashews should feel.",
+      comment: "The crunch is gentle yet firm, exactly how freshly picked W240 cashews should feel.",
       createdAt: new Date(Date.now() - 29 * 86400000).toISOString(),
     },
     {
@@ -219,7 +219,7 @@ export const FALLBACK_REVIEWS: Record<string, ProductReview[]> = {
       _id: "rev-walnuts-4",
       userName: "Neha Bansal",
       rating: 4,
-      title: "Wild Kashmiri harvest quality",
+      title: "Wild Kashmiri orchard quality",
       comment: "Sweet and buttery. Half kernels were mostly intact with very minimal crumb during transit.",
       createdAt: new Date(Date.now() - 20 * 86400000).toISOString(),
     },
@@ -378,7 +378,7 @@ export const FALLBACK_REVIEWS: Record<string, ProductReview[]> = {
       userName: "Zarina Billimoria",
       rating: 5,
       title: "50%+ oil content — real Mamra!",
-      comment: "You press one almond with a spoon and the oil literally coats the surface. Authentic Chaharmahal Iranian harvest.",
+      comment: "You press one almond with a spoon and the oil literally coats the surface. Authentic Chaharmahal Iranian reserve.",
       createdAt: new Date(Date.now() - 3 * 86400000).toISOString(),
     },
     {
@@ -458,7 +458,7 @@ export const FALLBACK_REVIEWS: Record<string, ProductReview[]> = {
       userName: "Sameer Nair",
       rating: 5,
       title: "Purest quality Mamra",
-      comment: "Authentic mountain harvest. High oil content is easily noticeable.",
+      comment: "Authentic mountain origin. High oil content is easily noticeable.",
       createdAt: new Date(Date.now() - 80 * 86400000).toISOString(),
     },
   ],
@@ -774,7 +774,7 @@ export const FALLBACK_REVIEWS: Record<string, ProductReview[]> = {
       userName: "Kiara Advani",
       rating: 5,
       title: "Urinary & skin health support",
-      comment: "Pure wild harvest without artificial colors or preservatives. Tastes like real fresh berries.",
+      comment: "Pure wild berries without artificial colors or preservatives. Tastes like real fresh fruit.",
       createdAt: new Date(Date.now() - 35 * 86400000).toISOString(),
     },
     {
@@ -956,7 +956,7 @@ export const FALLBACK_REVIEWS: Record<string, ProductReview[]> = {
       userName: "Mandira Bedi",
       rating: 5,
       title: "High magnesium & omega 3",
-      comment: "Noticeable boost in recovery after workouts. Top quality seed harvest.",
+      comment: "Noticeable boost in recovery after workouts. Top quality seed selection.",
       createdAt: new Date(Date.now() - 32 * 86400000).toISOString(),
     },
     {
@@ -1047,7 +1047,7 @@ export const FALLBACK_REVIEWS: Record<string, ProductReview[]> = {
       userName: "Kumar Mangalam Birla",
       rating: 5,
       title: "Flawless packaging and freshness",
-      comment: "Individual compartments ensure the nuts taste as fresh as the day they were harvested.",
+      comment: "Individual compartments ensure the nuts taste as fresh as the day they were packed.",
       createdAt: new Date(Date.now() - 37 * 86400000).toISOString(),
     },
     {

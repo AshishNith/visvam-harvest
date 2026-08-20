@@ -138,7 +138,7 @@ function GiftingPage() {
               to="/nuts"
               className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground hover:text-ink border-b border-ink/20 hover:border-ink pb-1 transition-all"
             >
-              <span>Explore Harvest Collections</span>
+              <span>Explore Viśvam Collections</span>
               <ArrowRight size={12} />
             </Link>
           </div>

@@ -35,10 +35,10 @@ const REELS: Reel[] = [
     video: heroMp4,
     type: "video/mp4",
     handle: "@visvam.in",
-    caption: "Inside our curation facility: Selecting the finest harvests. 🌰",
+    caption: "Inside our curation facility: Selecting the finest reserves. 🌰",
     likes: "4.1k",
     comments: "289",
-    tag: "Harvest Curation",
+    tag: "Estate Selection",
     instagramUrl: INSTAGRAM_URL,
   },
   {

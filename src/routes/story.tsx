@@ -66,7 +66,7 @@ function Story() {
         <div className="relative aspect-square lg:aspect-auto lg:min-h-[700px]">
           <img
             src={cashews1}
-            alt="Hand-selected premium cashew nuts harvested at peak maturity"
+            alt="Hand-selected premium cashew nuts picked at peak maturity"
             width={1200}
             height={1504}
             loading="eager"
@@ -98,7 +98,7 @@ function Story() {
               Mindful Presentation.
             </h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Upon selection, every harvest is protected in thoughtfully designed packaging that honors its natural textures, flavors, and visual appeal.
+              Upon selection, every batch is protected in thoughtfully designed packaging that honors its natural textures, flavors, and visual appeal.
             </p>
           </div>
         </div>

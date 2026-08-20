@@ -64,7 +64,7 @@ export const products: Product[] = [
       cImg("01_Almonds_Badam/DSC00418.jpg"),
     ],
     description:
-      "Hand-selected jumbo whole almonds harvested at peak oil maturity. Gently air-dried and carefully packaged to retain natural crunch, vitamin E, and sweet buttery flavor.",
+      "Hand-selected jumbo whole almonds selected at peak oil maturity. Gently air-dried and carefully packaged to retain natural crunch, vitamin E, and sweet buttery flavor.",
     serving: "500g Pouch",
     benefits: ["Rich in Vitamin E", "Heart Healthy", "High Plant Protein"],
     bestseller: true,
@@ -182,7 +182,7 @@ export const products: Product[] = [
     description:
       "Hand-extracted half kernels from wild Kashmiri walnut groves. Naturally sweet with zero bitterness, packed with heart-healthy Omega-3 ALA fatty acids.",
     serving: "500g Box",
-    benefits: ["High Omega-3 ALA", "Memory Support", "Naturally Harvested"],
+    benefits: ["High Omega-3 ALA", "Memory Support", "Orchard Sourced"],
     bestseller: true,
     isNew: true,
   },
@@ -234,7 +234,7 @@ export const products: Product[] = [
       cImg("05_Dates_Khajoor/DSC00567.jpg"),
     ],
     description:
-      "Hand-strung dried figs harvested from Kandahar orchards. Naturally sun-dried until the natural fruit sugars caramelize into a soft, honey-like center rich in dietary fiber.",
+      "Hand-strung dried figs sourced from Kandahar orchards. Naturally sun-dried until the natural fruit sugars caramelize into a soft, honey-like center rich in dietary fiber.",
     serving: "500g Pack",
     benefits: ["Digestive Wellness", "Rich Calcium Source", "Natural Sweetener"],
     bestseller: false,
@@ -305,7 +305,7 @@ export const products: Product[] = [
       cImg("07_Peanuts_and_Other_Nuts/DSC00505.jpg"),
     ],
     description:
-      "Silky, buttery macadamia nut halves and wholes harvested in subterranean Australian soil. Unmatched rich texture with ultra-healthy keto-friendly monounsaturated fats.",
+      "Silky, buttery macadamia nut halves and wholes cultivated in subterranean Australian soil. Unmatched rich texture with ultra-healthy keto-friendly monounsaturated fats.",
     serving: "400g Glass Jar",
     benefits: ["Keto Approved", "Monounsaturated Fats", "Silky Texture"],
   },
