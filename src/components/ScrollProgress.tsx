@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 
 export function ScrollProgress() {
-  const [scrollPercentage, setScrollPercentage] = useState(0);
+  const barRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let rafId = 0;
@@ -10,9 +10,9 @@ export function ScrollProgress() {
       rafId = requestAnimationFrame(() => {
         const scrollTop = window.scrollY;
         const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-        if (docHeight > 0) {
+        if (docHeight > 0 && barRef.current) {
           const pct = Math.min(100, Math.max(0, (scrollTop / docHeight) * 100));
-          setScrollPercentage(pct);
+          barRef.current.style.width = `${pct}%`;
         }
       });
     };
@@ -28,8 +28,9 @@ export function ScrollProgress() {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 h-[3px] bg-sand/20 pointer-events-none">
       <div
+        ref={barRef}
         className="h-full bg-clay transition-all duration-150 ease-out"
-        style={{ width: `${scrollPercentage}%` }}
+        style={{ width: "0%" }}
       />
     </div>
   );

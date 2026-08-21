@@ -3,23 +3,22 @@ import { SiteLayout } from "./SiteLayout";
 import { ProductCard } from "./ProductCard";
 import { getProductsByCategory, type Category, type Product, cImg } from "@/lib/products";
 import { fetchProductsFromBackend } from "@/lib/api";
-import nutsHeroBg from "@/assets/nuts-hero-bg.jpg";
-import gourmetHeroBg from "@/assets/gourmet-hero-bg.jpg";
 
+// Use Cloudinary CDN with auto-format & quality instead of raw 57 MB local files
 const META: Record<Category, { index: string; title: string; intro: string; image: string }> = {
   gourmet: {
     index: "01",
     title: "Gourmet",
     intro:
       "A little sweetness, a little savoury, and plenty of reasons to indulge. Carefully curated for you to discover, savour and share.",
-    image: gourmetHeroBg,
+    image: cImg("05_Dates_Khajoor/DSC00525.jpg"),
   },
   nuts: {
     index: "02",
     title: "Nuts & Dried Fruits",
     intro:
       "Discover thoughtfully sourced dry fruits and nuts, designed for moments of calm, clarity, and understated indulgence.",
-    image: nutsHeroBg,
+    image: cImg("01_Almonds_Badam/DSC00414.jpg"),
   },
   gifting: {
     index: "03",

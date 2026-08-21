@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
-import storyImage from "@/assets/Story Page Image.jpg";
+import { cImg } from "@/lib/products";
 import walnuts1 from "@/assets/walnuts-1.png";
+
+const storyImage = cImg("01_Almonds_Badam/DSC00445.jpg");
 
 export const Route = createFileRoute("/story")({
   head: () => {

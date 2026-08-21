@@ -233,34 +233,8 @@ function MenuItemPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [initialProduct]);
 
-  // Merge backend stats safely
-  useEffect(() => {
-    let isMounted = true;
-    if (initialProduct?.slug) {
-      fetchProductBySlugFromBackend(initialProduct.slug).then((data) => {
-        if (isMounted && data) {
-          setProduct((prev) => {
-            const hasLocalImages = prev.images && prev.images.length > 0 && !prev.images[0].startsWith("http");
-            return {
-              ...prev,
-              ...data,
-              price: prev.price > 100 && data.price < 100 ? prev.price : data.price,
-              images: hasLocalImages ? prev.images : (data.images && data.images.length > 0 ? data.images : prev.images),
-            };
-          });
-          if (data.hasVariants && data.variants && data.variants.length > 0) {
-            const def = data.variants.find((v: any) => v.isDefault) || data.variants[0];
-            if (def?.options) {
-              setSelectedOptions((prev) => ({ ...def.options, ...prev }));
-            }
-          }
-        }
-      });
-    }
-    return () => {
-      isMounted = false;
-    };
-  }, [initialProduct?.slug]);
+
+
 
   // Load reviews
   useEffect(() => {

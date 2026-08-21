@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, useMemo, type ReactNode } from "react";
 import { toast } from "sonner";
 import type { Product, IProductVariant } from "./products";
 
@@ -227,11 +227,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try { localStorage.removeItem(CART_STORAGE_KEY); } catch { /* ignore */ }
   }, []);
 
-  const subtotal = items.reduce((s, i) => {
+  const subtotal = useMemo(() => items.reduce((s, i) => {
     const unitPrice = i?.selectedVariant?.price ?? i?.product?.price ?? 0;
     return s + unitPrice * (i?.qty || 0);
-  }, 0);
-  const count = items.reduce((s, i) => s + (i?.qty || 0), 0);
+  }, 0), [items]);
+  const count = useMemo(() => items.reduce((s, i) => s + (i?.qty || 0), 0), [items]);
 
   return (
     <Ctx.Provider

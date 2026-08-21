@@ -9,9 +9,6 @@ import { useCart, formatPrice } from "@/lib/cart-context";
 import { fetchProductsFromBackend } from "@/lib/api";
 import { products, categories, type Product } from "@/lib/products";
 import heroVideoMp4 from "@/assets/timeline-hero.mp4";
-import heroVideoMov from "@/assets/Timeline 1.mov";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 
 
@@ -111,7 +108,7 @@ function Home() {
           loop
           muted
           playsInline
-          preload="auto"
+          preload="metadata"
           onLoadedData={() => {
             if (videoRef.current) {
               videoRef.current.muted = true;
@@ -120,8 +117,6 @@ function Home() {
           }}
           className="absolute inset-0 w-full h-full object-cover rounded-none hero-video"
         >
-          <source src={heroVideoMov} type="video/mp4" />
-          <source src={heroVideoMov} type="video/quicktime" />
           <source src={heroVideoMp4} type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-gradient-to-b from-ink/30 via-transparent to-ink/40 pointer-events-none" />
@@ -153,6 +148,7 @@ function Home() {
                       <img
                         src={p.images[0]}
                         alt={p.name}
+                        loading="lazy"
                         className="w-full h-full object-cover object-center rounded-2xl group-hover:scale-105 transition-transform duration-500"
                       />
                     </Link>
