@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
-import cashews1 from "@/assets/cashews-1.png";
+import storyImage from "@/assets/Story Page Image.jpg";
+import walnuts1 from "@/assets/walnuts-1.png";
 
 export const Route = createFileRoute("/story")({
   head: () => {
@@ -9,34 +10,40 @@ export const Route = createFileRoute("/story")({
     const storySchema = {
       "@context": "https://schema.org",
       "@type": "AboutPage",
-      "name": "Our Farm Story — Viśvam",
-      "description": "Discover the heritage behind Viśvam: single-origin orchards, traditional sun-drying, and artisanal curation.",
+      "name": "Our Story — Viśvam",
+      "description":
+        "Founded in Origin. Built on Knowledge. The best of anything is shaped at its origin. Discover the story behind Viśvam.",
       "url": canonicalUrl,
       "publisher": {
         "@type": "Organization",
-        "name": "Viśvam"
-      }
+        "name": "Viśvam",
+      },
     };
 
     return {
       meta: [
-        { title: "Our Farm Story & Orchard Heritage — Viśvam" },
+        { title: "Our Story — Founded in Origin. Built on Knowledge. — Viśvam" },
         {
           name: "description",
           content:
-            "Discover the heritage behind Viśvam: direct single-origin sourcing from California, Kashmir, & Kandahar, and artisanal curation.",
+            "Founded in Origin. Built on Knowledge. The best of anything is shaped at its origin. Discover the story behind Viśvam.",
         },
         {
           name: "keywords",
-          content: "Viśvam farm story, single origin dry fruits, artisanal nuts, Kashmiri walnut orchards",
+          content:
+            "Viśvam story, single origin dry fruits, artisanal nuts, founded in origin, built on knowledge, Viśvam",
         },
-        { property: "og:title", content: "Our Farm Story — Viśvam" },
-        { property: "og:description", content: "Direct-from-orchard collection of premium nuts and dried fruits." },
+        { property: "og:title", content: "Our Story — Founded in Origin. Built on Knowledge. — Viśvam" },
+        {
+          property: "og:description",
+          content:
+            "The best of anything is shaped at its origin. We started Viśvam to understand that beginning.",
+        },
         { property: "og:type", content: "website" },
         { property: "og:url", content: canonicalUrl },
         { property: "og:image", content: "https://visvam.in/Visvam-Logo.png" },
         { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: "Our Farm Story — Viśvam" },
+        { name: "twitter:title", content: "Our Story — Viśvam" },
         { name: "twitter:image", content: "https://visvam.in/Visvam-Logo.png" },
       ],
       links: [{ rel: "canonical", href: canonicalUrl }],
@@ -54,85 +61,156 @@ export const Route = createFileRoute("/story")({
 function Story() {
   return (
     <SiteLayout>
-      <section className="bg-cream/30">
-        <div className="max-w-[1400px] mx-auto px-6 pt-32 pb-24 lg:pt-44 lg:pb-36 text-center">
-          <h1 className="font-display italic text-5xl md:text-7xl lg:text-[96px] leading-[0.95] max-w-5xl mx-auto animate-fade-up">
-            Nurtured by Sun.<br />Graded by Hand.
+      {/* Hero Header */}
+      <section className="bg-cream/40 border-b border-border/40">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 pt-32 pb-20 sm:pt-40 sm:pb-28 text-center">
+          <p className="text-[11px] tracking-[0.25em] text-muted-foreground uppercase mb-6">
+            Our Story
+          </p>
+          <h1 className="font-display italic text-4xl sm:text-6xl md:text-7xl lg:text-[84px] leading-[1.05] max-w-4xl mx-auto text-ink animate-fade-up">
+            Founded in Origin.<br />Built on Knowledge.
           </h1>
         </div>
       </section>
 
-      <section className="grid grid-cols-1 lg:grid-cols-2">
-        <div className="relative aspect-square lg:aspect-auto lg:min-h-[700px]">
-          <img
-            src={cashews1}
-            alt="Hand-selected premium cashew nuts picked at peak maturity"
-            width={1200}
-            height={1504}
-            loading="eager"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        </div>
-        <div className="bg-cream p-10 lg:p-20 flex flex-col justify-center gap-8">
-          <div>
-            <p className="text-[10px] tracked text-muted-foreground mb-4 uppercase tracking-wider">01 — Orchard Direct</p>
-            <h3 className="font-display italic text-3xl mb-4">
-              Single-Origin Sourcing.
-            </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              We partner directly with family orchards in California's Central Valley, Kashmiri walnut groves, Kandahar fig farms, and Jericho Valley date palms. No middle traders, zero blended batches.
-            </p>
+      {/* Opening Movement: Origin & Character */}
+      <section className="max-w-[1400px] mx-auto px-4 sm:px-6 py-16 sm:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          <div className="lg:col-span-6 relative aspect-square sm:aspect-[4/3] lg:aspect-[5/4] rounded-2xl overflow-hidden bg-cream shadow-sm">
+            <img
+              src={storyImage}
+              alt="An editorial still life of dates, almonds, walnuts, milk, and honey — the quiet origin of remarkable things"
+              width={1200}
+              height={1504}
+              loading="eager"
+              className="w-full h-full object-cover"
+            />
           </div>
-          <div>
-            <p className="text-[10px] tracked text-muted-foreground mb-4 uppercase tracking-wider">02 — Sun & Time</p>
-            <h3 className="font-display italic text-3xl mb-4">
-              Traditional Sun & Shade Drying.
-            </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Our fruits and nuts ripen naturally on the vine and tree. Afghani figs are sun-garlanded; long green raisins are shade-dried in mud Kishmish Khana rooms to preserve natural sugars and vivid hues.
-            </p>
-          </div>
-          <div>
-            <p className="text-[10px] tracked text-muted-foreground mb-4 uppercase tracking-wider">03 — Presentation</p>
-            <h3 className="font-display italic text-3xl mb-4">
-              Mindful Presentation.
-            </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Upon selection, every batch is protected in thoughtfully designed packaging that honors its natural textures, flavors, and visual appeal.
-            </p>
+
+          <div className="lg:col-span-6 flex flex-col justify-center space-y-8 lg:pl-4">
+            <div>
+              <p className="font-display text-xl sm:text-2xl text-ink leading-relaxed font-normal mb-6">
+                The best of anything is shaped at its origin. In the ground it grew from, the season it was gathered, the conditions that were exactly right. Long before it reaches you, that quiet beginning is where its character is decided.
+              </p>
+              <div className="w-12 h-px bg-border my-6" />
+              <p className="text-base text-muted-foreground leading-relaxed">
+                We started Viśvam to understand that beginning. Not to take it on trust, but to know it. Where the best of a thing comes from, what the right conditions ask for, how to tell what is real from what only resembles it.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-background py-24">
-        <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
-          {[
-            ["Direct", "Orchard relationships"],
-            ["Handpicked", "Sorted by grade & size"],
-            ["Sun-Dried", "Traditional natural curing"],
-            ["Artisanal", "Bespoke presentation packaging"],
-          ].map(([k, v]) => (
-            <div key={k} className="bg-cream/40 p-10 text-center rounded-sm">
-              <p className="font-display italic text-5xl mb-3 text-ink">{k}</p>
-              <p className="text-[10.5px] tracked text-muted-foreground uppercase max-w-[20ch] mx-auto">
-                {v}
+      {/* Centerpiece Philosophy: The Meaning of Viśvam */}
+      <section className="bg-cream/60 py-20 sm:py-28 border-y border-border/40">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+          <p className="text-[10.5px] tracking-[0.25em] text-muted-foreground uppercase mb-6">
+            The Philosophy
+          </p>
+          <blockquote className="font-display italic text-2xl sm:text-4xl lg:text-5xl text-ink leading-[1.25] mb-8">
+            “That knowing is the whole of what we do. It is also what the name holds.”
+          </blockquote>
+          <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+            Viśvam means the whole of everything, and to know a thing truly you have to understand all of it, from where it began to the moment it reaches your hand.
+          </p>
+        </div>
+      </section>
+
+      {/* Second Movement: Slow Growth & World Vision */}
+      <section className="max-w-[1400px] mx-auto px-4 sm:px-6 py-16 sm:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          <div className="lg:col-span-6 order-2 lg:order-1 flex flex-col justify-center space-y-6 lg:pr-6">
+            <h3 className="font-display italic text-3xl sm:text-4xl text-ink leading-snug">
+              One remarkable thing at a time.
+            </h3>
+            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+              We grow slowly, and on purpose from one remarkable thing at a time, understood fully before the next. There is a whole world we mean to bring you this way.
+            </p>
+            <div className="pt-4">
+              <p className="font-display italic text-2xl sm:text-3xl text-clay">
+                This is where it begins.
               </p>
+            </div>
+          </div>
+
+          <div className="lg:col-span-6 order-1 lg:order-2 relative aspect-square sm:aspect-[4/3] lg:aspect-[5/4] rounded-2xl overflow-hidden bg-cream shadow-sm">
+            <img
+              src={walnuts1}
+              alt="Extra-light premium walnut halves representing mindful sourcing and single-origin quality"
+              width={1200}
+              height={1504}
+              loading="lazy"
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* 4 Pillars of Knowledge & Origin */}
+      <section className="bg-background py-16 sm:py-24 border-t border-border/40">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          {[
+            {
+              title: "Origin",
+              subtitle: "Shaped at the source",
+              description: "In the ground it grew from and the season it was gathered.",
+            },
+            {
+              title: "Knowledge",
+              subtitle: "Understood, not assumed",
+              description: "Knowing where the best comes from and how to tell what is real.",
+            },
+            {
+              title: "Wholeness",
+              subtitle: "The meaning of Viśvam",
+              description: "Understanding every step from where it began to your hand.",
+            },
+            {
+              title: "Purpose",
+              subtitle: "Measured progression",
+              description: "One remarkable thing at a time, fully mastered before the next.",
+            },
+          ].map((pillar) => (
+            <div
+              key={pillar.title}
+              className="bg-cream/40 p-8 sm:p-10 rounded-2xl border border-border/30 flex flex-col justify-between"
+            >
+              <div>
+                <h4 className="font-display italic text-3xl sm:text-4xl mb-2 text-ink">
+                  {pillar.title}
+                </h4>
+                <p className="text-[11px] tracking-wider text-clay uppercase font-medium mb-4">
+                  {pillar.subtitle}
+                </p>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  {pillar.description}
+                </p>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="bg-ink text-white py-24 text-center">
-        <h2 className="font-display italic text-4xl md:text-5xl max-w-2xl mx-auto px-6 mb-8">
-          Taste the difference of true orchard freshness.
-        </h2>
-        <Link
-          to="/nuts"
-          className="group inline-flex items-center gap-3 text-white text-[12px] font-medium tracked uppercase tracking-widest py-2 border-b-2 border-white/80 hover:text-clay hover:border-clay transition-all duration-300"
-        >
-          <span>Explore Collection</span>
-          <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay" />
-        </Link>
+      {/* Closing Call to Explore */}
+      <section className="bg-ink text-white py-20 sm:py-28 text-center">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
+          <p className="text-[11px] tracking-[0.25em] text-white/60 uppercase mb-4">
+            Viśvam
+          </p>
+          <h2 className="font-display italic text-3xl sm:text-5xl max-w-2xl mx-auto mb-8 leading-tight">
+            This is where it begins.
+          </h2>
+          <Link
+            to="/nuts"
+            className="group inline-flex items-center gap-3 text-white text-[12px] font-medium tracked uppercase tracking-widest py-2 border-b-2 border-white/80 hover:text-clay hover:border-clay transition-all duration-300"
+          >
+            <span>Explore The Collection</span>
+            <ArrowRight
+              size={15}
+              className="group-hover:translate-x-1.5 transition-transform duration-300 text-clay"
+            />
+          </Link>
+        </div>
       </section>
     </SiteLayout>
   );

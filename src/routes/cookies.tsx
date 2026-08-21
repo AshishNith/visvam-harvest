@@ -107,11 +107,10 @@ function CookieNotice() {
 
             <section className="space-y-4">
               <h2 className="font-display italic text-2xl text-ink">Contact & Privacy Questions</h2>
-              <div className="p-4 bg-cream/50 rounded-lg border border-border/60 text-xs font-mono space-y-1 text-ink">
-                <p><strong>Data Protection Officer</strong></p>
-                <p>Tej Kripa Private Limited (Brand: Viśvam)</p>
-                <p>Address: GK-1, New Delhi</p>
-                <p>Email: <a href="mailto:dpo@visvam.in" className="text-clay underline font-medium">dpo@visvam.in</a></p>
+              <div className="p-5 bg-cream/50 rounded-xl border border-border/60 text-xs font-mono space-y-1.5 text-ink">
+                <p className="font-bold text-sm">Tej Kripa Private Limited <span className="font-normal text-muted-foreground">(Brand: Viśvam)</span></p>
+                <p>Address: F-329, 2nd Floor, F Block, Sector-63, Noida, Uttar Pradesh 201309</p>
+                <p>Email: <a href="mailto:contact@visvam.in" className="text-clay underline font-medium">contact@visvam.in</a> &nbsp;&bull;&nbsp; Phone: <a href="tel:+919217870974" className="text-clay underline font-medium">+91 9217870974</a></p>
               </div>
             </section>
           </div>

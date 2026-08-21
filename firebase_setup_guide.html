@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Viśvam Harvest — Firebase Authentication Setup Guide</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 18mm 15mm 18mm 15mm;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #1f2937;
+      line-height: 1.5;
+      font-size: 12.5px;
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff;
+    }
+    .header {
+      border-bottom: 2px solid #8a4f27;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .brand-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #241a12;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+    .brand-subtitle {
+      font-size: 11px;
+      color: #8a4f27;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+      margin-top: 3px;
+    }
+    .doc-meta {
+      font-size: 10.5px;
+      color: #6b7280;
+      text-align: right;
+      line-height: 1.4;
+    }
+    .badge {
+      display: inline-block;
+      background: #8a4f27;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 2px;
+      letter-spacing: 0.5px;
+      margin-left: 6px;
+    }
+    .section {
+      margin-bottom: 18px;
+      background: #faf7f2;
+      border: 1px solid #e5d8c8;
+      border-radius: 6px;
+      padding: 14px 16px;
+      page-break-inside: avoid;
+    }
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #241a12;
+      margin: 0 0 10px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #e5d8c8;
+      padding-bottom: 6px;
+    }
+    .section-num {
+      background: #8a4f27;
+      color: white;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      margin-right: 8px;
+    }
+    .purpose-box {
+      background-color: #ffffff;
+      border-left: 3.5px solid #8a4f27;
+      padding: 8px 12px;
+      margin-bottom: 10px;
+      border-radius: 0 4px 4px 0;
+      font-size: 11.5px;
+      color: #4b5563;
+    }
+    ol {
+      margin: 0;
+      padding-left: 20px;
+    }
+    li {
+      margin-bottom: 6px;
+      color: #374151;
+    }
+    li:last-child {
+      margin-bottom: 0;
+    }
+    strong {
+      color: #111827;
+    }
+    .tip-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-left: 3.5px solid #3b82f6;
+      border-radius: 0 4px 4px 0;
+      padding: 8px 12px;
+      margin-top: 10px;
+      font-size: 11px;
+      color: #1e40af;
+    }
+    .checklist-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: #fff;
+      font-size: 11.5px;
+    }
+    .checklist-table th, .checklist-table td {
+      border: 1px solid #e5e7eb;
+      padding: 7px 10px;
+      text-align: left;
+    }
+    .checklist-table th {
+      background-color: #f3f4f6;
+      font-weight: 700;
+      color: #374151;
+      text-transform: uppercase;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-weight: 600;
+      background: #dcfce7;
+      color: #166534;
+    }
+    .footer {
+      margin-top: 20px;
+      padding-top: 10px;
+      border-top: 1px solid #e5e7eb;
+      font-size: 10px;
+      color: #9ca3af;
+      display: flex;
+      justify-content: space-between;
+    }
+    code {
+      background: #f1f5f9;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 11px;
+      color: #0f172a;
+      border: 1px solid #e2e8f0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div>
+      <h1 class="brand-title">VIŚVAM HARVEST</h1>
+      <div class="brand-subtitle">Firebase Authentication Setup & Activation Guide</div>
+    </div>
+    <div class="doc-meta">
+      <strong>Target Project:</strong> <code>visvam-1be38</code><br>
+      <strong>Feature:</strong> Phone OTP & Passwordless Auth<br>
+      <strong>Date:</strong> August 20, 2026
+    </div>
+  </div>
+
+  <!-- SECTION 1: Phone Auth -->
+  <div class="section">
+    <div class="section-title">
+      <div><span class="section-num">1</span> Enable Phone Authentication (SMS OTP)</div>
+      <span class="badge">Required</span>
+    </div>
+    <div class="purpose-box">
+      Enables 6-digit SMS OTP verification for instant phone login across India and internationally.
+    </div>
+    <ol>
+      <li>Log in to the <strong>Firebase Console</strong> at <code>https://console.firebase.google.com</code>.</li>
+      <li>Open your project: <strong><code>visvam-1be38</code></strong>.</li>
+      <li>In the left sidebar under <strong>Build</strong>, click <strong>Authentication</strong>.</li>
+      <li>Click on the <strong>Sign-in method</strong> tab.</li>
+      <li>Click on <strong>Phone</strong> (or <em>Add new provider</em> &gt; <em>Phone</em>).</li>
+      <li>Toggle the <strong>Enable</strong> switch to <strong>ON</strong>.</li>
+      <li><em>(Recommended for testing)</em> Expand <strong>Phone numbers for testing</strong>:
+        <br>Add phone <code>+91 9999999999</code> with test OTP <code>123456</code> to test without spending SMS quota.</li>
+      <li>Click <strong>Save</strong>.</li>
+    </ol>
+  </div>
+
+  <!-- SECTION 2: Email Link -->
+  <div class="section">
+    <div class="section-title">
+      <div><span class="section-num">2</span> Enable Email Link (Passwordless Magic Link)</div>
+      <span class="badge">Required</span>
+    </div>
+    <div class="purpose-box">
+      Enables 1-click passwordless login via email magic links sent directly to customer inboxes.
+    </div>
+    <ol>
+      <li>In <strong>Authentication</strong> &gt; <strong>Sign-in method</strong>, click <strong>Email/Password</strong>.</li>
+      <li>Ensure the first toggle <strong>Email/Password</strong> is switched <strong>ON</strong>.</li>
+      <li>Turn <strong>ON</strong> the second toggle: <strong>Email link (passwordless sign-in)</strong>.</li>
+      <li>Click <strong>Save</strong>.</li>
+    </ol>
+  </div>
+
+  <!-- SECTION 3: Google Sign-in -->
+  <div class="section">
+    <div class="section-title">
+      <div><span class="section-num">3</span> Confirm Google Sign-In Provider</div>
+      <span class="badge">Active</span>
+    </div>
+    <ol>
+      <li>In the <strong>Sign-in method</strong> tab, check that <strong>Google</strong> is listed and <strong>Enabled</strong>.</li>
+      <li>Ensure a <strong>Project support email</strong> is selected.</li>
+      <li>Click <strong>Save</strong> if making any updates.</li>
+    </ol>
+  </div>
+
+  <!-- SECTION 4: Authorized Domains -->
+  <div class="section">
+    <div class="section-title">
+      <div><span class="section-num">4</span> Add Authorized Domains</div>
+      <span class="badge">Security</span>
+    </div>
+    <div class="purpose-box">
+      Firebase will reject OTP requests if the origin domain is not whitelisted.
+    </div>
+    <ol>
+      <li>In <strong>Authentication</strong>, click the <strong>Settings</strong> tab (next to <em>Sign-in method</em>).</li>
+      <li>Click on <strong>Authorized domains</strong> in the sub-menu.</li>
+      <li>Verify and add the following domains:</li>
+    </ol>
+    <div class="tip-box">
+      • <code>localhost</code> (local development)<br>
+      • <code>visvam.in</code> (production domain)<br>
+      • <code>visvam-harvest.vercel.app</code> (or any active preview / staging URLs)
+    </div>
+  </div>
+
+  <!-- SECTION 5: Summary Checklist -->
+  <div class="section">
+    <div class="section-title">
+      <div><span class="section-num">5</span> Verification Checklist</div>
+    </div>
+    <table class="checklist-table">
+      <thead>
+        <tr>
+          <th>Provider / Feature</th>
+          <th>Required Setting</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Phone Auth</strong></td>
+          <td>Enabled</td>
+          <td>SMS 6-digit OTP delivery</td>
+        </tr>
+        <tr>
+          <td><strong>Email Link</strong></td>
+          <td>Enabled (Passwordless)</td>
+          <td>Magic link sign-in to email inbox</td>
+        </tr>
+        <tr>
+          <td><strong>Google Provider</strong></td>
+          <td>Enabled</td>
+          <td>1-tap Google OAuth login</td>
+        </tr>
+        <tr>
+          <td><strong>Authorized Domains</strong></td>
+          <td><code>localhost</code>, <code>visvam.in</code></td>
+          <td>Allows web app to trigger SMS & Google auth</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    <span>Viśvam Harvest — Engineering & Product Documentation</span>
+    <span>Generated: August 20, 2026</span>
+  </div>
+
+</body>
+</html>

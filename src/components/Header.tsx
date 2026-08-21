@@ -22,7 +22,7 @@ const rightLinks = [
 export function Header() {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
-  const isDarkHeroPage = location.pathname === "/" || location.pathname === "/nuts" || location.pathname === "/gourmet";
+  const isDarkHeroPage = location.pathname === "/" || location.pathname === "/nuts";
   const { count, openCart } = useCart();
   const { user, isAuthenticated } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -64,10 +64,10 @@ export function Header() {
       <header
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
           isScrolled
-            ? "bg-background/95 backdrop-blur-sm shadow-md py-0"
+            ? "bg-background/95 backdrop-blur-md shadow-xs border-b border-border/40 py-0"
             : isDarkHeroPage
             ? "bg-gradient-to-b from-black/50 via-black/20 to-transparent shadow-none border-none py-0"
-            : "bg-transparent shadow-none border-none py-0"
+            : "bg-background/90 backdrop-blur-md border-b border-border/40 shadow-xs py-0"
         }`}
       >
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 flex items-center justify-between lg:grid lg:grid-cols-[1fr_auto_1fr] h-20 gap-4 lg:gap-6">
@@ -121,45 +121,61 @@ export function Header() {
 
                   {/* Mega Menu Dropdown */}
                   {activeCategoryHover === l.category && (
-                    <div className={`absolute top-full left-0 bg-background/98 backdrop-blur-md shadow-lg p-3 animate-fade-up z-50 rounded-sm text-ink border border-border/40 ${
-                      l.category === "gifting" || l.category === "gourmet" ? "w-48" : "w-72"
+                    <div className={`absolute top-full left-0 bg-background/98 backdrop-blur-md shadow-lg p-3.5 animate-fade-up z-50 rounded-lg text-ink border border-border/40 ${
+                      l.category === "gifting" || l.category === "gourmet" ? "w-52" : "w-80"
                     }`}>
                       {l.category === "gifting" ? (
-                        <p className="text-xs text-muted-foreground text-center py-2 font-sans font-medium whitespace-nowrap px-3">
-                          Coming soon
+                        <p className="text-xs text-muted-foreground text-center py-2.5 font-sans font-medium whitespace-nowrap px-3">
+                          Unwrapping Soon
                         </p>
                       ) : l.category === "gourmet" ? (
-                        <p className="text-xs text-muted-foreground text-center py-2 font-sans font-medium whitespace-nowrap px-3">
-                          Curating for you
+                        <p className="text-xs text-muted-foreground text-center py-2.5 font-sans font-medium whitespace-nowrap px-3">
+                          Unveiling Soon
                         </p>
                       ) : (
                         <>
                           <div className="flex items-center justify-between pb-2 mb-2 border-b border-border/30">
-                            <span className="text-[9px] tracked text-muted-foreground uppercase font-medium">
-                              Featured in {l.label}
+                            <span className="text-[9.5px] tracked text-muted-foreground uppercase font-semibold">
+                              Highlighted Selections
                             </span>
                             <Link
                               to={l.to}
-                              className="text-[9px] text-clay hover:underline flex items-center gap-1 font-sans capitalize"
+                              className="text-[9.5px] text-clay hover:underline flex items-center gap-1 font-sans capitalize font-medium"
                             >
-                              View All <ArrowRight size={10} />
+                              View All ({products.filter((p) => p.category === "nuts").length}) <ArrowRight size={10} />
                             </Link>
                           </div>
                           <div className="space-y-2 pt-1">
-                            {products
-                              .filter((p) => p.category === l.category)
-                              .slice(0, 2)
+                            {[
+                              products.find((p) => p.slug === "kashmiri-snow-walnuts"),
+                              products.find((p) => p.slug === "iranian-mamra-almonds"),
+                            ]
+                              .filter(Boolean)
                               .map((p) => (
                                 <Link
-                                  key={p.slug}
+                                  key={p!.slug}
                                   to="/menu/$slug"
-                                  params={{ slug: p.slug }}
-                                  className="flex items-center gap-3 p-2 hover:bg-cream/60 transition-colors"
+                                  params={{ slug: p!.slug }}
+                                  className="flex items-center gap-3 p-2 rounded-md hover:bg-cream/70 transition-colors group/item"
                                 >
-                                  <img src={p.images[0]} alt={p.name} className="w-10 h-10 object-cover rounded-md" />
-                                  <div className="min-w-0">
-                                    <h5 className="text-xs font-medium text-ink truncate">{p.name}</h5>
-                                    <p className="text-[10px] text-clay font-semibold">{formatPrice(p.price)}</p>
+                                  <img
+                                    src={p!.images[0]}
+                                    alt={p!.name}
+                                    className="w-12 h-12 object-cover rounded-md border border-border/40 group-hover/item:scale-105 transition-transform"
+                                  />
+                                  <div className="min-w-0 flex-1">
+                                    <h5 className="text-xs font-medium text-ink truncate group-hover/item:text-clay transition-colors">
+                                      {p!.name}
+                                    </h5>
+                                    <p className="text-[10px] text-muted-foreground line-clamp-1">
+                                      {p!.tagline}
+                                    </p>
+                                    <p className="text-[10.5px] text-clay font-semibold mt-0.5">
+                                      {formatPrice(p!.price)}
+                                      <span className="text-[9px] text-muted-foreground font-normal ml-1">
+                                        / {p!.serving}
+                                      </span>
+                                    </p>
                                   </div>
                                 </Link>
                               ))}
@@ -299,14 +315,34 @@ export function Header() {
 
                 {/* Mobile Links */}
                 <div className="flex flex-col space-y-2 pt-1 divide-y divide-border/30">
-                  <Link
-                    to="/nuts"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-xs font-medium tracked uppercase py-3 hover:text-clay flex items-center justify-between"
-                  >
-                    <span>Nuts & Dried Fruits</span>
-                    <ArrowRight size={14} className="text-clay" />
-                  </Link>
+                  <div>
+                    <Link
+                      to="/nuts"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="text-xs font-medium tracked uppercase py-3 hover:text-clay flex items-center justify-between"
+                    >
+                      <span>Nuts & Dried Fruits</span>
+                      <ArrowRight size={14} className="text-clay" />
+                    </Link>
+                    <div className="flex items-center gap-2 pb-2 pl-2">
+                      <Link
+                        to="/menu/$slug"
+                        params={{ slug: "kashmiri-snow-walnuts" }}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="text-[10.5px] font-sans text-muted-foreground hover:text-clay bg-cream/70 px-2.5 py-1 rounded-md border border-border/40"
+                      >
+                        Kashmiri Walnuts
+                      </Link>
+                      <Link
+                        to="/menu/$slug"
+                        params={{ slug: "iranian-mamra-almonds" }}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="text-[10.5px] font-sans text-muted-foreground hover:text-clay bg-cream/70 px-2.5 py-1 rounded-md border border-border/40"
+                      >
+                        Mamra Almonds
+                      </Link>
+                    </div>
+                  </div>
 
                   <Link
                     to="/gourmet"
@@ -333,7 +369,7 @@ export function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="text-xs font-medium tracked uppercase py-3 hover:text-clay flex items-center justify-between"
                   >
-                    <span>Our Sourcing Story</span>
+                    <span>Our Story</span>
                     <ArrowRight size={14} />
                   </Link>
                 </div>

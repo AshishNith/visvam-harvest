@@ -52,26 +52,25 @@ export function CategoryPage({ category }: { category: Category }) {
   return (
     <SiteLayout>
       <section className="relative overflow-hidden min-h-[380px] sm:min-h-[440px] lg:min-h-[480px] flex items-center justify-center pt-32 pb-20 sm:pt-40 sm:pb-28 border-b border-border/40">
-        {/* Background Image with Atmospheric Luxury Overlay */}
+        {/* Crisp Background Image with Subtle Elegant Scrim */}
         <div className="absolute inset-0 z-0">
           <img
             src={meta.image}
             alt={meta.title}
-            className="w-full h-full object-cover object-center scale-105"
+            className="w-full h-full object-cover object-center"
           />
-          <div className="absolute inset-0 bg-ink/65 backdrop-blur-[1.5px]" />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/50 to-ink/70" />
+          <div className="absolute inset-0 bg-gradient-to-b from-ink/40 via-ink/25 to-ink/65" />
         </div>
 
         {/* Content */}
         <div className="relative z-10 max-w-[1100px] mx-auto px-6 text-center text-white">
-          <h1 className="font-display italic text-5xl sm:text-7xl lg:text-8xl text-white leading-[1.02] tracking-tight mb-6 animate-fade-up drop-shadow-sm">
+          <h1 className="font-display italic text-5xl sm:text-7xl lg:text-8xl text-white leading-[1.02] tracking-tight mb-6 animate-fade-up drop-shadow-md">
             {meta.title}
           </h1>
 
-          <div className="w-12 h-px bg-sand/60 mx-auto my-6 animate-fade-up" />
+          <div className="w-12 h-px bg-sand/80 mx-auto my-6 animate-fade-up shadow-sm" />
 
-          <p className="font-baskerville italic text-lg sm:text-2xl text-cream/95 leading-relaxed max-w-2xl mx-auto animate-fade-up [animation-delay:150ms] drop-shadow-xs">
+          <p className="font-baskerville italic text-lg sm:text-2xl text-cream leading-relaxed max-w-2xl mx-auto animate-fade-up [animation-delay:150ms] drop-shadow-md">
             {meta.intro}
           </p>
         </div>
