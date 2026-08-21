@@ -148,50 +148,6 @@ function Story() {
         </div>
       </section>
 
-      {/* 4 Pillars of Knowledge & Origin */}
-      <section className="bg-background py-16 sm:py-24 border-t border-border/40">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          {[
-            {
-              title: "Origin",
-              subtitle: "Shaped at the source",
-              description: "In the ground it grew from and the season it was gathered.",
-            },
-            {
-              title: "Knowledge",
-              subtitle: "Understood, not assumed",
-              description: "Knowing where the best comes from and how to tell what is real.",
-            },
-            {
-              title: "Wholeness",
-              subtitle: "The meaning of Viśvam",
-              description: "Understanding every step from where it began to your hand.",
-            },
-            {
-              title: "Purpose",
-              subtitle: "Measured progression",
-              description: "One remarkable thing at a time, fully mastered before the next.",
-            },
-          ].map((pillar) => (
-            <div
-              key={pillar.title}
-              className="bg-cream/40 p-8 sm:p-10 rounded-2xl border border-border/30 flex flex-col justify-between"
-            >
-              <div>
-                <h4 className="font-display italic text-3xl sm:text-4xl mb-2 text-ink">
-                  {pillar.title}
-                </h4>
-                <p className="text-[11px] tracking-wider text-clay uppercase font-medium mb-4">
-                  {pillar.subtitle}
-                </p>
-                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                  {pillar.description}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* Closing Call to Explore */}
       <section className="bg-ink text-white py-20 sm:py-28 text-center">
