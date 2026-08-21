@@ -9,7 +9,6 @@ import { useCart, formatPrice } from "@/lib/cart-context";
 import { fetchProductsFromBackend } from "@/lib/api";
 import { products, categories, type Product } from "@/lib/products";
 import heroVideoMov from "@/assets/Timeline 1.mov";
-import heroVideoMp4 from "@/assets/timeline-hero.mp4";
 
 
 
@@ -118,9 +117,8 @@ function Home() {
           }}
           className="absolute inset-0 w-full h-full object-cover rounded-none hero-video"
         >
-          <source src={heroVideoMov} type="video/quicktime" />
           <source src={heroVideoMov} type="video/mp4" />
-          <source src={heroVideoMp4} type="video/mp4" />
+          <source src={heroVideoMov} type="video/quicktime" />
         </video>
         <div className="absolute inset-0 bg-gradient-to-b from-ink/30 via-transparent to-ink/40 pointer-events-none" />
       </section>

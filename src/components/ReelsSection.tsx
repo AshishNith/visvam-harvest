@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Instagram, Play, Volume2, VolumeX, Heart, MessageCircle, ArrowUpRight } from "lucide-react";
 import montageVideo from "@/assets/Dry_fruit_craftsmanship_montage_202608061931.mp4";
-import heroMp4 from "@/assets/timeline-hero.mp4";
+import timelineMov from "@/assets/Timeline 1.mov";
 
 type Reel = {
   id: string;
@@ -31,7 +31,7 @@ const REELS: Reel[] = [
   },
   {
     id: "reel-2",
-    video: heroMp4,
+    video: timelineMov,
     type: "video/mp4",
     handle: "@visvam.in",
     caption: "Inside our curation facility: Selecting the finest reserves. 🌰",
@@ -42,7 +42,7 @@ const REELS: Reel[] = [
   },
   {
     id: "reel-3",
-    video: heroMp4,
+    video: montageVideo,
     type: "video/mp4",
     handle: "@visvam.in",
     caption: "Artisanal dry fruit craftsmanship — Bespoke luxury presentation boxes. 📦👑",
