@@ -1,10 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
-import { cImg } from "@/lib/products";
-import walnuts1 from "@/assets/walnuts-1.png";
-
-const storyImage = cImg("01_Almonds_Badam/DSC00445.jpg");
+import storyStillLife from "@/assets/Story Page Image.jpg";
 
 export const Route = createFileRoute("/story")({
   head: () => {
@@ -80,10 +77,10 @@ function Story() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           <div className="lg:col-span-6 relative aspect-square sm:aspect-[4/3] lg:aspect-[5/4] rounded-2xl overflow-hidden bg-cream shadow-sm">
             <img
-              src={storyImage}
+              src={storyStillLife}
               alt="An editorial still life of dates, almonds, walnuts, milk, and honey — the quiet origin of remarkable things"
-              width={1200}
-              height={1504}
+              width={1435}
+              height={1800}
               loading="eager"
               className="w-full h-full object-cover"
             />
@@ -106,9 +103,6 @@ function Story() {
       {/* Centerpiece Philosophy: The Meaning of Viśvam */}
       <section className="bg-cream/60 py-20 sm:py-28 border-y border-border/40">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <p className="text-[10.5px] tracking-[0.25em] text-muted-foreground uppercase mb-6">
-            The Philosophy
-          </p>
           <blockquote className="font-display italic text-2xl sm:text-4xl lg:text-5xl text-ink leading-[1.25] mb-8">
             “That knowing is the whole of what we do. It is also what the name holds.”
           </blockquote>
@@ -118,43 +112,16 @@ function Story() {
         </div>
       </section>
 
-      {/* Second Movement: Slow Growth & World Vision */}
-      <section className="max-w-[1400px] mx-auto px-4 sm:px-6 py-16 sm:py-24">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          <div className="lg:col-span-6 order-2 lg:order-1 flex flex-col justify-center space-y-6 lg:pr-6">
-            <h3 className="font-display italic text-3xl sm:text-4xl text-ink leading-snug">
-              One remarkable thing at a time.
-            </h3>
-            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-              We grow slowly, and on purpose from one remarkable thing at a time, understood fully before the next. There is a whole world we mean to bring you this way.
-            </p>
-            <div className="pt-4">
-              <p className="font-display italic text-2xl sm:text-3xl text-clay">
-                This is where it begins.
-              </p>
-            </div>
-          </div>
-
-          <div className="lg:col-span-6 order-1 lg:order-2 relative aspect-square sm:aspect-[4/3] lg:aspect-[5/4] rounded-2xl overflow-hidden bg-cream shadow-sm">
-            <img
-              src={walnuts1}
-              alt="Extra-light premium walnut halves representing mindful sourcing and single-origin quality"
-              width={1200}
-              height={1504}
-              loading="lazy"
-              className="w-full h-full object-cover"
-            />
-          </div>
-        </div>
+      {/* Closing Statement: Slow Growth */}
+      <section className="max-w-3xl mx-auto px-4 sm:px-6 py-16 sm:py-24 text-center">
+        <p className="font-display text-xl sm:text-2xl md:text-3xl text-ink leading-relaxed">
+          We grow slowly, and on purpose from one remarkable thing at a time, understood fully before the next. There is a whole world we mean to bring you this way.
+        </p>
       </section>
-
 
       {/* Closing Call to Explore */}
       <section className="bg-ink text-white py-20 sm:py-28 text-center">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
-          <p className="text-[11px] tracking-[0.25em] text-white/60 uppercase mb-4">
-            Viśvam
-          </p>
           <h2 className="font-display italic text-3xl sm:text-5xl max-w-2xl mx-auto mb-8 leading-tight">
             This is where it begins.
           </h2>
