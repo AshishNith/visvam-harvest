@@ -130,7 +130,7 @@ export function Header() {
                         </p>
                       ) : l.category === "gourmet" ? (
                         <p className="text-xs text-muted-foreground text-center py-2.5 font-sans font-medium whitespace-nowrap px-3">
-                          Unveiling Soon
+                          Curating for you.
                         </p>
                       ) : (
                         <>
