@@ -4,6 +4,7 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { submitContactInquiryToBackend } from "@/lib/api";
+import giftingHeroBg from "@/assets/gifting-hero-bg.jpg";
 
 export const Route = createFileRoute("/gifting")({
   head: () => {
@@ -87,11 +88,34 @@ function GiftingPage() {
 
   return (
     <SiteLayout>
-      <div className="bg-[#fcfaf7] min-h-[80vh] flex flex-col justify-center items-center pt-32 pb-20 px-6 sm:px-8 text-ink">
-        <div className="max-w-lg w-full mx-auto text-center space-y-5">
-          <h1 className="font-baskerville italic text-3xl sm:text-4xl lg:text-5xl text-ink leading-tight tracking-tight">
-            Unwrapping Soon.
+      <section className="relative overflow-hidden min-h-[380px] sm:min-h-[440px] lg:min-h-[480px] flex items-center justify-center pt-32 pb-20 sm:pt-40 sm:pb-28 border-b border-border/40">
+        <div className="absolute inset-0 z-0">
+          <img
+            src={giftingHeroBg}
+            alt="Gifting"
+            className="w-full h-full object-cover object-center blur-[2px]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-ink/40 via-ink/25 to-ink/65" />
+        </div>
+
+        <div className="relative z-10 max-w-[1100px] mx-auto px-6 text-center text-white">
+          <h1 className="font-display italic text-5xl sm:text-7xl lg:text-8xl text-white leading-[1.02] tracking-tight mb-6 animate-fade-up drop-shadow-md">
+            Gifting
           </h1>
+
+          <div className="w-12 h-px bg-sand/80 mx-auto my-6 animate-fade-up shadow-sm" />
+
+          <p className="font-baskerville italic text-lg sm:text-2xl text-cream leading-relaxed max-w-2xl mx-auto animate-fade-up [animation-delay:150ms] drop-shadow-md">
+            Handcrafted luxury presentation boxes and celebratory dry fruit hampers featuring distinct compartments of our finest single-origin nuts and gourmet selections.
+          </p>
+        </div>
+      </section>
+
+      <div className="bg-[#fcfaf7] flex flex-col justify-center items-center py-20 px-6 sm:px-8 text-ink">
+        <div className="max-w-lg w-full mx-auto text-center space-y-5">
+          <h2 className="font-baskerville italic text-3xl sm:text-4xl lg:text-5xl text-ink leading-tight tracking-tight">
+            Unwrapping Soon.
+          </h2>
 
           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-md mx-auto">
             Be among the first to preview our festive gift sets and reserve early allocations prior to public release.
