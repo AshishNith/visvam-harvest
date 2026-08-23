@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import nutsHeroBg from "@/assets/nuts-hero-bg.jpg";
+import nutsCategoriesBg from "@/assets/nuts-categories-bg.jpg";
 import gourmetHeroBg from "@/assets/gourmet-hero-bg.jpg";
 import giftingCategoriesBg from "@/assets/gifting-categories-bg.jpg";
 
@@ -18,7 +18,7 @@ const CATEGORIES: CategoryItem[] = [
     slug: "nuts",
     title: "Nuts & Dried Fruits",
     subtitle: "Every nut is hand-picked for depth of flavor, elegantly packaged to deliver a hushed yet unmistakable sense of refinement.",
-    image: nutsHeroBg,
+    image: nutsCategoriesBg,
   },
   {
     id: "gourmet",
