@@ -3,9 +3,10 @@ import { SiteLayout } from "./SiteLayout";
 import { ProductCard } from "./ProductCard";
 import { getProductsByCategory, type Category, type Product, cImg } from "@/lib/products";
 import { fetchProductsFromBackend } from "@/lib/api";
+import nutsHeroBg from "@/assets/nuts-hero-bg.jpg";
 
 // Use Cloudinary CDN with auto-format & quality instead of raw 57 MB local files
-const META: Record<Category, { index: string; title: string; intro: string; image: string }> = {
+const META: Record<Category, { index: string; title: string; intro: string; image: string; blurBg?: boolean }> = {
   gourmet: {
     index: "01",
     title: "Gourmet",
@@ -18,7 +19,8 @@ const META: Record<Category, { index: string; title: string; intro: string; imag
     title: "Nuts & Dried Fruits",
     intro:
       "Discover thoughtfully sourced dry fruits and nuts, designed for moments of calm, clarity, and understated indulgence.",
-    image: cImg("01_Almonds_Badam/DSC00414.jpg"),
+    image: nutsHeroBg,
+    blurBg: true,
   },
   gifting: {
     index: "03",
@@ -56,7 +58,7 @@ export function CategoryPage({ category }: { category: Category }) {
           <img
             src={meta.image}
             alt={meta.title}
-            className="w-full h-full object-cover object-center"
+            className={`w-full h-full object-cover object-center ${meta.blurBg ? "blur-[2px]" : ""}`}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-ink/40 via-ink/25 to-ink/65" />
         </div>
