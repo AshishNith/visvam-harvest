@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import { cImg } from "@/lib/products";
+import nutsHeroBg from "@/assets/nuts-hero-bg.jpg";
+import gourmetHeroBg from "@/assets/gourmet-hero-bg.jpg";
 
 type CategoryItem = {
   id: string;
@@ -16,14 +17,14 @@ const CATEGORIES: CategoryItem[] = [
     slug: "nuts",
     title: "Nuts & Dried Fruits",
     subtitle: "Every nut is hand-picked for depth of flavor, elegantly packaged to deliver a hushed yet unmistakable sense of refinement.",
-    image: cImg("01_Almonds_Badam/DSC00414.jpg"),
+    image: nutsHeroBg,
   },
   {
     id: "gourmet",
     slug: "gourmet",
     title: "Gourmet",
     subtitle: "The little joys we love to share—sweet, savoury, and made for togetherness.",
-    image: cImg("05_Dates_Khajoor/DSC00525.jpg"),
+    image: gourmetHeroBg,
   },
 ];
 
