@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import nutsHeroBg from "@/assets/nuts-hero-bg.jpg";
 import gourmetHeroBg from "@/assets/gourmet-hero-bg.jpg";
+import giftingCategoriesBg from "@/assets/gifting-categories-bg.jpg";
 
 type CategoryItem = {
   id: string;
@@ -25,6 +26,13 @@ const CATEGORIES: CategoryItem[] = [
     title: "Gourmet",
     subtitle: "The little joys we love to share—sweet, savoury, and made for togetherness.",
     image: gourmetHeroBg,
+  },
+  {
+    id: "gifting",
+    slug: "gifting",
+    title: "Gifting",
+    subtitle: "Handcrafted presentation boxes and celebratory hampers, composed for the moments worth marking.",
+    image: giftingCategoriesBg,
   },
 ];
 
