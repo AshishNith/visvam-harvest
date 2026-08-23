@@ -120,7 +120,7 @@ function GourmetPage() {
       <div className="bg-[#fcfaf7] flex flex-col justify-center items-center py-20 px-6 sm:px-8 text-ink">
         <div className="max-w-lg w-full mx-auto text-center space-y-5">
           <h2 className="font-baskerville italic text-3xl sm:text-4xl lg:text-5xl text-ink leading-tight tracking-tight">
-            Unveiling Soon.
+            Curating for you.
           </h2>
 
           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-md mx-auto">
