@@ -48,9 +48,10 @@ export function ScrollStackCategories() {
 
         <div className="space-y-5 sm:space-y-8">
           {CATEGORIES.map((cat) => (
-            <div
+            <Link
               key={cat.id}
-              className="relative min-h-[170px] sm:min-h-[220px] lg:min-h-[260px] aspect-[16/10] sm:aspect-[28/9] lg:aspect-[32/9] overflow-hidden group rounded-2xl sm:rounded-3xl shadow-sm"
+              to={`/${cat.slug}`}
+              className="relative min-h-[170px] sm:min-h-[220px] lg:min-h-[260px] aspect-[16/10] sm:aspect-[28/9] lg:aspect-[32/9] overflow-hidden group rounded-2xl sm:rounded-3xl shadow-sm block"
             >
               <img
                 src={cat.image}
@@ -64,15 +65,12 @@ export function ScrollStackCategories() {
                 <p className="text-xs sm:text-sm text-white/90 max-w-xl leading-relaxed line-clamp-2">
                   {cat.subtitle}
                 </p>
-                <Link
-                  to={`/${cat.slug}`}
-                  className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-white hover:text-sand border-b border-white/60 pb-1 self-start transition-all pt-1"
-                >
+                <span className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-white group-hover:text-sand border-b border-white/60 pb-1 self-start transition-all pt-1">
                   <span>Explore Line</span>
                   <ArrowRight size={13} className="group-hover:translate-x-1.5 transition-transform duration-300" />
-                </Link>
+                </span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

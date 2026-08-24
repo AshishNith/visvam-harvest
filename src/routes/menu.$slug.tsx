@@ -6,7 +6,7 @@ import { useCart, formatPrice } from "@/lib/cart-context";
 import { useAuth } from "@/lib/auth-context";
 import { categories, type Product, type IProductVariant } from "@/lib/products";
 import { fetchProductBySlugFromBackend, fetchProductReviews, submitReview } from "@/lib/api";
-import { Check, ShieldCheck, MapPin, Award, ArrowRight, Star, Loader2, MessageSquare } from "lucide-react";
+import { Check, ShieldCheck, MapPin, Award, ArrowRight, Star, Loader2, MessageSquare, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/menu/$slug")({
@@ -173,6 +173,27 @@ function MenuItemPage() {
   const { add } = useCart();
   const { user, isAuthenticated } = useAuth();
   const [active, setActive] = useState(0);
+  const [imageDirection, setImageDirection] = useState<1 | -1>(1);
+  const [swipeStartX, setSwipeStartX] = useState<number | null>(null);
+
+  const goToPrevImage = () => {
+    setImageDirection(-1);
+    setActive((prev) => (prev - 1 + product.images.length) % product.images.length);
+  };
+  const goToNextImage = () => {
+    setImageDirection(1);
+    setActive((prev) => (prev + 1) % product.images.length);
+  };
+
+  const SWIPE_THRESHOLD_PX = 40;
+  const handleGalleryPointerDown = (e: React.PointerEvent) => setSwipeStartX(e.clientX);
+  const handleGalleryPointerUp = (e: React.PointerEvent) => {
+    if (swipeStartX === null || product.images.length <= 1) return;
+    const delta = e.clientX - swipeStartX;
+    if (delta > SWIPE_THRESHOLD_PX) goToPrevImage();
+    else if (delta < -SWIPE_THRESHOLD_PX) goToNextImage();
+    setSwipeStartX(null);
+  };
 
   // Variant & Customizations selection state
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
@@ -223,6 +244,7 @@ function MenuItemPage() {
   useEffect(() => {
     setProduct(initialProduct);
     setActive(0);
+    setImageDirection(1);
     setShowAllReviews(false);
     if (initialProduct?.hasVariants && initialProduct.variants && initialProduct.variants.length > 0) {
       const def = initialProduct.variants.find((v) => v.isDefault) || initialProduct.variants[0];
@@ -314,7 +336,11 @@ function MenuItemPage() {
       <section className="max-w-[1200px] mx-auto px-4 sm:px-6 py-6 sm:py-8 grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14 items-start">
         {/* Left Column: Product Image Gallery */}
         <div className="max-w-lg mx-auto w-full">
-          <div className="bg-cream relative overflow-hidden aspect-square border border-border/40 max-h-[460px] rounded-lg">
+          <div
+            className="bg-cream relative overflow-hidden aspect-square border border-border/40 max-h-[460px] rounded-lg touch-pan-y"
+            onPointerDown={handleGalleryPointerDown}
+            onPointerUp={handleGalleryPointerUp}
+          >
             {product.badge && (
               <span
                 className={`absolute top-4 left-4 z-10 text-[9px] tracked px-2.5 py-1 font-semibold uppercase rounded-full ${
@@ -332,15 +358,41 @@ function MenuItemPage() {
               alt={`${product.name} — photo ${active + 1}`}
               width={600}
               height={600}
-              className="w-full h-full object-cover animate-fade-in"
+              draggable={false}
+              className={`w-full h-full object-cover select-none ${
+                imageDirection === 1 ? "animate-slide-in-right" : "animate-slide-in-left"
+              }`}
             />
+            {product.images.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={goToPrevImage}
+                  aria-label="Previous image"
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/85 backdrop-blur-sm border border-border/60 text-ink grid place-items-center hover:bg-white hover:text-clay transition-colors shadow-sm"
+                >
+                  <ChevronLeft size={18} />
+                </button>
+                <button
+                  type="button"
+                  onClick={goToNextImage}
+                  aria-label="Next image"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/85 backdrop-blur-sm border border-border/60 text-ink grid place-items-center hover:bg-white hover:text-clay transition-colors shadow-sm"
+                >
+                  <ChevronRight size={18} />
+                </button>
+              </>
+            )}
           </div>
           {product.images.length > 1 && (
             <div className="grid grid-cols-3 gap-2.5 mt-2.5">
               {product.images.map((img: string, i: number) => (
                 <button
                   key={i}
-                  onClick={() => setActive(i)}
+                  onClick={() => {
+                    setImageDirection(i > active ? 1 : -1);
+                    setActive(i);
+                  }}
                   aria-label={`View image ${i + 1}`}
                   className={`aspect-square overflow-hidden bg-cream border rounded-md transition-colors ${
                     i === active ? "border-ink" : "border-transparent hover:border-border"

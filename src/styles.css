@@ -182,6 +182,14 @@
   0%, 100% { opacity: 0.25; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.35); }
 }
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(32px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-32px); }
+  to { opacity: 1; transform: translateX(0); }
+}
 
 @utility animate-marquee {
   animation: marquee 34s linear infinite;
@@ -206,6 +214,12 @@
 }
 @utility animate-steam {
   animation: steam 3.2s ease-out infinite;
+}
+@utility animate-slide-in-right {
+  animation: slide-in-right 0.35s cubic-bezier(0.2, 1, 0.3, 1) both;
+}
+@utility animate-slide-in-left {
+  animation: slide-in-left 0.35s cubic-bezier(0.2, 1, 0.3, 1) both;
 }
 @utility animate-lane-pulse {
   animation: lane-pulse 1.8s ease-in-out infinite;
