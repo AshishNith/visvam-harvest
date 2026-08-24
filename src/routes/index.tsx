@@ -6,7 +6,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { ScrollStackCategories } from "@/components/ScrollStackCategories";
 import { ReelsSection } from "@/components/ReelsSection";
 import { useCart, formatPrice } from "@/lib/cart-context";
-import { fetchProductsFromBackend } from "@/lib/api";
+import { fetchProductsFromBackend, fetchMerchandising } from "@/lib/api";
 import { products, categories, type Product } from "@/lib/products";
 import heroVideo from "@/assets/hero-loop.mp4";
 import heroPoster from "@/assets/hero-poster.jpg";
@@ -46,28 +46,28 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const [bestsellers, setBestsellers] = useState<Product[]>(() =>
-    products.filter((p) => p.category === "nuts" && p.bestseller).slice(0, 4)
+    products.filter((p) => p.category === "nuts" && p.bestseller).slice(0, 3)
   );
   const [giftBox, setGiftBox] = useState<Product | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const { add } = useCart();
 
   useEffect(() => {
-    fetchProductsFromBackend({ category: "nuts", bestseller: true, limit: 6 }).then((data) => {
-      if (data && data.length > 0) {
-        const priorityOrder = [
-          "california-jumbo-almonds",
-          "king-w240-cashews",
-          "kashmiri-snow-walnuts",
-          "roasted-salted-pistachios",
-        ];
-        const sorted = [...data].sort((a, b) => {
-          const idxA = priorityOrder.indexOf(a.slug);
-          const idxB = priorityOrder.indexOf(b.slug);
-          return (idxA === -1 ? 99 : idxA) - (idxB === -1 ? 99 : idxB);
-        });
-        setBestsellers(sorted);
+    // The homepage bestsellers are picked directly in the admin dashboard
+    // (Merchandising page) — that pick is exact products in an exact order,
+    // independent of any product's own "Bestseller" checkbox. Until that
+    // slot has been configured, fall back to the bestseller-flagged nuts.
+    fetchMerchandising().then((merch) => {
+      const picked = merch?.["homepage-bestsellers"];
+      if (picked && picked.length > 0) {
+        setBestsellers(picked.slice(0, 3));
+        return;
       }
+      fetchProductsFromBackend({ category: "nuts", bestseller: true, limit: 3 }).then((data) => {
+        if (data && data.length > 0) {
+          setBestsellers(data.slice(0, 3));
+        }
+      });
     });
 
     fetchProductsFromBackend({ category: "gifting", limit: 1 }).then((data) => {

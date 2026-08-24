@@ -17,6 +17,7 @@ import reviewRoutes from "./routes/reviewRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import shippingRoutes from "./routes/shippingRoutes.js";
+import merchandisingRoutes from "./routes/merchandisingRoutes.js";
 
 import { checkDbConnection } from "./config/db.js";
 import { apiLimiter } from "./middleware/rateLimiter.js";
@@ -119,6 +120,7 @@ app.use("/api/v1/newsletter", newsletterRoutes);
 app.use("/api/v1/upload", uploadRoutes);
 app.use("/api/v1/reviews", reviewRoutes);
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/merchandising", merchandisingRoutes);
 
 // Error Handling Middlewares
 app.use(notFound);

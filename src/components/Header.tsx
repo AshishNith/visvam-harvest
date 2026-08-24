@@ -7,7 +7,8 @@ import { SearchModal } from "./SearchModal";
 import { UserAccountModal } from "./UserAccountModal";
 import logoWordmark from "@/assets/Visvam Logo_Wordmark.png";
 import logoEmblem from "@/assets/Visvam Logo.png";
-import { products } from "@/lib/products";
+import { products, type Product } from "@/lib/products";
+import { fetchMerchandising } from "@/lib/api";
 
 const leftLinks = [
   { to: "/nuts", label: "Nuts & Dried Fruits", category: "nuts" },
@@ -30,6 +31,26 @@ export function Header() {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeCategoryHover, setActiveCategoryHover] = useState<string | null>(null);
+  const [merchandising, setMerchandising] = useState<Record<string, Product[]> | null>(null);
+
+  // Nav dropdown picks are curated in the admin dashboard (Merchandising page).
+  // Until a slot has been configured there, fall back to today's defaults so
+  // the dropdown never renders empty.
+  useEffect(() => {
+    fetchMerchandising().then(setMerchandising);
+  }, []);
+
+  const fallbackNutsProducts = [
+    products.find((p) => p.slug === "kashmiri-snow-walnuts"),
+    products.find((p) => p.slug === "iranian-mamra-almonds"),
+  ].filter((p): p is Product => Boolean(p));
+
+  const getDropdownProducts = (category: string): Product[] => {
+    const picked = merchandising?.[`nav-${category}`];
+    if (picked && picked.length > 0) return picked.slice(0, 2);
+    if (category === "nuts") return fallbackNutsProducts;
+    return [];
+  };
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -103,7 +124,9 @@ export function Header() {
 
             {/* Desktop Left Nav */}
             <nav className={`hidden lg:flex items-center gap-8 text-[10.5px] font-medium tracked ${textColorClass}`}>
-              {leftLinks.map((l) => (
+              {leftLinks.map((l) => {
+                const dropdownProducts = getDropdownProducts(l.category);
+                return (
                 <div
                   key={l.to}
                   className="relative group py-6"
@@ -119,18 +142,14 @@ export function Header() {
                     <ChevronDown size={11} className="text-current opacity-70 transition-transform duration-200 group-hover:rotate-180" />
                   </Link>
 
-                  {/* Mega Menu Dropdown */}
+                  {/* Mega Menu Dropdown — products curated via the admin Merchandising page */}
                   {activeCategoryHover === l.category && (
                     <div className={`absolute top-full left-0 bg-background/98 backdrop-blur-md shadow-lg p-3.5 animate-fade-up z-50 rounded-lg text-ink border border-border/40 ${
-                      l.category === "gifting" || l.category === "gourmet" ? "w-52" : "w-80"
+                      dropdownProducts.length > 0 ? "w-80" : "w-52"
                     }`}>
-                      {l.category === "gifting" ? (
+                      {dropdownProducts.length === 0 ? (
                         <p className="text-xs text-muted-foreground text-center py-2.5 font-sans font-medium whitespace-nowrap px-3">
-                          Unwrapping Soon
-                        </p>
-                      ) : l.category === "gourmet" ? (
-                        <p className="text-xs text-muted-foreground text-center py-2.5 font-sans font-medium whitespace-nowrap px-3">
-                          Curating for you.
+                          {l.category === "gifting" ? "Unwrapping Soon" : l.category === "gourmet" ? "Curating for you." : "More arriving soon."}
                         </p>
                       ) : (
                         <>
@@ -142,38 +161,33 @@ export function Header() {
                               to={l.to}
                               className="text-[9.5px] text-clay hover:underline flex items-center gap-1 font-sans capitalize font-medium"
                             >
-                              View All ({products.filter((p) => p.category === "nuts").length}) <ArrowRight size={10} />
+                              View All <ArrowRight size={10} />
                             </Link>
                           </div>
                           <div className="space-y-2 pt-1">
-                            {[
-                              products.find((p) => p.slug === "kashmiri-snow-walnuts"),
-                              products.find((p) => p.slug === "iranian-mamra-almonds"),
-                            ]
-                              .filter(Boolean)
-                              .map((p) => (
+                            {dropdownProducts.map((p) => (
                                 <Link
-                                  key={p!.slug}
+                                  key={p.slug}
                                   to="/menu/$slug"
-                                  params={{ slug: p!.slug }}
+                                  params={{ slug: p.slug }}
                                   className="flex items-center gap-3 p-2 rounded-md hover:bg-cream/70 transition-colors group/item"
                                 >
                                   <img
-                                    src={p!.images[0]}
-                                    alt={p!.name}
+                                    src={p.images[0]}
+                                    alt={p.name}
                                     className="w-12 h-12 object-cover rounded-md border border-border/40 group-hover/item:scale-105 transition-transform"
                                   />
                                   <div className="min-w-0 flex-1">
                                     <h5 className="text-xs font-medium text-ink truncate group-hover/item:text-clay transition-colors">
-                                      {p!.name}
+                                      {p.name}
                                     </h5>
                                     <p className="text-[10px] text-muted-foreground line-clamp-1">
-                                      {p!.tagline}
+                                      {p.tagline}
                                     </p>
                                     <p className="text-[10.5px] text-clay font-semibold mt-0.5">
-                                      {formatPrice(p!.price)}
+                                      {formatPrice(p.price)}
                                       <span className="text-[9px] text-muted-foreground font-normal ml-1">
-                                        / {p!.serving}
+                                        / {p.serving}
                                       </span>
                                     </p>
                                   </div>
@@ -185,7 +199,8 @@ export function Header() {
                     </div>
                   )}
                 </div>
-              ))}
+                );
+              })}
             </nav>
           </div>
 
@@ -324,45 +339,76 @@ export function Header() {
                       <span>Nuts & Dried Fruits</span>
                       <ArrowRight size={14} className="text-clay" />
                     </Link>
-                    <div className="flex items-center gap-2 pb-2 pl-2">
-                      <Link
-                        to="/menu/$slug"
-                        params={{ slug: "kashmiri-snow-walnuts" }}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="text-[10.5px] font-sans text-muted-foreground hover:text-clay bg-cream/70 px-2.5 py-1 rounded-md border border-border/40"
-                      >
-                        Kashmiri Walnuts
-                      </Link>
-                      <Link
-                        to="/menu/$slug"
-                        params={{ slug: "iranian-mamra-almonds" }}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="text-[10.5px] font-sans text-muted-foreground hover:text-clay bg-cream/70 px-2.5 py-1 rounded-md border border-border/40"
-                      >
-                        Mamra Almonds
-                      </Link>
-                    </div>
+                    {getDropdownProducts("nuts").length > 0 && (
+                      <div className="flex items-center gap-2 pb-2 pl-2">
+                        {getDropdownProducts("nuts").map((p) => (
+                          <Link
+                            key={p.slug}
+                            to="/menu/$slug"
+                            params={{ slug: p.slug }}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="text-[10.5px] font-sans text-muted-foreground hover:text-clay bg-cream/70 px-2.5 py-1 rounded-md border border-border/40"
+                          >
+                            {p.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
-                  <Link
-                    to="/gourmet"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-xs font-medium tracked uppercase py-3 hover:text-clay flex items-center justify-between"
-                  >
-                    <span>Gourmet</span>
-                    <ArrowRight size={14} className="text-clay" />
-                  </Link>
+                  <div>
+                    <Link
+                      to="/gourmet"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="text-xs font-medium tracked uppercase py-3 hover:text-clay flex items-center justify-between"
+                    >
+                      <span>Gourmet</span>
+                      <ArrowRight size={14} className="text-clay" />
+                    </Link>
+                    {getDropdownProducts("gourmet").length > 0 && (
+                      <div className="flex items-center gap-2 pb-2 pl-2">
+                        {getDropdownProducts("gourmet").map((p) => (
+                          <Link
+                            key={p.slug}
+                            to="/menu/$slug"
+                            params={{ slug: p.slug }}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="text-[10.5px] font-sans text-muted-foreground hover:text-clay bg-cream/70 px-2.5 py-1 rounded-md border border-border/40"
+                          >
+                            {p.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
-                  <Link
-                    to="/gifting"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-xs font-medium tracked uppercase py-3 hover:text-clay flex items-center justify-between text-clay font-semibold"
-                  >
-                    <span className="flex items-center gap-2">
-                      <Sparkles size={13} /> Gifting & Hampers
-                    </span>
-                    <ArrowRight size={14} />
-                  </Link>
+                  <div>
+                    <Link
+                      to="/gifting"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="text-xs font-medium tracked uppercase py-3 hover:text-clay flex items-center justify-between text-clay font-semibold"
+                    >
+                      <span className="flex items-center gap-2">
+                        <Sparkles size={13} /> Gifting & Hampers
+                      </span>
+                      <ArrowRight size={14} />
+                    </Link>
+                    {getDropdownProducts("gifting").length > 0 && (
+                      <div className="flex items-center gap-2 pb-2 pl-2">
+                        {getDropdownProducts("gifting").map((p) => (
+                          <Link
+                            key={p.slug}
+                            to="/menu/$slug"
+                            params={{ slug: p.slug }}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="text-[10.5px] font-sans text-muted-foreground hover:text-clay bg-cream/70 px-2.5 py-1 rounded-md border border-border/40"
+                          >
+                            {p.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
                   <Link
                     to="/story"

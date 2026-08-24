@@ -122,6 +122,33 @@ export async function fetchProductsFromBackend(params?: FetchProductsParams): Pr
   }
 }
 
+// Named, ordered product picks curated in the admin dashboard — nav dropdown
+// contents, the homepage bestsellers section, etc. Keyed by slot key; returns
+// null (not an empty object) on any failure so callers can fall back to their
+// existing hardcoded defaults rather than rendering an empty section.
+export async function fetchMerchandising(): Promise<Record<string, Product[]> | null> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/merchandising`);
+    if (!res.ok) return null;
+    const json = await res.json();
+    if (!json.data || typeof json.data !== "object") return null;
+    const result: Record<string, Product[]> = {};
+    for (const [key, items] of Object.entries(json.data)) {
+      result[key] = Array.isArray(items)
+        ? items.map((item: any) => ({
+            ...item,
+            _id: item._id || item.id,
+            isNew: item.isNew ?? item.isNewProduct ?? false,
+          }))
+        : [];
+    }
+    return result;
+  } catch (error) {
+    console.warn("Merchandising fetch failed, falling back to defaults.", error);
+    return null;
+  }
+}
+
 export async function fetchProductBySlugFromBackend(slug: string): Promise<Product | null> {
   try {
     const res = await fetch(`${API_BASE_URL}/products/${slug}`);
