@@ -28,6 +28,12 @@ export interface IShiprocketDetails {
   etd?: string;
 }
 
+export interface IPaymentResult {
+  razorpayOrderId?: string;
+  razorpayPaymentId?: string;
+  razorpaySignature?: string;
+}
+
 export interface IOrder extends Document {
   user?: mongoose.Types.ObjectId;
   guestEmail?: string;
@@ -45,6 +51,7 @@ export interface IOrder extends Document {
     country: string;
   };
   paymentMethod: string;
+  paymentResult?: IPaymentResult;
   itemsPrice: number;
   taxPrice: number;
   shippingPrice: number;
@@ -110,6 +117,11 @@ const OrderSchema = new Schema<IOrder>(
       type: String,
       required: true,
       default: "Card / Pickup",
+    },
+    paymentResult: {
+      razorpayOrderId: { type: String, index: true },
+      razorpayPaymentId: String,
+      razorpaySignature: String,
     },
     itemsPrice: {
       type: Number,

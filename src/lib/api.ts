@@ -270,6 +270,49 @@ export async function submitOrderToBackend(orderData: SubmitOrderData) {
   }
 }
 
+// ─── Razorpay Payments API ───────────────────────────────────────
+export async function createRazorpayOrder(orderId: string): Promise<{
+  success: boolean;
+  keyId?: string;
+  amount?: number;
+  currency?: string;
+  razorpayOrderId?: string;
+  message?: string;
+}> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/payments/razorpay/order`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify({ orderId }),
+    });
+    return await res.json();
+  } catch (error: any) {
+    return { success: false, message: error.message || "Failed to initiate payment" };
+  }
+}
+
+export async function verifyRazorpayPayment(data: {
+  orderId: string;
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/payments/razorpay/verify`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify(data),
+    });
+    const json = await res.json();
+    if (json.success && json.data) {
+      saveLocalOrder(json.data);
+    }
+    return json;
+  } catch (error: any) {
+    return { success: false, message: error.message || "Failed to verify payment" };
+  }
+}
+
 export async function trackOrderByIdFromBackend(orderId: string) {
   try {
     const res = await fetch(`${API_BASE_URL}/orders/track/${encodeURIComponent(orderId)}`);

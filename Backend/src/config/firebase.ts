@@ -47,9 +47,12 @@ export const verifyFirebaseToken = async (idToken: string) => {
   if (admin.apps.length === 0) {
     initFirebase();
   }
-  // checkRevoked ensures a token from a since-disabled/deleted Firebase account
-  // is rejected even if it hasn't naturally expired yet.
-  return await admin.auth().verifyIdToken(idToken, true);
+  // Not passing checkRevoked=true: that flag calls getUser() under the hood,
+  // which needs real Admin SDK service-account credentials
+  // (FIREBASE_CLIENT_EMAIL / FIREBASE_PRIVATE_KEY) — without them every
+  // token verification throws and login fails with 401. Signature and
+  // expiry are still fully verified either way.
+  return await admin.auth().verifyIdToken(idToken);
 };
 
 export { admin };

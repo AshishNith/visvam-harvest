@@ -145,7 +145,9 @@ export const getProductBySlug = async (req: Request, res: Response): Promise<voi
       return;
     }
 
-    const rawProduct = await Product.findOne({ slug }).lean();
+    const rawProduct = await Product.findOne({ slug })
+      .populate("relatedProducts", "slug name tagline price category badge images serving stock hasVariants variantAttributes variants isNewProduct bestseller rating numReviews")
+      .lean();
 
     if (!rawProduct) {
       res.status(404).json({ success: false, message: "Product not found" });
@@ -155,6 +157,8 @@ export const getProductBySlug = async (req: Request, res: Response): Promise<voi
     const product = {
       ...rawProduct,
       isNew: (rawProduct as any).isNew ?? (rawProduct as any).isNewProduct ?? false,
+      // A related product can be deleted after being picked; drop dangling refs.
+      relatedProducts: ((rawProduct as any).relatedProducts || []).filter(Boolean),
     };
 
     const responsePayload = {

@@ -39,6 +39,7 @@ export interface IProduct extends Document {
   hasVariants?: boolean;
   variantAttributes?: IVariantAttribute[];
   variants?: IProductVariant[];
+  relatedProducts?: mongoose.Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -142,6 +143,14 @@ const ProductSchema = new Schema<IProduct>(
         isDefault: { type: Boolean, default: false },
       },
     ],
+    relatedProducts: {
+      type: [{ type: Schema.Types.ObjectId, ref: "Product" }],
+      default: [],
+      validate: {
+        validator: (v: unknown[]) => v.length <= 3,
+        message: "A product can have at most 3 related products",
+      },
+    },
   },
   {
     timestamps: true,

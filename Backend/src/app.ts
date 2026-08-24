@@ -18,6 +18,7 @@ import uploadRoutes from "./routes/uploadRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import shippingRoutes from "./routes/shippingRoutes.js";
 import merchandisingRoutes from "./routes/merchandisingRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 
 import { checkDbConnection } from "./config/db.js";
 import { apiLimiter } from "./middleware/rateLimiter.js";
@@ -77,7 +78,18 @@ app.use(
 app.use(compression());
 
 // Body Parsing & Rate Limiting
-app.use(express.json({ limit: "2mb" }));
+// The `verify` hook stashes the raw request bytes on req.rawBody — the
+// Razorpay webhook handler needs the exact original bytes to recompute the
+// HMAC signature; the parsed JSON object isn't guaranteed to re-serialize
+// byte-for-byte identically.
+app.use(
+  express.json({
+    limit: "2mb",
+    verify: (req: any, _res, buf) => {
+      req.rawBody = buf;
+    },
+  })
+);
 app.use(express.urlencoded({ extended: true, limit: "2mb" }));
 app.use(apiLimiter);
 
@@ -121,6 +133,7 @@ app.use("/api/v1/upload", uploadRoutes);
 app.use("/api/v1/reviews", reviewRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/merchandising", merchandisingRoutes);
+app.use("/api/v1/payments", paymentRoutes);
 
 // Error Handling Middlewares
 app.use(notFound);
