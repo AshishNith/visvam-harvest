@@ -146,7 +146,7 @@ function Home() {
                 <div>
                   {/* Small Image with Rounded Corners */}
                   <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 bg-cream flex items-center justify-center">
-                    <Link to="/menu/$slug" params={{ slug: p.slug }} className="w-full h-full block">
+                    <Link to="/menu/$slug" params={{ slug: p.slug }} className="absolute inset-0 block">
                       <img
                         src={p.images[0]}
                         alt={p.name}
@@ -155,7 +155,21 @@ function Home() {
                         loading={i === 0 ? "eager" : "lazy"}
                         fetchPriority={i === 0 ? "high" : "auto"}
                         decoding="async"
-                        className="w-full h-full object-cover object-center rounded-2xl group-hover:scale-105 transition-transform duration-500"
+                        className="absolute inset-0 w-full h-full object-cover object-center rounded-2xl"
+                      />
+                      {/* Curtain reveal: clipped flush to the top edge, unrolls
+                          downward on hover and retracts back up on mouse-leave.
+                          Eager-loaded — starting at zero visible area made
+                          "loading=lazy" defer the fetch until the first hover. */}
+                      <img
+                        src={p.images[1] ?? p.images[0]}
+                        alt={`${p.name} detail`}
+                        width={800}
+                        height={600}
+                        loading="eager"
+                        fetchPriority="low"
+                        decoding="async"
+                        className="absolute inset-0 w-full h-full object-cover object-center rounded-2xl [clip-path:inset(0_0_100%_0)] transition-[clip-path] duration-[650ms] ease-[cubic-bezier(0.65,0,0.35,1)] group-hover:[clip-path:inset(0_0_0%_0)]"
                       />
                     </Link>
                   </div>
