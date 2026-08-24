@@ -159,12 +159,21 @@ export async function fetchProductBySlugFromBackend(slug: string): Promise<Produ
     if (!res.ok) return null;
     const json = await res.json();
     if (!json.data) return null;
+    const relatedProducts = Array.isArray(json.data.relatedProducts)
+      ? json.data.relatedProducts.map((rp: any) =>
+          optimizeProductImages(
+            { ...rp, _id: rp._id || rp.id, isNew: rp.isNew ?? rp.isNewProduct ?? false },
+            600
+          )
+        )
+      : [];
     // Detail page shows a larger hero, so allow a wider derivative here.
     return optimizeProductImages(
       {
         ...json.data,
         _id: json.data._id || json.data.id,
         isNew: json.data.isNew ?? json.data.isNewProduct ?? false,
+        relatedProducts,
       },
       1400
     );

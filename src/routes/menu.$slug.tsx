@@ -4,7 +4,7 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { ProductCard } from "@/components/ProductCard";
 import { useCart, formatPrice } from "@/lib/cart-context";
 import { useAuth } from "@/lib/auth-context";
-import { getProductBySlug, products, categories, type Product, type IProductVariant } from "@/lib/products";
+import { categories, type Product, type IProductVariant } from "@/lib/products";
 import { fetchProductBySlugFromBackend, fetchProductReviews, submitReview } from "@/lib/api";
 import { Check, ShieldCheck, MapPin, Award, ArrowRight, Star, Loader2, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
@@ -290,22 +290,7 @@ function MenuItemPage() {
     }
   };
 
-  const FREQUENT_SLUGS = [
-    "kashmiri-snow-walnuts",
-    "california-jumbo-almonds",
-    "king-w240-cashews",
-  ];
-
-  const frequentlyBoughtTogether = [
-    ...FREQUENT_SLUGS.filter((s) => s !== product.slug)
-      .map((s) => products.find((p) => p.slug === s))
-      .filter((p): p is Product => Boolean(p)),
-    ...products.filter((p) => p.slug !== product.slug && !FREQUENT_SLUGS.includes(p.slug)),
-  ].slice(0, 3);
-
-  const related = products
-    .filter((p) => p.category === product.category && p.slug !== product.slug)
-    .slice(0, 3);
+  const recommended = product.relatedProducts || [];
 
   const categoryLabel =
     categories.find((c) => c.slug === product.category)?.label ?? product.category;
@@ -520,51 +505,6 @@ function MenuItemPage() {
         </div>
       </section>
 
-      {/* Frequently Bought Together Section */}
-      {frequentlyBoughtTogether.length > 0 && (
-        <section className="max-w-[1200px] mx-auto px-6 py-12 border-t border-border">
-          <div className="mb-6">
-            <p className="text-[10px] tracked font-semibold uppercase text-clay mb-1">Recommended Pairings</p>
-            <h2 className="font-display italic text-2xl lg:text-3xl text-ink">
-              Frequently Bought Together
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {frequentlyBoughtTogether.map((item) => (
-              <div
-                key={item.slug}
-                className="bg-cream/40 border border-border/60 p-4 flex items-center gap-4 group hover:border-clay transition-all duration-300"
-              >
-                <Link to="/menu/$slug" params={{ slug: item.slug }} className="shrink-0">
-                  <img
-                    src={item.images?.[0] || ""}
-                    alt={item.name}
-                    className="w-16 h-20 object-cover bg-background border border-border/40 group-hover:scale-105 transition-transform duration-300"
-                  />
-                </Link>
-                <div className="flex-1 min-w-0">
-                  <Link
-                    to="/menu/$slug"
-                    params={{ slug: item.slug }}
-                    className="text-xs font-semibold text-ink hover:text-clay transition-colors block truncate"
-                  >
-                    {item.name}
-                  </Link>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">{item.serving}</p>
-                  <p className="text-xs font-semibold text-ink mt-2 tabular-nums">{formatPrice(item.price)}</p>
-                </div>
-                <button
-                  onClick={() => add(item)}
-                  className="px-3 py-2 border border-ink text-[10px] tracked font-semibold uppercase hover:bg-ink hover:text-white transition-colors shrink-0 cursor-pointer"
-                >
-                  Add +
-                </button>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
       {/* Customer Reviews Section */}
       <section className="max-w-[1200px] mx-auto px-6 py-14 border-t border-border">
         <div className="flex items-center justify-between mb-8">
@@ -731,12 +671,13 @@ function MenuItemPage() {
         )}
       </section>
 
-      {/* Related Products Section */}
-      {related.length > 0 && (
+      {/* Recommended Products Section (admin-curated per product) */}
+      {recommended.length > 0 && (
         <section className="max-w-[1200px] mx-auto px-6 py-14 border-t border-border mt-8">
+          <p className="text-[10px] tracked font-semibold uppercase text-clay mb-1">Recommended For You</p>
           <h2 className="font-display italic text-2xl lg:text-3xl mb-8">Pairs perfectly with</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-            {related.map((p) => (
+            {recommended.map((p) => (
               <ProductCard key={p.slug} product={p} />
             ))}
           </div>

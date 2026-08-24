@@ -36,6 +36,7 @@ export type Product = {
   hasVariants?: boolean;
   variantAttributes?: IVariantAttribute[];
   variants?: IProductVariant[];
+  relatedProducts?: Product[];
 };
 
 const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "dvwpxb2oa";
