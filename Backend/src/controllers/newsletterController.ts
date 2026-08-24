@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Newsletter } from "../models/Newsletter.js";
+import { sendSubscriptionConfirmationEmail } from "../services/emailService.js";
 import { z } from "zod";
 
 const newsletterSchema = z.object({
@@ -37,6 +38,12 @@ export const subscribeNewsletter = async (req: Request, res: Response): Promise<
     } else {
       await Newsletter.create({ email, status: "subscribed" });
     }
+
+    // Fire the confirmation email in the background — a delivery failure
+    // (e.g. missing/invalid provider credentials) must not fail the signup.
+    sendSubscriptionConfirmationEmail(email).catch((err) => {
+      console.error("Subscription confirmation email failed:", err);
+    });
 
     res.status(201).json({
       success: true,

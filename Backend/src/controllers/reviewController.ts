@@ -119,6 +119,7 @@ export const getProductReviews = async (req: Request, res: Response): Promise<vo
     const { productSlug } = req.params;
 
     const reviews = await Review.find({ productSlug })
+      .select("-user")
       .sort({ createdAt: -1 })
       .lean();
 

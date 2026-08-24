@@ -3,7 +3,10 @@ import jwt from "jsonwebtoken";
 import { verifyFirebaseToken } from "../config/firebase.js";
 import { User, IUser } from "../models/User.js";
 
-const JWT_SECRET = process.env.JWT_SECRET || "visvam-harvest-jwt-secret-key-2026";
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error("JWT_SECRET environment variable is required and must not be empty.");
+}
 
 export interface AuthenticatedRequest extends Request {
   user?: IUser;

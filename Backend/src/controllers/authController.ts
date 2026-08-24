@@ -4,7 +4,10 @@ import jwt from "jsonwebtoken";
 import { User } from "../models/User.js";
 import { AuthenticatedRequest } from "../middleware/authMiddleware.js";
 
-const JWT_SECRET = process.env.JWT_SECRET || "visvam-harvest-jwt-secret-key-2026";
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error("JWT_SECRET environment variable is required and must not be empty.");
+}
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "30d";
 
 const generateToken = (userId: string, role: string): string => {

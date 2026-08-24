@@ -1,8 +1,12 @@
+// Must run before any other local import — several modules (e.g. authController,
+// authMiddleware) read process.env.JWT_SECRET at module load time, so the .env
+// file has to be parsed before those modules are evaluated, not after.
+import "dotenv/config";
+
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
-import dotenv from "dotenv";
 
 import authRoutes from "./routes/authRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
@@ -18,9 +22,14 @@ import { checkDbConnection } from "./config/db.js";
 import { apiLimiter } from "./middleware/rateLimiter.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
-dotenv.config();
-
 const app = express();
+
+// Behind the VPS nginx reverse proxy, so the client IP arrives in
+// X-Forwarded-For. Trust exactly one hop (nginx) — without this the rate
+// limiter keys every request off the proxy's own IP and throttles all users
+// as if they were one. Not a blanket `true`, which would let clients spoof
+// their own X-Forwarded-For and evade the limiter.
+app.set("trust proxy", 1);
 
 // Security Headers & Dynamic CORS configuration
 app.use(
