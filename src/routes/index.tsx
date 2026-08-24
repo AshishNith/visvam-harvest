@@ -8,7 +8,8 @@ import { ReelsSection } from "@/components/ReelsSection";
 import { useCart, formatPrice } from "@/lib/cart-context";
 import { fetchProductsFromBackend } from "@/lib/api";
 import { products, categories, type Product } from "@/lib/products";
-import heroVideoMov from "@/assets/Timeline 1.mov";
+import heroVideo from "@/assets/hero-loop.mp4";
+import heroPoster from "@/assets/hero-poster.jpg";
 
 
 
@@ -108,7 +109,8 @@ function Home() {
           loop
           muted
           playsInline
-          preload="metadata"
+          preload="auto"
+          poster={heroPoster}
           onLoadedData={() => {
             if (videoRef.current) {
               videoRef.current.muted = true;
@@ -117,8 +119,7 @@ function Home() {
           }}
           className="absolute inset-0 w-full h-full object-cover rounded-none hero-video"
         >
-          <source src={heroVideoMov} type="video/mp4" />
-          <source src={heroVideoMov} type="video/quicktime" />
+          <source src={heroVideo} type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-gradient-to-b from-ink/30 via-transparent to-ink/40 pointer-events-none" />
       </section>

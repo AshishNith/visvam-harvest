@@ -1,7 +1,7 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Instagram, Play, Volume2, VolumeX, Heart, MessageCircle, ArrowUpRight } from "lucide-react";
 import montageVideo from "@/assets/Dry_fruit_craftsmanship_montage_202608061931.mp4";
-import timelineMov from "@/assets/Timeline 1.mov";
+import heroLoop from "@/assets/hero-loop.mp4";
 
 type Reel = {
   id: string;
@@ -31,7 +31,7 @@ const REELS: Reel[] = [
   },
   {
     id: "reel-2",
-    video: timelineMov,
+    video: heroLoop,
     type: "video/mp4",
     handle: "@visvam.in",
     caption: "Inside our curation facility: Selecting the finest reserves. 🌰",
@@ -55,18 +55,46 @@ const REELS: Reel[] = [
 
 function ReelCard({ reel }: { reel: Reel }) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const manuallyPausedRef = useRef(false);
+  const [manuallyPaused, setManuallyPaused] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
 
+  // Only the reel actually on screen is allowed to decode. Three looping
+  // videos autoplaying behind the fold kept the main thread busy and made
+  // Lenis' scroll feel sluggish; preload="none" keeps them off the wire too.
+  useEffect(() => {
+    const container = containerRef.current;
+    const video = videoRef.current;
+    if (!container || !video) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (!manuallyPausedRef.current) video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.35 }
+    );
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
   const togglePlay = () => {
-    if (!videoRef.current) return;
-    if (isPlaying) {
-      videoRef.current.pause();
-      setIsPlaying(false);
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) {
+      manuallyPausedRef.current = false;
+      setManuallyPaused(false);
+      video.play().catch(() => {});
     } else {
-      videoRef.current.play().catch(() => {});
-      setIsPlaying(true);
+      manuallyPausedRef.current = true;
+      setManuallyPaused(true);
+      video.pause();
     }
   };
 
@@ -79,6 +107,7 @@ function ReelCard({ reel }: { reel: Reel }) {
 
   return (
     <div
+      ref={containerRef}
       onClick={togglePlay}
       className="relative aspect-[9/16] rounded-2xl overflow-hidden bg-ink/90 shadow-md border border-border/30 group cursor-pointer select-none transition-transform duration-300 hover:scale-[1.01]"
     >
@@ -86,11 +115,10 @@ function ReelCard({ reel }: { reel: Reel }) {
       <video
         ref={videoRef}
         src={reel.video}
-        autoPlay
         loop
         muted={isMuted}
         playsInline
-        preload="metadata"
+        preload="none"
         className="w-full h-full object-cover rounded-2xl"
       />
 
@@ -114,7 +142,7 @@ function ReelCard({ reel }: { reel: Reel }) {
       </div>
 
       {/* Center Pause/Play Indicator */}
-      {!isPlaying && (
+      {manuallyPaused && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none z-10">
           <div className="p-4 rounded-full bg-black/60 backdrop-blur-md text-white">
             <Play size={24} className="ml-0.5" />

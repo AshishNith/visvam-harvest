@@ -35,3 +35,6 @@ dist-ssr
 Backend/.env
 Backend/.env.*
 !Backend/.env.example
+
+# Full-resolution source photography / footage — kept locally, never bundled or tracked
+design-assets/
