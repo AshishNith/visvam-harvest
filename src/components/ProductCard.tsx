@@ -40,13 +40,17 @@ export function ProductCard({ product, priority = false }: { product: Product; p
             className="absolute inset-0 w-full h-full object-cover rounded-2xl"
           />
           {/* Curtain reveal: clipped flush to the top edge, unrolls downward
-              on hover and retracts back up on mouse-leave. */}
+              on hover and retracts back up on mouse-leave. Always eager —
+              since it starts at zero visible area, "loading=lazy" left
+              browsers deferring the actual fetch until the first hover,
+              causing a stall before the curtain could animate in. */}
           <img
             src={product.images?.[1] ?? product.images?.[0] ?? ""}
             alt={`${product.name} detail`}
             width={912}
             height={1200}
-            loading="lazy"
+            loading="eager"
+            fetchPriority="low"
             decoding="async"
             className="absolute inset-0 w-full h-full object-cover rounded-2xl [clip-path:inset(0_0_100%_0)] transition-[clip-path] duration-[650ms] ease-[cubic-bezier(0.65,0,0.35,1)] group-hover:[clip-path:inset(0_0_0%_0)]"
           />
