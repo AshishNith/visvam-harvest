@@ -66,7 +66,6 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
 
       {/* Dialog Container */}
       <div
-        data-lenis-prevent
         className="relative w-full max-w-2xl bg-background border border-border shadow-2xl z-10 overflow-hidden animate-fade-up overscroll-contain"
       >
         {/* Header Bar */}
@@ -98,7 +97,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
         </div>
 
         {/* Modal Content */}
-        <div data-lenis-prevent className="p-6 max-h-[70vh] overflow-y-auto overscroll-contain">
+        <div className="p-6 max-h-[70vh] overflow-y-auto overscroll-contain">
           {!query.trim() ? (
             <div className="space-y-6">
               <div>

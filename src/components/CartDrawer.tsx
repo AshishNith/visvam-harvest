@@ -150,7 +150,6 @@ export function CartDrawer() {
         className="absolute inset-0 bg-ink/40 backdrop-blur-sm animate-overlay-in"
       />
       <aside
-        data-lenis-prevent
         className="absolute right-0 top-0 h-full max-h-full w-full max-w-[470px] bg-background flex flex-col animate-drawer-in shadow-2xl overflow-hidden z-10 overscroll-contain"
       >
         <div className="p-6 border-b border-border flex justify-between items-center bg-cream/30">
@@ -172,7 +171,6 @@ export function CartDrawer() {
         {/* Order Success State */}
         {orderSuccess ? (
           <div
-            data-lenis-prevent
             className="flex-1 overflow-y-auto min-h-0 flex flex-col items-center justify-center p-10 text-center overscroll-contain"
           >
             <div className="w-16 h-16 rounded-full bg-clay/10 text-clay grid place-items-center mb-6">
@@ -217,7 +215,6 @@ export function CartDrawer() {
                 </div>
 
                 <div
-                  data-lenis-prevent
                   className="flex-1 overflow-y-auto min-h-0 p-6 overscroll-contain"
                 >
                   {items.length === 0 ? (
@@ -338,7 +335,6 @@ export function CartDrawer() {
             {step === "address" && (
               <>
                 <div
-                  data-lenis-prevent
                   className="flex-1 overflow-y-auto min-h-0 p-6 space-y-5 overscroll-contain"
                 >
                   <div className="flex items-center gap-2 text-[10px] tracked text-muted-foreground uppercase mb-2">
@@ -442,7 +438,6 @@ export function CartDrawer() {
             {step === "confirm" && (
               <>
                 <div
-                  data-lenis-prevent
                   className="flex-1 overflow-y-auto min-h-0 p-6 space-y-6 overscroll-contain"
                 >
                   {/* Delivery Address Summary */}

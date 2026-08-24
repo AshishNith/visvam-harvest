@@ -63,7 +63,7 @@ function ReelCard({ reel }: { reel: Reel }) {
 
   // Only the reel actually on screen is allowed to decode. Three looping
   // videos autoplaying behind the fold kept the main thread busy and made
-  // Lenis' scroll feel sluggish; preload="none" keeps them off the wire too.
+  // scroll feel sluggish; preload="none" keeps them off the wire too.
   useEffect(() => {
     const container = containerRef.current;
     const video = videoRef.current;
