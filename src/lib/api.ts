@@ -125,32 +125,61 @@ export async function fetchProductsFromBackend(params?: FetchProductsParams): Pr
 }
 
 // Named, ordered product picks curated in the admin dashboard — nav dropdown
-// contents, the homepage bestsellers section, etc. Keyed by slot key; returns
-// null (not an empty object) on any failure so callers can fall back to their
-// existing hardcoded defaults rather than rendering an empty section.
+// contents, the homepage bestsellers section, etc. Keyed by slot key.
+//
+// Fetched once per page load and cached at module scope: Header (and thus
+// this fetch) remounts on every client-side route change since SiteLayout is
+// rendered per-route rather than as a persistent layout, so without this
+// cache every navigation re-fetched merchandising and briefly showed no
+// picks. The cache is shared by every caller (Header's nav dropdowns, the
+// homepage bestsellers section, ...) and only clears on an actual browser
+// reload — a fresh network fetch only ever happens once "at the start of
+// the website".
+let merchandisingCache: Record<string, Product[]> | null = null;
+let merchandisingInflight: Promise<Record<string, Product[]> | null> | null = null;
+
+// Synchronous read of whatever's cached so far — lets a component's initial
+// render already have data (no fallback/placeholder flash) if some earlier
+// caller already resolved the fetch this page load.
+export function getCachedMerchandising(): Record<string, Product[]> | null {
+  return merchandisingCache;
+}
+
 export async function fetchMerchandising(): Promise<Record<string, Product[]> | null> {
-  try {
-    const res = await fetch(`${API_BASE_URL}/merchandising`);
-    if (!res.ok) return null;
-    const json = await res.json();
-    if (!json.data || typeof json.data !== "object") return null;
-    const result: Record<string, Product[]> = {};
-    for (const [key, items] of Object.entries(json.data)) {
-      result[key] = Array.isArray(items)
-        ? items.map((item: any) =>
-            optimizeProductImages({
-              ...item,
-              _id: item._id || item.id,
-              isNew: item.isNew ?? item.isNewProduct ?? false,
-            })
-          )
-        : [];
+  if (merchandisingCache) return merchandisingCache;
+  if (merchandisingInflight) return merchandisingInflight;
+
+  merchandisingInflight = (async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/merchandising`);
+      if (!res.ok) return null;
+      const json = await res.json();
+      if (!json.data || typeof json.data !== "object") return null;
+      const result: Record<string, Product[]> = {};
+      for (const [key, items] of Object.entries(json.data)) {
+        result[key] = Array.isArray(items)
+          ? items.map((item: any) =>
+              optimizeProductImages({
+                ...item,
+                _id: item._id || item.id,
+                isNew: item.isNew ?? item.isNewProduct ?? false,
+              })
+            )
+          : [];
+      }
+      merchandisingCache = result;
+      return result;
+    } catch (error) {
+      console.warn("Merchandising fetch failed.", error);
+      return null;
+    } finally {
+      // Don't cache a failure — let the next caller (e.g. the next page
+      // navigation) retry instead of being stuck with no picks all session.
+      merchandisingInflight = null;
     }
-    return result;
-  } catch (error) {
-    console.warn("Merchandising fetch failed, falling back to defaults.", error);
-    return null;
-  }
+  })();
+
+  return merchandisingInflight;
 }
 
 export async function fetchProductBySlugFromBackend(slug: string): Promise<Product | null> {

@@ -7,8 +7,8 @@ import { SearchModal } from "./SearchModal";
 import { UserAccountModal } from "./UserAccountModal";
 import logoWordmark from "@/assets/Visvam Logo_Wordmark.png";
 import logoEmblem from "@/assets/Visvam Logo.png";
-import { products, type Product } from "@/lib/products";
-import { fetchMerchandising } from "@/lib/api";
+import type { Product } from "@/lib/products";
+import { fetchMerchandising, getCachedMerchandising } from "@/lib/api";
 
 const leftLinks = [
   { to: "/nuts", label: "Nuts & Dried Fruits", category: "nuts" },
@@ -31,25 +31,22 @@ export function Header() {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeCategoryHover, setActiveCategoryHover] = useState<string | null>(null);
-  const [merchandising, setMerchandising] = useState<Record<string, Product[]> | null>(null);
+  // Nav dropdown picks are curated in the admin dashboard (Merchandising
+  // page) — fetched and cached once per page load (see getCachedMerchandising
+  // in lib/api), so a route change that remounts Header reads the already-
+  // fetched data straight away instead of re-fetching or showing a stand-in.
+  const [merchandising, setMerchandising] = useState<Record<string, Product[]> | null>(
+    () => getCachedMerchandising()
+  );
 
-  // Nav dropdown picks are curated in the admin dashboard (Merchandising page).
-  // Until a slot has been configured there, fall back to today's defaults so
-  // the dropdown never renders empty.
   useEffect(() => {
+    if (getCachedMerchandising()) return;
     fetchMerchandising().then(setMerchandising);
   }, []);
 
-  const fallbackNutsProducts = [
-    products.find((p) => p.slug === "kashmiri-snow-walnuts"),
-    products.find((p) => p.slug === "iranian-mamra-almonds"),
-  ].filter((p): p is Product => Boolean(p));
-
   const getDropdownProducts = (category: string): Product[] => {
     const picked = merchandising?.[`nav-${category}`];
-    if (picked && picked.length > 0) return picked.slice(0, 2);
-    if (category === "nuts") return fallbackNutsProducts;
-    return [];
+    return picked && picked.length > 0 ? picked.slice(0, 2) : [];
   };
 
   // Close mobile menu on route change
