@@ -3,7 +3,10 @@ import { ArrowRight } from "lucide-react";
 import { useCart, formatPrice } from "@/lib/cart-context";
 import type { Product } from "@/lib/products";
 
-export function ProductCard({ product }: { product: Product }) {
+// `priority` marks above-the-fold cards (e.g. the first homepage bestsellers).
+// Those must not be lazy-loaded — the LCP element was being deferred, which
+// pushed Largest Contentful Paint out by several seconds.
+export function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
   const { add } = useCart();
 
   const hasVariants = Boolean(product.hasVariants && product.variants && product.variants.length > 0);
@@ -31,7 +34,8 @@ export function ProductCard({ product }: { product: Product }) {
             alt={product.name}
             width={912}
             height={1200}
-            loading="lazy"
+            loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : "auto"}
             decoding="async"
             className="absolute inset-0 w-full h-full object-cover transition-all duration-[900ms] ease-out group-hover:opacity-0 group-hover:scale-[1.04] rounded-2xl"
           />

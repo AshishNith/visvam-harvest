@@ -141,7 +141,7 @@ function Home() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
-            {bestsellers.slice(0, 3).map((p) => (
+            {bestsellers.slice(0, 3).map((p, i) => (
               <div key={p.slug} className="group flex flex-col justify-between">
                 <div>
                   {/* Small Image with Rounded Corners */}
@@ -150,7 +150,11 @@ function Home() {
                       <img
                         src={p.images[0]}
                         alt={p.name}
-                        loading="lazy"
+                        width={800}
+                        height={600}
+                        loading={i === 0 ? "eager" : "lazy"}
+                        fetchPriority={i === 0 ? "high" : "auto"}
+                        decoding="async"
                         className="w-full h-full object-cover object-center rounded-2xl group-hover:scale-105 transition-transform duration-500"
                       />
                     </Link>

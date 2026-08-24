@@ -44,10 +44,44 @@ const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "dvw
 const PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'%3E%3Crect width='1' height='1' fill='%23f8f1e7'/%3E%3C/svg%3E";
 
 // Constructs optimized Cloudinary CDN URLs with auto-format & quality compression
+// w_1400,c_limit caps delivery width: f_auto,q_auto alone still served the
+// full 6224px original into ~400px slots, costing ~800KB per card image.
 export function cImg(folderAndFilename: string): string {
   if (!CLOUDINARY_CLOUD_NAME) return PLACEHOLDER;
   const cleanPath = folderAndFilename.replace(/^\//, "").replace(/\.JPG$/i, ".jpg");
-  return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto/visvam_harvest/${cleanPath}`;
+  return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1400,c_limit/visvam_harvest/${cleanPath}`;
+}
+
+// Images uploaded through the admin panel are stored as raw Cloudinary URLs —
+// full-resolution originals (often 8000px+ / ~10MB each). Served untouched they
+// blow out both bandwidth and, far worse, main-thread decode time: a 9344x7015
+// JPEG costs ~260MB of RGBA once decoded, which is what stalls scrolling.
+// This rewrites any Cloudinary delivery URL to request a sensibly sized,
+// auto-format, auto-quality derivative instead. Already-transformed URLs and
+// non-Cloudinary URLs are returned untouched.
+export function optimizeImageUrl(url: string, width = 800): string {
+  if (!url || !url.includes("res.cloudinary.com")) return url;
+
+  const marker = "/image/upload/";
+  const at = url.indexOf(marker);
+  if (at === -1) return url;
+
+  const prefix = url.slice(0, at + marker.length);
+  const rest = url.slice(at + marker.length);
+
+  // Cloudinary puts transformations directly after /upload/. If the first
+  // segment isn't a version (v123…) or a bare path, transforms already exist.
+  const firstSegment = rest.split("/")[0];
+  const alreadyTransformed = /(^|,)(f_|q_|w_|h_|c_|dpr_)/.test(firstSegment);
+  if (alreadyTransformed) return url;
+
+  return `${prefix}f_auto,q_auto,w_${width},c_limit/${rest}`;
+}
+
+// Applies optimizeImageUrl across a product's image array.
+export function optimizeProductImages<T extends { images?: string[] }>(product: T, width = 800): T {
+  if (!Array.isArray(product.images)) return product;
+  return { ...product, images: product.images.map((img) => optimizeImageUrl(img, width)) };
 }
 
 export const products: Product[] = [

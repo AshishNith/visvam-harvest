@@ -1,4 +1,4 @@
-import { Product } from "./products";
+import { Product, optimizeProductImages } from "./products";
 import { ShippingAddress } from "./cart-context";
 
 export const API_BASE_URL = import.meta.env.VITE_API_URL || "https://visvam-backend.onrender.com/api/v1";
@@ -111,11 +111,13 @@ export async function fetchProductsFromBackend(params?: FetchProductsParams): Pr
     if (!res.ok) return null;
     const json = await res.json();
     if (!Array.isArray(json.data)) return null;
-    return json.data.map((item: any) => ({
-      ...item,
-      _id: item._id || item.id,
-      isNew: item.isNew ?? item.isNewProduct ?? false,
-    }));
+    return json.data.map((item: any) =>
+      optimizeProductImages({
+        ...item,
+        _id: item._id || item.id,
+        isNew: item.isNew ?? item.isNewProduct ?? false,
+      })
+    );
   } catch (error) {
     console.warn("Backend API unavailable, using local static data fallback.", error);
     return null;
@@ -135,11 +137,13 @@ export async function fetchMerchandising(): Promise<Record<string, Product[]> | 
     const result: Record<string, Product[]> = {};
     for (const [key, items] of Object.entries(json.data)) {
       result[key] = Array.isArray(items)
-        ? items.map((item: any) => ({
-            ...item,
-            _id: item._id || item.id,
-            isNew: item.isNew ?? item.isNewProduct ?? false,
-          }))
+        ? items.map((item: any) =>
+            optimizeProductImages({
+              ...item,
+              _id: item._id || item.id,
+              isNew: item.isNew ?? item.isNewProduct ?? false,
+            })
+          )
         : [];
     }
     return result;
@@ -155,11 +159,15 @@ export async function fetchProductBySlugFromBackend(slug: string): Promise<Produ
     if (!res.ok) return null;
     const json = await res.json();
     if (!json.data) return null;
-    return {
-      ...json.data,
-      _id: json.data._id || json.data.id,
-      isNew: json.data.isNew ?? json.data.isNewProduct ?? false,
-    };
+    // Detail page shows a larger hero, so allow a wider derivative here.
+    return optimizeProductImages(
+      {
+        ...json.data,
+        _id: json.data._id || json.data.id,
+        isNew: json.data.isNew ?? json.data.isNewProduct ?? false,
+      },
+      1400
+    );
   } catch (error) {
     console.warn("Backend API unavailable, using local static data fallback.", error);
     return null;
