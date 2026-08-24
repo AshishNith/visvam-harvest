@@ -37,8 +37,10 @@ export function ProductCard({ product, priority = false }: { product: Product; p
             loading={priority ? "eager" : "lazy"}
             fetchPriority={priority ? "high" : "auto"}
             decoding="async"
-            className="absolute inset-0 w-full h-full object-cover transition-all duration-[900ms] ease-out group-hover:opacity-0 group-hover:scale-[1.04] rounded-2xl"
+            className="absolute inset-0 w-full h-full object-cover rounded-2xl"
           />
+          {/* Curtain reveal: clipped flush to the top edge, unrolls downward
+              on hover and retracts back up on mouse-leave. */}
           <img
             src={product.images?.[1] ?? product.images?.[0] ?? ""}
             alt={`${product.name} detail`}
@@ -46,7 +48,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
             height={1200}
             loading="lazy"
             decoding="async"
-            className="absolute inset-0 w-full h-full object-cover opacity-0 scale-[1.06] transition-all duration-[900ms] ease-out group-hover:opacity-100 group-hover:scale-100 rounded-2xl"
+            className="absolute inset-0 w-full h-full object-cover rounded-2xl [clip-path:inset(0_0_100%_0)] transition-[clip-path] duration-[650ms] ease-[cubic-bezier(0.65,0,0.35,1)] group-hover:[clip-path:inset(0_0_0%_0)]"
           />
         </Link>
         {product.badge && (

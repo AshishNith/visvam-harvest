@@ -169,6 +169,10 @@
   from { opacity: 0; transform: translateY(48px) scale(0.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
+@keyframes curtain-down {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0% 0); }
+}
 @keyframes steam {
   0% { opacity: 0; transform: translateY(6px) scaleX(0.9); }
   40% { opacity: 0.6; }
@@ -196,6 +200,9 @@
 }
 @utility animate-reveal-up {
   animation: reveal-up 1s cubic-bezier(0.2, 1, 0.3, 1) both;
+}
+@utility animate-curtain-down {
+  animation: curtain-down 0.5s cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 @utility animate-steam {
   animation: steam 3.2s ease-out infinite;

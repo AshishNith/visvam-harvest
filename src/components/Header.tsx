@@ -311,7 +311,7 @@ export function Header() {
               onClick={() => setIsMobileMenuOpen(false)}
               aria-label="Close menu backdrop"
             />
-            <div className="relative z-40 lg:hidden bg-background border-b border-border shadow-2xl animate-fade-up text-ink max-h-[calc(100dvh-5rem)] overflow-y-auto">
+            <div className="relative z-40 lg:hidden bg-background border-b border-border shadow-2xl animate-curtain-down text-ink max-h-[calc(100dvh-5rem)] overflow-y-auto">
               <div className="px-5 py-5 space-y-4">
                 <div className="flex items-center justify-center py-1">
                   <img src={logoEmblem} alt="Viśvam Emblem" className="h-9 w-auto object-contain" />
