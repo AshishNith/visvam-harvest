@@ -130,24 +130,13 @@
     font-style: normal !important;
   }
 
-  /* Luxury Custom Scrollbar (Transparent Track) */
+  /* Scrollbar hidden site-wide — ScrollProgress renders a fixed bar in its place */
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: rgba(138, 79, 39, 0.45);
-    border-radius: 9999px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(138, 79, 39, 0.85);
+    display: none;
   }
   * {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(138, 79, 39, 0.45) transparent;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
 }
 

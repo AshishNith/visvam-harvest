@@ -12,7 +12,7 @@ export function ScrollProgress() {
         const docHeight = document.documentElement.scrollHeight - window.innerHeight;
         if (docHeight > 0 && barRef.current) {
           const pct = Math.min(100, Math.max(0, (scrollTop / docHeight) * 100));
-          barRef.current.style.width = `${pct}%`;
+          barRef.current.style.height = `${pct}%`;
         }
       });
     };
@@ -26,11 +26,11 @@ export function ScrollProgress() {
   }, []);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 h-[3px] bg-sand/20 pointer-events-none">
+    <div className="fixed top-0 bottom-0 right-0 z-50 w-[4px] bg-sand/20 pointer-events-none">
       <div
         ref={barRef}
-        className="h-full bg-clay transition-all duration-150 ease-out"
-        style={{ width: "0%" }}
+        className="w-full bg-clay transition-all duration-150 ease-out"
+        style={{ height: "0%" }}
       />
     </div>
   );
