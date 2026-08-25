@@ -544,8 +544,6 @@ function MenuItemPage() {
 
           <ul className="space-y-2 border-t border-border/70 pt-5">
             {[
-              "Direct Single-Origin Sourcing",
-              "Bespoke Presentation Packaging",
               "Free shipping on orders above ₹3,499",
             ].map((t) => (
               <li key={t} className="flex gap-2.5 text-[11px] items-center text-muted-foreground">

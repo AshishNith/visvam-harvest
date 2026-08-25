@@ -1,0 +1,755 @@
+[
+  {
+    "_id": "6a8bf29cdc148f7cae8ce1d3",
+    "slug": "black-raisins",
+    "name": "Black Raisins",
+    "tagline": "",
+    "price": 558,
+    "category": "nuts",
+    "badge": "",
+    "images": [
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787556493/visvam_harvest_products/di4xiostytxxmbamldcx.jpg",
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787556500/visvam_harvest_products/oekwxulwf3qnwvdtvxfb.jpg"
+    ],
+    "description": "Deep in colour and naturally sweet, black raisins have a rich, distinctive character that makes them a lovely addition to everyday moments. Gently dried to develop their soft, chewy texture, they bring a little warmth and sweetness to every handful—perfect for enjoying, sharing, or simply keeping close for a quiet treat.",
+    "serving": "500g Pouch",
+    "prepMinutes": 0,
+    "benefits": [],
+    "bestseller": false,
+    "isNewProduct": true,
+    "stock": 1000,
+    "rating": 5,
+    "numReviews": 0,
+    "hasVariants": true,
+    "variantAttributes": [
+      {
+        "name": "Weight",
+        "values": [
+          "250g",
+          "500g"
+        ],
+        "_id": "6a8bf29cdc148f7cae8ce1d4"
+      }
+    ],
+    "variants": [
+      {
+        "sku": "BLAC-250G",
+        "title": "250g",
+        "options": {
+          "Weight": "250g"
+        },
+        "price": 558,
+        "mrp": 558,
+        "stock": 500,
+        "isDefault": true,
+        "_id": "6a8bf29cdc148f7cae8ce1d5"
+      },
+      {
+        "sku": "BLAC-500G",
+        "title": "500g",
+        "options": {
+          "Weight": "500g"
+        },
+        "price": 1035,
+        "mrp": 1035,
+        "stock": 500,
+        "isDefault": false,
+        "_id": "6a8bf29cdc148f7cae8ce1d6"
+      }
+    ],
+    "createdAt": "2026-08-24T07:28:28.124Z",
+    "updatedAt": "2026-08-24T12:51:34.517Z",
+    "__v": 0,
+    "relatedProducts": [
+      "6a8bf0eddc148f7cae8ce1b1"
+    ],
+    "isNew": true
+  },
+  {
+    "_id": "6a8bf0eddc148f7cae8ce1b1",
+    "slug": "gurbandi-almonds",
+    "name": "Gurbandi Almonds",
+    "tagline": "",
+    "price": 825,
+    "category": "nuts",
+    "badge": "Warmly Distinctive",
+    "images": [
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787556072/visvam_harvest_products/vtlkge7sk1dxpe46k4pd.jpg"
+    ],
+    "description": "Gurbandi almonds are typically smaller and more petite, with a darker skin and a naturally rich, earthy character. Their varied shapes and deep flavour give them a wonderfully traditional appeal.",
+    "serving": "500g Pouch",
+    "prepMinutes": 0,
+    "benefits": [],
+    "bestseller": false,
+    "isNewProduct": true,
+    "stock": 1000,
+    "rating": 5,
+    "numReviews": 0,
+    "hasVariants": true,
+    "variantAttributes": [
+      {
+        "name": "Weight",
+        "values": [
+          "250g",
+          "500g"
+        ],
+        "_id": "6a8bf0eddc148f7cae8ce1b2"
+      }
+    ],
+    "variants": [
+      {
+        "sku": "GURB-250G",
+        "title": "250g",
+        "options": {
+          "Weight": "250g"
+        },
+        "price": 825,
+        "mrp": 930,
+        "stock": 500,
+        "isDefault": true,
+        "_id": "6a8bf0eddc148f7cae8ce1b3"
+      },
+      {
+        "sku": "GURB-500G",
+        "title": "500g",
+        "options": {
+          "Weight": "500g"
+        },
+        "price": 1500,
+        "mrp": 1725,
+        "stock": 500,
+        "isDefault": false,
+        "_id": "6a8bf0eddc148f7cae8ce1b4"
+      }
+    ],
+    "createdAt": "2026-08-24T07:21:17.444Z",
+    "updatedAt": "2026-08-24T07:21:17.444Z",
+    "__v": 0,
+    "isNew": true
+  },
+  {
+    "_id": "6a8100c05364d4534987d1d9",
+    "slug": "green-raisins",
+    "name": "Green Raisins",
+    "tagline": "Sweetness in every bite.",
+    "price": 1091,
+    "category": "nuts",
+    "badge": "Sunkissed",
+    "images": [
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787553222/visvam_harvest_products/vau8jfxjf0qfabxxg7pu.jpg",
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787550051/visvam_harvest_products/vagbk4dz5c6yvrufyzbt.jpg",
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787550059/visvam_harvest_products/ozyroxed6nd5tu7pawzv.jpg"
+    ],
+    "description": "From plump, fresh grapes to beautifully wrinkled raisins, it’s a simple transformation that brings out a whole new character. Carefully selected and ready to enjoy, our raisins are a lovely little addition to your everyday moments.",
+    "serving": "500g Pouch",
+    "origin": "Herat, Afghanistan",
+    "prepMinutes": 0,
+    "grade": "Long Green A+",
+    "benefits": [],
+    "bestseller": false,
+    "isNewProduct": true,
+    "stock": 1000,
+    "rating": 4.8,
+    "numReviews": 11,
+    "__v": 0,
+    "createdAt": "2026-08-16T00:13:52.653Z",
+    "updatedAt": "2026-08-24T06:45:47.471Z",
+    "hasVariants": true,
+    "variantAttributes": [
+      {
+        "name": "Grade",
+        "values": [
+          "Round",
+          "Long"
+        ],
+        "_id": "6a86b671249a318b0a3c72ae"
+      },
+      {
+        "name": "Weight",
+        "values": [
+          "250g",
+          "500g"
+        ],
+        "_id": "6a86b671249a318b0a3c72af"
+      }
+    ],
+    "variants": [
+      {
+        "sku": "GREE-ROUN-250G",
+        "title": "Round · 250g",
+        "options": {
+          "Grade": "Round",
+          "Weight": "250g"
+        },
+        "price": 1091,
+        "mrp": 1091,
+        "stock": 250,
+        "isDefault": true,
+        "_id": "6a87eebcc28bb70a5665013e"
+      },
+      {
+        "sku": "GREE-ROUN-500G",
+        "title": "Round · 500g",
+        "options": {
+          "Grade": "Round",
+          "Weight": "500g"
+        },
+        "price": 1091,
+        "mrp": 1091,
+        "stock": 250,
+        "isDefault": false,
+        "_id": "6a87eebcc28bb70a5665013f"
+      },
+      {
+        "sku": "GREE-LONG-250G",
+        "title": "Long · 250g",
+        "options": {
+          "Grade": "Long",
+          "Weight": "250g"
+        },
+        "price": 1091,
+        "mrp": 1091,
+        "stock": 250,
+        "isDefault": false,
+        "_id": "6a87eebcc28bb70a56650140"
+      },
+      {
+        "sku": "GREE-LONG-500G",
+        "title": "Long · 500g",
+        "options": {
+          "Grade": "Long",
+          "Weight": "500g"
+        },
+        "price": 1091,
+        "mrp": 1091,
+        "stock": 250,
+        "isDefault": false,
+        "_id": "6a87eebcc28bb70a56650141"
+      }
+    ],
+    "isNew": true
+  },
+  {
+    "_id": "6a8100c05364d4534987d1d4",
+    "slug": "walnuts",
+    "name": "Walnuts",
+    "tagline": "Delicate Crunch, Rich in oils",
+    "price": 852,
+    "category": "nuts",
+    "badge": "Naturally Rich",
+    "images": [
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787551064/visvam_harvest_products/jv0lipxe9ckphmzhwgn2.jpg",
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787551170/visvam_harvest_products/q7vflixslueqkpnavz7x.jpg",
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787551758/visvam_harvest_products/jpezkvle52igvkskeuwh.jpg"
+    ],
+    "description": "There’s something wonderfully familiar about a good walnut—the beautiful curves, delicate crunch, and naturally rich character in every piece. With their naturally occurring oils and carefully preserved freshness, our walnuts are thoughtfully sourced to bring you a beautiful, satisfying walnut experience.",
+    "serving": "POUCH",
+    "origin": "Anantnag, Kashmir",
+    "prepMinutes": 0,
+    "grade": "Snow Light Halves",
+    "benefits": [],
+    "bestseller": true,
+    "isNewProduct": false,
+    "stock": 3000,
+    "rating": 4.8,
+    "numReviews": 11,
+    "__v": 0,
+    "createdAt": "2026-08-16T00:13:52.652Z",
+    "updatedAt": "2026-08-24T06:09:30.766Z",
+    "hasVariants": true,
+    "variantAttributes": [
+      {
+        "name": "Weight",
+        "values": [
+          "250g",
+          "500g"
+        ],
+        "_id": "6a8bddec7b9cdc5ed1b46d20"
+      }
+    ],
+    "variants": [
+      {
+        "sku": "WALN-250G",
+        "title": "250g",
+        "options": {
+          "Weight": "250g"
+        },
+        "price": 852,
+        "mrp": 960,
+        "stock": 50,
+        "isDefault": true,
+        "_id": "6a8bddec7b9cdc5ed1b46d21"
+      },
+      {
+        "sku": "WALN-500G",
+        "title": "500g",
+        "options": {
+          "Weight": "500g"
+        },
+        "price": 1549,
+        "mrp": 1781,
+        "stock": 40,
+        "isDefault": false,
+        "_id": "6a8bddec7b9cdc5ed1b46d22"
+      }
+    ],
+    "isNew": false
+  },
+  {
+    "_id": "6a8100c05364d4534987d1d5",
+    "slug": "pistachios",
+    "name": "Pistachios",
+    "tagline": "",
+    "price": 714,
+    "category": "nuts",
+    "badge": "Irresistable",
+    "images": [
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787552572/visvam_harvest_products/njhewtjxo959mhumrbz6.jpg",
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787552584/visvam_harvest_products/dklevsbaxfz6aqg8t4mj.jpg",
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787552624/visvam_harvest_products/iywar2odhymmkmymigab.jpg"
+    ],
+    "description": "With their delicate crunch and naturally beautiful green hues, pistachios are as inviting to look at as they are to enjoy. Thoughtfully sourced and chosen with an eye for quality, they make every little snacking moment feel special.",
+    "serving": "500g Pouch",
+    "origin": "Kerman Valley",
+    "prepMinutes": 0,
+    "grade": "Jumbo 20/22",
+    "benefits": [],
+    "bestseller": false,
+    "isNewProduct": true,
+    "stock": 1000,
+    "rating": 4.8,
+    "numReviews": 11,
+    "__v": 0,
+    "createdAt": "2026-08-16T00:13:52.652Z",
+    "updatedAt": "2026-08-24T09:26:04.610Z",
+    "hasVariants": true,
+    "variantAttributes": [
+      {
+        "name": "Weight",
+        "values": [
+          "250g",
+          "500g"
+        ],
+        "_id": "6a8be3d3dc148f7cae8ce121"
+      }
+    ],
+    "variants": [
+      {
+        "sku": "PIST-250G",
+        "title": "250g",
+        "options": {
+          "Weight": "250g"
+        },
+        "price": 714,
+        "mrp": 805,
+        "stock": 500,
+        "isDefault": true,
+        "_id": "6a8be3d3dc148f7cae8ce122"
+      },
+      {
+        "sku": "PIST-500G",
+        "title": "500g",
+        "options": {
+          "Weight": "500g"
+        },
+        "price": 1299,
+        "mrp": 1494,
+        "stock": 500,
+        "isDefault": false,
+        "_id": "6a8be3d3dc148f7cae8ce123"
+      }
+    ],
+    "isNew": true
+  },
+  {
+    "_id": "6a8100c05364d4534987d1d6",
+    "slug": "mamra-almonds",
+    "name": "Mamra Almonds",
+    "tagline": "",
+    "price": 2500,
+    "category": "nuts",
+    "badge": "Traditionally Cherished",
+    "images": [
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787553120/visvam_harvest_products/rlr7j08cbiulkep75rh4.jpg",
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787553154/visvam_harvest_products/dmbjrmchwfvxovbmasan.jpg"
+    ],
+    "description": "Known for their smaller, elongated shape and naturally uneven appearance, Mamra almonds have a distinctive character that sets them apart. Their delicate texture and naturally occurring oils make them a particularly special variety to savour.",
+    "serving": "500g Tin",
+    "origin": "Chaharmahal, Iran",
+    "prepMinutes": 0,
+    "grade": "Authentic Mamra",
+    "benefits": [],
+    "bestseller": true,
+    "isNewProduct": false,
+    "stock": 1000,
+    "rating": 4.8,
+    "numReviews": 11,
+    "__v": 0,
+    "createdAt": "2026-08-16T00:13:52.652Z",
+    "updatedAt": "2026-08-24T06:32:59.070Z",
+    "hasVariants": true,
+    "variantAttributes": [
+      {
+        "name": "Weight",
+        "values": [
+          "250g",
+          "500g"
+        ],
+        "_id": "6a8be59bdc148f7cae8ce131"
+      }
+    ],
+    "variants": [
+      {
+        "sku": "MAMR-250G",
+        "title": "250g",
+        "options": {
+          "Weight": "250g"
+        },
+        "price": 2500,
+        "mrp": 2500,
+        "stock": 500,
+        "isDefault": true,
+        "_id": "6a8be59bdc148f7cae8ce132"
+      },
+      {
+        "sku": "MAMR-500G",
+        "title": "500g",
+        "options": {
+          "Weight": "500g"
+        },
+        "price": 5000,
+        "mrp": 5000,
+        "stock": 500,
+        "isDefault": false,
+        "_id": "6a8be59bdc148f7cae8ce133"
+      }
+    ],
+    "isNew": false
+  },
+  {
+    "_id": "6a8100c05364d4534987d1d7",
+    "slug": "dried-figs-anjeer",
+    "name": "Dried Figs",
+    "tagline": "Sun-Dried· Zero Sugar Added",
+    "price": 879,
+    "category": "nuts",
+    "badge": "High Fiber",
+    "images": [
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787554119/visvam_harvest_products/otalvdqkdwr9bry66vhx.jpg",
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787554112/visvam_harvest_products/fo2odmv1ssrq0zfmcdcn.jpg",
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787554122/visvam_harvest_products/fpnyfddg9ireoca7y3xr.jpg"
+    ],
+    "description": "Soft, naturally sweet, and wonderfully inviting, figs bring a warm, comforting touch to the table. Carefully brought together for you, they’re a simple pleasure to enjoy on their own or share with someone special.",
+    "serving": "500g Pack",
+    "origin": "Kandahar, Afghanistan",
+    "prepMinutes": 0,
+    "grade": "Grade A Garland",
+    "benefits": [],
+    "bestseller": false,
+    "isNewProduct": true,
+    "stock": 1000,
+    "rating": 4.8,
+    "numReviews": 11,
+    "__v": 0,
+    "createdAt": "2026-08-16T00:13:52.652Z",
+    "updatedAt": "2026-08-24T06:49:15.584Z",
+    "hasVariants": true,
+    "variantAttributes": [
+      {
+        "name": "Weight",
+        "values": [
+          "250g",
+          "500g"
+        ],
+        "_id": "6a8be96bdc148f7cae8ce16e"
+      }
+    ],
+    "variants": [
+      {
+        "sku": "DRIE-250G",
+        "title": "250g",
+        "options": {
+          "Weight": "250g"
+        },
+        "price": 879,
+        "mrp": 991,
+        "stock": 500,
+        "isDefault": true,
+        "_id": "6a8be96bdc148f7cae8ce16f"
+      },
+      {
+        "sku": "DRIE-500G",
+        "title": "500g",
+        "options": {
+          "Weight": "500g"
+        },
+        "price": 1599,
+        "mrp": 1839,
+        "stock": 500,
+        "isDefault": false,
+        "_id": "6a8be96bdc148f7cae8ce170"
+      }
+    ],
+    "isNew": true
+  },
+  {
+    "_id": "6a8100c05364d4534987d1d8",
+    "slug": "medjool-dates",
+    "name": "Medjool Dates",
+    "tagline": "Large Soft Medjool · Rich Caramel Bite ",
+    "price": 797,
+    "category": "nuts",
+    "badge": "Organic",
+    "images": [
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787554547/visvam_harvest_products/zgyllqcnnueb2xf8ixgb.jpg",
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787554538/visvam_harvest_products/peqpnwflcub8g8kwktza.jpg",
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787554540/visvam_harvest_products/gk5trizkykgzdtnjmkda.jpg"
+    ],
+    "description": "Abundantly plump, soft, and moist Medjool dates with a rich caramel texture. Perfect as a natural pre-workout energy boost.",
+    "serving": "500g Box",
+    "origin": "Jericho Oasis",
+    "prepMinutes": 0,
+    "grade": "Super Jumbo",
+    "benefits": [],
+    "bestseller": false,
+    "isNewProduct": false,
+    "stock": 1000,
+    "rating": 4.8,
+    "numReviews": 11,
+    "__v": 0,
+    "createdAt": "2026-08-16T00:13:52.652Z",
+    "updatedAt": "2026-08-24T06:56:20.907Z",
+    "hasVariants": true,
+    "variantAttributes": [
+      {
+        "name": "Weight",
+        "values": [
+          "250g",
+          "500g"
+        ],
+        "_id": "6a8beb147b9cdc5ed1b46d8c"
+      }
+    ],
+    "variants": [
+      {
+        "sku": "MEDJ-250G",
+        "title": "250g",
+        "options": {
+          "Weight": "250g"
+        },
+        "price": 797,
+        "mrp": 898,
+        "stock": 500,
+        "isDefault": true,
+        "_id": "6a8beb147b9cdc5ed1b46d8d"
+      },
+      {
+        "sku": "MEDJ-500G",
+        "title": "500g",
+        "options": {
+          "Weight": "500g"
+        },
+        "price": 1449,
+        "mrp": 1666,
+        "stock": 500,
+        "isDefault": false,
+        "_id": "6a8beb147b9cdc5ed1b46d8e"
+      }
+    ],
+    "isNew": false
+  },
+  {
+    "_id": "6a8100c05364d4534987d1d3",
+    "slug": "whole-cashews",
+    "name": "Whole Cashews",
+    "tagline": "Creamy crunch",
+    "price": 849,
+    "category": "nuts",
+    "badge": "Creamy",
+    "images": [
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787555031/visvam_harvest_products/ir6hces7bttp7a0aexmp.jpg",
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787554966/visvam_harvest_products/x6ywfa0jsvq4ydusf0bw.jpg",
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787554975/visvam_harvest_products/dljlhxssdet8slkdzjgt.jpg"
+    ],
+    "description": "From their naturally curved shape to their smooth, creamy texture, cashews have a simple charm that makes them hard to resist. Thoughtfully sourced and carefully prepared, they’re a delightful choice for everyday snacking and sharing.",
+    "serving": "500g Jar",
+    "origin": "Mangaluru, India",
+    "prepMinutes": 0,
+    "grade": "W240 Whole",
+    "benefits": [],
+    "bestseller": false,
+    "isNewProduct": true,
+    "stock": 1000,
+    "rating": 4.8,
+    "numReviews": 11,
+    "__v": 0,
+    "createdAt": "2026-08-16T00:13:52.651Z",
+    "updatedAt": "2026-08-24T07:04:11.137Z",
+    "hasVariants": true,
+    "variantAttributes": [
+      {
+        "name": "Grade",
+        "values": [
+          "Extra Bold",
+          "Medium",
+          "Regular"
+        ],
+        "_id": "6a8becebdc148f7cae8ce18c"
+      },
+      {
+        "name": "Weight",
+        "values": [
+          "250g",
+          "500g"
+        ],
+        "_id": "6a8becebdc148f7cae8ce18d"
+      }
+    ],
+    "variants": [
+      {
+        "sku": "WHOL-XBLD-250",
+        "title": "Extra Bold · 250g",
+        "options": {
+          "Grade": "Extra Bold",
+          "Weight": "250g"
+        },
+        "price": 849,
+        "mrp": 899,
+        "stock": 500,
+        "isDefault": true,
+        "_id": "6a8becebdc148f7cae8ce18e"
+      },
+      {
+        "sku": "WHOL-XBLD-500",
+        "title": "Extra Bold · 500g",
+        "options": {
+          "Grade": "Extra Bold",
+          "Weight": "500g"
+        },
+        "price": 1599,
+        "mrp": 1699,
+        "stock": 500,
+        "isDefault": false,
+        "_id": "6a8becebdc148f7cae8ce18f"
+      },
+      {
+        "sku": "WHOL-MEDI-250G",
+        "title": "Medium · 250g",
+        "options": {
+          "Grade": "Medium",
+          "Weight": "250g"
+        },
+        "price": 1399,
+        "mrp": 1609,
+        "stock": 500,
+        "isDefault": false,
+        "_id": "6a8becebdc148f7cae8ce190"
+      },
+      {
+        "sku": "WHOL-MEDI-500G",
+        "title": "Medium · 500g",
+        "options": {
+          "Grade": "Medium",
+          "Weight": "500g"
+        },
+        "price": 1399,
+        "mrp": 1609,
+        "stock": 500,
+        "isDefault": false,
+        "_id": "6a8becebdc148f7cae8ce191"
+      },
+      {
+        "sku": "WHOL-REGU-250G",
+        "title": "Regular · 250g",
+        "options": {
+          "Grade": "Regular",
+          "Weight": "250g"
+        },
+        "price": 1399,
+        "mrp": 1609,
+        "stock": 500,
+        "isDefault": false,
+        "_id": "6a8becebdc148f7cae8ce192"
+      },
+      {
+        "sku": "WHOL-REGU-500G",
+        "title": "Regular · 500g",
+        "options": {
+          "Grade": "Regular",
+          "Weight": "500g"
+        },
+        "price": 1399,
+        "mrp": 1609,
+        "stock": 500,
+        "isDefault": false,
+        "_id": "6a8becebdc148f7cae8ce193"
+      }
+    ],
+    "isNew": true
+  },
+  {
+    "_id": "6a8100c05364d4534987d1d2",
+    "slug": "california-almonds",
+    "name": "California Almonds",
+    "tagline": "",
+    "price": 659,
+    "category": "nuts",
+    "badge": "Everyday Favourite",
+    "images": [
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787555796/visvam_harvest_products/ileydiqfzi1t4tb53id4.jpg",
+      "https://res.cloudinary.com/dvwpxb2oa/image/upload/v1787556309/visvam_harvest_products/t83fc6mnulq6qjk6vpzq.jpg"
+    ],
+    "description": "Recognisable by their smooth, fuller shape and lighter appearance, California almonds offer a clean, familiar character. Their consistent size and texture make them a versatile favourite for everyday enjoyment.",
+    "serving": "500g Pouch",
+    "origin": "California, USA",
+    "prepMinutes": 0,
+    "grade": "Jumbo A1",
+    "benefits": [],
+    "bestseller": true,
+    "isNewProduct": false,
+    "stock": 1000,
+    "rating": 4.8,
+    "numReviews": 11,
+    "__v": 0,
+    "createdAt": "2026-08-16T00:13:52.650Z",
+    "updatedAt": "2026-08-24T07:25:27.657Z",
+    "hasVariants": true,
+    "variantAttributes": [
+      {
+        "name": "Weight",
+        "values": [
+          "250g",
+          "500g"
+        ],
+        "_id": "6a8bf04c7b9cdc5ed1b46daa"
+      }
+    ],
+    "variants": [
+      {
+        "sku": "CALI-250G",
+        "title": "250g",
+        "options": {
+          "Weight": "250g"
+        },
+        "price": 659,
+        "mrp": 743,
+        "stock": 500,
+        "isDefault": true,
+        "_id": "6a8bf04c7b9cdc5ed1b46dab"
+      },
+      {
+        "sku": "CALI-500G",
+        "title": "500g",
+        "options": {
+          "Weight": "500g"
+        },
+        "price": 1199,
+        "mrp": 1379,
+        "stock": 500,
+        "isDefault": false,
+        "_id": "6a8bf04c7b9cdc5ed1b46dac"
+      }
+    ],
+    "isNew": false
+  }
+]
