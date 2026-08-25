@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Search, X, ArrowRight, Sparkles } from "lucide-react";
+import { Search, X, ArrowRight } from "lucide-react";
 import { type Product } from "@/lib/products";
 import { formatPrice } from "@/lib/cart-context";
 import { fetchProductsFromBackend } from "@/lib/api";
@@ -10,8 +10,6 @@ type SearchModalProps = {
   isOpen: boolean;
   onClose: () => void;
 };
-
-const POPULAR_TAGS = ["Jumbo Almonds", "W240 Cashews", "Medjool Dates", "Mamra Almonds", "Gift Box"];
 
 export function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const navigate = useNavigate();
@@ -103,24 +101,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
           {!query.trim() ? (
             <div className="space-y-6">
               <div>
-                <p className="text-[10px] tracked text-muted-foreground mb-3 flex items-center gap-1.5">
-                  <Sparkles size={12} className="text-clay" /> Popular Searches
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {POPULAR_TAGS.map((tag) => (
-                    <button
-                      key={tag}
-                      onClick={() => setQuery(tag)}
-                      className="text-xs border border-border px-3 py-1.5 hover:border-clay hover:bg-cream/60 transition-colors text-ink/80"
-                    >
-                      {tag}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <p className="text-[10px] tracked text-muted-foreground mb-3">Featured Royal Collections</p>
+                <p className="text-[10px] tracked text-muted-foreground mb-3">Featured Collections</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {allProducts.slice(0, 4).map((p) => (
                     <Link
