@@ -27,6 +27,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ProposalPdfRouteImport } from './routes/proposal-pdf'
 import { Route as ReturnsRouteImport } from './routes/returns'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as ShippingRouteImport } from './routes/shipping'
 import { Route as StoryRouteImport } from './routes/story'
 import { Route as TermsRouteImport } from './routes/terms'
@@ -123,6 +124,11 @@ const ReturnsRoute = ReturnsRouteImport.update({
   path: '/returns',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShippingRoute = ShippingRouteImport.update({
   id: '/shipping',
   path: '/shipping',
@@ -168,6 +174,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/proposal-pdf': typeof ProposalPdfRoute
   '/returns': typeof ReturnsRoute
+  '/search': typeof SearchRoute
   '/shipping': typeof ShippingRoute
   '/story': typeof StoryRoute
   '/terms': typeof TermsRoute
@@ -193,6 +200,7 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileRoute
   '/proposal-pdf': typeof ProposalPdfRoute
   '/returns': typeof ReturnsRoute
+  '/search': typeof SearchRoute
   '/shipping': typeof ShippingRoute
   '/story': typeof StoryRoute
   '/terms': typeof TermsRoute
@@ -219,6 +227,7 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/proposal-pdf': typeof ProposalPdfRoute
   '/returns': typeof ReturnsRoute
+  '/search': typeof SearchRoute
   '/shipping': typeof ShippingRoute
   '/story': typeof StoryRoute
   '/terms': typeof TermsRoute
@@ -246,6 +255,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/proposal-pdf'
     | '/returns'
+    | '/search'
     | '/shipping'
     | '/story'
     | '/terms'
@@ -271,6 +281,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/proposal-pdf'
     | '/returns'
+    | '/search'
     | '/shipping'
     | '/story'
     | '/terms'
@@ -296,6 +307,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/proposal-pdf'
     | '/returns'
+    | '/search'
     | '/shipping'
     | '/story'
     | '/terms'
@@ -322,6 +334,7 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   ProposalPdfRoute: typeof ProposalPdfRoute
   ReturnsRoute: typeof ReturnsRoute
+  SearchRoute: typeof SearchRoute
   ShippingRoute: typeof ShippingRoute
   StoryRoute: typeof StoryRoute
   TermsRoute: typeof TermsRoute
@@ -457,6 +470,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReturnsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shipping': {
       id: '/shipping'
       path: '/shipping'
@@ -514,6 +534,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   ProposalPdfRoute: ProposalPdfRoute,
   ReturnsRoute: ReturnsRoute,
+  SearchRoute: SearchRoute,
   ShippingRoute: ShippingRoute,
   StoryRoute: StoryRoute,
   TermsRoute: TermsRoute,

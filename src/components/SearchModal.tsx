@@ -1,9 +1,10 @@
 import { useState, useMemo, useEffect } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Search, X, ArrowRight, Sparkles } from "lucide-react";
-import { products, type Product } from "@/lib/products";
+import { type Product } from "@/lib/products";
 import { formatPrice } from "@/lib/cart-context";
 import { fetchProductsFromBackend } from "@/lib/api";
+import { searchProducts } from "@/lib/search";
 
 type SearchModalProps = {
   isOpen: boolean;
@@ -13,32 +14,30 @@ type SearchModalProps = {
 const POPULAR_TAGS = ["Jumbo Almonds", "W240 Cashews", "Medjool Dates", "Mamra Almonds", "Gift Box"];
 
 export function SearchModal({ isOpen, onClose }: SearchModalProps) {
+  const navigate = useNavigate();
   const [query, setQuery] = useState("");
-  const [allProducts, setAllProducts] = useState<Product[]>(products);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
+      setLoadingProducts(true);
       fetchProductsFromBackend().then((backendProducts) => {
-        if (backendProducts && backendProducts.length > 0) {
-          const map = new Map<string, Product>();
-          products.forEach((p) => map.set(p.slug, p));
-          backendProducts.forEach((p) => map.set(p.slug, p));
-          setAllProducts(Array.from(map.values()));
-        }
+        setAllProducts(backendProducts || []);
+        setLoadingProducts(false);
       });
     }
   }, [isOpen]);
 
-  const results = useMemo(() => {
-    if (!query.trim()) return [];
-    const q = query.toLowerCase();
-    return allProducts.filter(
-      (p) =>
-        p.name.toLowerCase().includes(q) ||
-        p.description.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q)
-    );
-  }, [query, allProducts]);
+  const results = useMemo(() => searchProducts(allProducts, query), [query, allProducts]);
+  const VISIBLE_LIMIT = 6;
+  const visibleResults = results.slice(0, VISIBLE_LIMIT);
+
+  const goToFullResults = () => {
+    if (!query.trim()) return;
+    navigate({ to: "/search", search: { q: query.trim() } });
+    onClose();
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -75,6 +74,9 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") goToFullResults();
+            }}
             placeholder="Search almonds, cashews, figs, medjool dates, gift sets..."
             className="w-full bg-transparent text-sm md:text-base outline-none text-ink placeholder:text-muted-foreground/60 font-sans"
             autoFocus
@@ -120,7 +122,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
               <div>
                 <p className="text-[10px] tracked text-muted-foreground mb-3">Featured Royal Collections</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {products.slice(0, 4).map((p) => (
+                  {allProducts.slice(0, 4).map((p) => (
                     <Link
                       key={p.slug}
                       to="/menu/$slug"
@@ -144,13 +146,27 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
                 </div>
               </div>
             </div>
+          ) : loadingProducts ? (
+            <div className="text-center py-10">
+              <p className="font-display italic text-lg text-muted-foreground animate-pulse">Searching our collection...</p>
+            </div>
           ) : results.length > 0 ? (
             <div>
-              <p className="text-[10px] tracked text-muted-foreground mb-3">
-                Found {results.length} item{results.length > 1 ? "s" : ""} matching "{query}"
-              </p>
+              <div className="flex items-center justify-between mb-3 gap-3">
+                <p className="text-[10px] tracked text-muted-foreground">
+                  Found {results.length} item{results.length > 1 ? "s" : ""} matching "{query}"
+                </p>
+                {results.length > VISIBLE_LIMIT && (
+                  <button
+                    onClick={goToFullResults}
+                    className="text-[10px] tracked font-medium text-clay hover:underline shrink-0"
+                  >
+                    View all {results.length}
+                  </button>
+                )}
+              </div>
               <div className="divide-y divide-border/40">
-                {results.map((p) => (
+                {visibleResults.map((p) => (
                   <Link
                     key={p.slug}
                     to="/menu/$slug"
