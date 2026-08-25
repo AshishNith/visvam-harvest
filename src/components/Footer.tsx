@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Instagram, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { subscribeNewsletterToBackend } from "@/lib/api";
 import logoEmblem from "@/assets/Visvam Logo.png";
@@ -117,6 +117,15 @@ export function Footer() {
             <Link to="/terms" className="hover:text-clay transition">Terms</Link>
             <Link to="/cookies" className="hover:text-clay transition">Cookie Notice</Link>
             <Link to="/contact" className="hover:text-clay transition">Contact Us</Link>
+            <a
+              href="https://www.instagram.com/visvam.in/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Viśvam on Instagram"
+              className="hover:text-clay transition"
+            >
+              <Instagram size={14} />
+            </a>
           </div>
         </div>
       </div>

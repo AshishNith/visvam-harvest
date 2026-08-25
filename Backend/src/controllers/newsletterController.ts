@@ -47,7 +47,7 @@ export const subscribeNewsletter = async (req: Request, res: Response): Promise<
 
     res.status(201).json({
       success: true,
-      message: "Welcome to the Viśvam Royal Circle! 10% discount code has been reserved for your email.",
+      message: "Welcome to the Viśvam Royal Circle!",
     });
   } catch (error: any) {
     res.status(500).json({

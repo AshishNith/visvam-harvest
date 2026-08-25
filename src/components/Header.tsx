@@ -184,7 +184,7 @@ export function Header() {
                                     <p className="text-[10.5px] text-clay font-semibold mt-0.5">
                                       {formatPrice(p.price)}
                                       <span className="text-[9px] text-muted-foreground font-normal ml-1">
-                                        / {p.serving}
+                                        / {p.serving.replace(/\b(Tin|Pouch)\b/gi, "").trim()}
                                       </span>
                                     </p>
                                   </div>

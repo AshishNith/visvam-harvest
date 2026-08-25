@@ -1,8 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import nutsCategoriesBg from "@/assets/nuts-categories-bg.jpg";
-import gourmetHeroBg from "@/assets/gourmet-hero-bg.jpg";
-import giftingCategoriesBg from "@/assets/gifting-categories-bg.jpg";
+import nutsCategoriesBg from "@/assets/Nuts-Dried-Homepage-BG.png";
+import gourmetHeroBg from "@/assets/Gourmets-Homepage-BG.png";
+import giftingCategoriesBg from "@/assets/Gifting-Homepage-BG.png";
 
 type CategoryItem = {
   id: string;
@@ -24,7 +24,7 @@ const CATEGORIES: CategoryItem[] = [
     id: "gourmet",
     slug: "gourmet",
     title: "Gourmet",
-    subtitle: "The little joys we love to share—sweet, savoury, and made for togetherness.",
+    subtitle: "Curated for everyday indulgence. A little sweet, a little savoury, made for togetherness.",
     image: gourmetHeroBg,
   },
   {
@@ -66,7 +66,7 @@ export function ScrollStackCategories() {
                   {cat.subtitle}
                 </p>
                 <span className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-white group-hover:text-sand border-b border-white/60 pb-1 self-start transition-all pt-1">
-                  <span>Explore Line</span>
+                  <span>Explore</span>
                   <ArrowRight size={13} className="group-hover:translate-x-1.5 transition-transform duration-300" />
                 </span>
               </div>

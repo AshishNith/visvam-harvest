@@ -28,7 +28,7 @@ const META: Record<Category, { index: string; title: string; intro: string; imag
     index: "03",
     title: "Gifting",
     intro:
-      "Handcrafted luxury presentation boxes and celebratory dry fruit hampers featuring distinct compartments of our finest single-origin nuts and gourmet selections.",
+      "Celebratory dry fruit hampers featuring our finest nuts, dried fruits and gourmet selections.",
     image: cImg("08_Assorted_Mix_and_Gift_Platters/DSC00762.jpg"),
   },
 };

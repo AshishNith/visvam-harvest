@@ -349,25 +349,13 @@ export async function subscribeNewsletterToBackend(email: string) {
   }
 }
 
-import { FALLBACK_REVIEWS } from "./reviews-data";
-
 // ─── Reviews API ─────────────────────────────────────────────────
 export async function fetchProductReviews(productSlug: string) {
-  const fallback = FALLBACK_REVIEWS[productSlug] || FALLBACK_REVIEWS["california-jumbo-almonds"] || [];
-  const fallbackAvg =
-    fallback.length > 0
-      ? Math.round((fallback.reduce((sum, r) => sum + r.rating, 0) / fallback.length) * 10) / 10
-      : 0;
-
   try {
     const res = await fetch(`${API_BASE_URL}/reviews/${encodeURIComponent(productSlug)}`);
-    const json = await res.json();
-    if (json && json.success && Array.isArray(json.data) && json.data.length > 0) {
-      return json;
-    }
-    return { success: true, count: fallback.length, avgRating: fallbackAvg, data: fallback };
+    return await res.json();
   } catch (error: any) {
-    return { success: true, count: fallback.length, avgRating: fallbackAvg, data: fallback };
+    return { success: false, count: 0, avgRating: 0, data: [], message: error.message };
   }
 }
 

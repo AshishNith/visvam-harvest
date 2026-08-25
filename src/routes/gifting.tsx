@@ -106,7 +106,7 @@ function GiftingPage() {
           <div className="w-12 h-px bg-sand/80 mx-auto my-6 animate-fade-up shadow-sm" />
 
           <p className="font-baskerville italic text-lg sm:text-2xl text-cream leading-relaxed max-w-2xl mx-auto animate-fade-up [animation-delay:150ms] drop-shadow-md">
-            Handcrafted luxury presentation boxes and celebratory dry fruit hampers featuring distinct compartments of our finest single-origin nuts and gourmet selections.
+            Celebratory dry fruit hampers featuring our finest nuts, dried fruits and gourmet selections.
           </p>
         </div>
       </section>
