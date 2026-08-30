@@ -64,7 +64,7 @@ function PrivacyPolicy() {
               <div className="p-5 bg-cream/50 rounded-xl border border-border/60 text-xs font-mono space-y-1.5 text-ink">
                 <p className="font-bold text-sm">Tej Kripa Private Limited <span className="font-normal text-muted-foreground">(brand: Viśvam)</span></p>
                 <p>Address: F-329, 2nd Floor, F Block, Sector-63, Noida, Uttar Pradesh 201309</p>
-                <p>CIN: U46301UW2026PTC254347 &nbsp;&bull;&nbsp; GSTIN: AANCT2392L</p>
+                <p>CIN: U46301UW2026PTC254347 &nbsp;&bull;&nbsp; GSTIN: 09AANCT2392L1ZM</p>
                 <p>Contact for privacy matters: <a href="mailto:contact@visvam.in" className="text-clay underline font-medium">contact@visvam.in</a></p>
               </div>
             </section>

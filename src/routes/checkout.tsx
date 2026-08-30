@@ -14,6 +14,7 @@ import {
   Mail,
   CreditCard,
   Banknote,
+  Zap,
 } from "lucide-react";
 import { useCart, formatPrice, type ShippingAddress } from "@/lib/cart-context";
 import { useAuth } from "@/lib/auth-context";
@@ -22,7 +23,12 @@ import {
   checkPincodeServiceability,
   createRazorpayOrder,
   verifyRazorpayPayment,
+  fetchMyAddresses,
+  createAddress,
+  type SavedAddress,
 } from "@/lib/api";
+import { CityStateFields } from "@/components/CityStateFields";
+import { prefillableName, sanitizeNameInput } from "@/lib/name";
 import { loadRazorpayScript } from "@/lib/razorpay";
 import { toast } from "sonner";
 import type { ConfirmationResult } from "@/lib/firebase";
@@ -43,7 +49,24 @@ export const Route = createFileRoute("/checkout")({
   component: CheckoutPage,
 });
 
+// Express delivery is the only paid option, and it is complimentary once the
+// order clears this threshold. Standard delivery is always free. Mirrors the
+// same rule in Backend/src/controllers/orderController.ts, which is the
+// authority on what actually gets charged.
 const FREE_SHIPPING_THRESHOLD = 3499;
+const EXPRESS_SHIPPING_FEE = 79;
+
+type ShippingMethod = "standard" | "express";
+
+/** Saved addresses store a `pincode`; the checkout form expects the same shape. */
+const toShippingAddress = (address: SavedAddress): ShippingAddress => ({
+  fullName: address.fullName || "",
+  phone: address.phone || "",
+  street: address.street || "",
+  city: address.city || "",
+  state: address.state || "",
+  pincode: address.pincode || "",
+});
 
 function CheckoutPage() {
   const navigate = useNavigate();
@@ -61,9 +84,14 @@ function CheckoutPage() {
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
 
   const [addressForm, setAddressForm] = useState<ShippingAddress>(shippingAddress);
+  const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+  const [addressesLoading, setAddressesLoading] = useState(false);
   const [submittingOrder, setSubmittingOrder] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "cod">("razorpay");
+  // Defaults to standard - express is never applied unless the customer picks it.
+  const [shippingMethod, setShippingMethod] = useState<ShippingMethod>("standard");
   // Set once the underlying Order document is created, so a retry after a
   // cancelled/failed payment reuses it instead of creating a duplicate order.
   const [pendingOrderId, setPendingOrderId] = useState<string | null>(null);
@@ -186,16 +214,71 @@ function CheckoutPage() {
     setAddressForm(shippingAddress);
   }, [shippingAddress]);
 
-  // Pre-fill name from user profile
+  // Pull the customer's saved addresses once they are signed in and drop the
+  // default one straight into the form, so a returning customer does not retype
+  // an address they already gave us.
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setSavedAddresses([]);
+      setSelectedAddressId(null);
+      return;
+    }
+
+    let cancelled = false;
+    (async () => {
+      setAddressesLoading(true);
+      try {
+        const res = await fetchMyAddresses();
+        if (cancelled) return;
+
+        const list = res.success && Array.isArray(res.data) ? res.data : [];
+        setSavedAddresses(list);
+
+        if (list.length > 0) {
+          const preferred = list.find((a) => a.isDefault) || list[0];
+          setSelectedAddressId(preferred._id);
+          setAddressForm(toShippingAddress(preferred));
+        }
+      } finally {
+        if (!cancelled) setAddressesLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthenticated]);
+
+  // Fall back to the profile name when there is nothing saved to prefill from.
   useEffect(() => {
     if (user && !addressForm.fullName) {
-      setAddressForm((prev) => ({ ...prev, fullName: user.name || "" }));
+      setAddressForm((prev) => ({ ...prev, fullName: prefillableName(user.name) }));
     }
   }, [user]);
 
-  const shippingPrice = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : 79;
+  const handleSelectSavedAddress = (address: SavedAddress) => {
+    setSelectedAddressId(address._id);
+    setAddressForm(toShippingAddress(address));
+  };
+
+  const handleUseNewAddress = () => {
+    setSelectedAddressId(null);
+    setAddressForm({ fullName: prefillableName(user?.name), phone: "", street: "", city: "", state: "", pincode: "" });
+  };
+
+  const expressIsFree = subtotal >= FREE_SHIPPING_THRESHOLD;
+  const shippingPrice = shippingMethod === "express" && !expressIsFree ? EXPRESS_SHIPPING_FEE : 0;
   const taxPrice = Math.round(subtotal * 0.05);
   const totalPrice = subtotal + shippingPrice + taxPrice;
+
+  // The Order document is created before payment and priced server-side, so a
+  // delivery-speed change after that point has to void the pending order -
+  // otherwise the customer pays the total from the previous selection.
+  const handleSelectShippingMethod = (method: ShippingMethod) => {
+    if (method === shippingMethod) return;
+    setShippingMethod(method);
+    setPendingOrderId(null);
+  };
 
   // Validate Address
   const validateAddress = (): boolean => {
@@ -220,6 +303,21 @@ function CheckoutPage() {
     try {
       setShippingAddress(addressForm);
 
+      // A freshly typed address is worth keeping for next time. Saving is a
+      // convenience, never a reason to block the order, so failures stay quiet.
+      if (selectedAddressId === null) {
+        createAddress({
+          label: savedAddresses.length === 0 ? "Home" : "Other",
+          fullName: addressForm.fullName,
+          phone: addressForm.phone,
+          street: addressForm.street,
+          city: addressForm.city,
+          state: addressForm.state,
+          pincode: addressForm.pincode,
+          isDefault: savedAddresses.length === 0,
+        }).catch(() => {});
+      }
+
       let orderId: string | null = pendingOrderId;
 
       if (!orderId) {
@@ -240,6 +338,7 @@ function CheckoutPage() {
           shippingAddress: addressForm,
           guestEmail: user?.email || "",
           paymentMethod: paymentMethod === "razorpay" ? "Razorpay" : "Cash on Delivery",
+          shippingMethod,
         });
 
         if (!res.success || !res.data?._id) {
@@ -565,7 +664,7 @@ function CheckoutPage() {
                   </div>
                   <div>
                     <p className="text-xs font-medium text-ink">{user?.name || user?.email}</p>
-                    <p className="text-[10px] text-muted-foreground">Authenticated · Royal Member</p>
+                    <p className="text-[10px] text-muted-foreground">Authenticated · Member</p>
                   </div>
                 </div>
                 <Link
@@ -581,13 +680,68 @@ function CheckoutPage() {
                 <h3 className="text-sm font-semibold uppercase tracking-wider flex items-center gap-2 text-ink border-b border-border pb-3">
                   <MapPin size={16} className="text-clay" /> Shipping & Delivery Address
                 </h3>
+
+                {addressesLoading && (
+                  <p className="text-[10px] text-muted-foreground flex items-center gap-2">
+                    <Loader2 size={11} className="animate-spin text-clay" /> Loading your saved addresses...
+                  </p>
+                )}
+
+                {savedAddresses.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-[10px] tracked text-muted-foreground uppercase">Deliver to a saved address</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {savedAddresses.map((address) => {
+                        const isSelected = selectedAddressId === address._id;
+                        return (
+                          <button
+                            key={address._id}
+                            type="button"
+                            onClick={() => handleSelectSavedAddress(address)}
+                            className={`text-left p-3 border transition-colors ${
+                              isSelected
+                                ? "border-clay bg-cream/60"
+                                : "border-border hover:border-clay/50 bg-transparent"
+                            }`}
+                          >
+                            <span className="flex items-center gap-2 mb-1">
+                              <span className="text-[10px] tracked uppercase font-semibold text-ink">
+                                {address.label || "Address"}
+                              </span>
+                              {address.isDefault && (
+                                <span className="text-[8px] tracked uppercase text-clay border border-clay/40 px-1.5 py-0.5">
+                                  Default
+                                </span>
+                              )}
+                            </span>
+                            <span className="block text-[10px] text-muted-foreground leading-relaxed">
+                              {address.fullName} · {address.phone}
+                              <br />
+                              {address.street}, {address.city}, {address.state} — {address.pincode}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleUseNewAddress}
+                      className={`text-[10px] tracked uppercase font-semibold underline transition-colors ${
+                        selectedAddressId === null ? "text-clay" : "text-muted-foreground hover:text-clay"
+                      }`}
+                    >
+                      + Deliver somewhere else
+                    </button>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[10px] tracked text-muted-foreground uppercase mb-1">Full Name *</label>
                     <input
                       type="text"
                       value={addressForm.fullName}
-                      onChange={(e) => setAddressForm({ ...addressForm, fullName: e.target.value })}
+                      onChange={(e) => setAddressForm({ ...addressForm, fullName: sanitizeNameInput(e.target.value) })}
                       placeholder="Receiver's name"
                       className="w-full px-3 py-2 text-xs border border-border outline-none focus:border-clay bg-transparent"
                       required
@@ -617,28 +771,15 @@ function CheckoutPage() {
                   />
                 </div>
                 <div className="grid grid-cols-3 gap-3">
-                  <div>
-                    <label className="block text-[10px] tracked text-muted-foreground uppercase mb-1">City *</label>
-                    <input
-                      type="text"
-                      value={addressForm.city}
-                      onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
-                      placeholder="City"
-                      className="w-full px-3 py-2 text-xs border border-border outline-none focus:border-clay bg-transparent"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] tracked text-muted-foreground uppercase mb-1">State *</label>
-                    <input
-                      type="text"
-                      value={addressForm.state}
-                      onChange={(e) => setAddressForm({ ...addressForm, state: e.target.value })}
-                      placeholder="State"
-                      className="w-full px-3 py-2 text-xs border border-border outline-none focus:border-clay bg-transparent"
-                      required
-                    />
-                  </div>
+                  <CityStateFields
+                    city={addressForm.city}
+                    state={addressForm.state}
+                    onCityChange={(city) => setAddressForm({ ...addressForm, city })}
+                    onStateChange={(state) => setAddressForm({ ...addressForm, state })}
+                    inputClass="w-full px-3 py-2 text-xs border border-border outline-none focus:border-clay bg-transparent"
+                    labelClass="block text-[10px] tracked text-muted-foreground uppercase mb-1"
+                    required
+                  />
                   <div>
                     <label className="block text-[10px] tracked text-muted-foreground uppercase mb-1">Pincode *</label>
                     <input
@@ -666,7 +807,7 @@ function CheckoutPage() {
                     <div className="flex items-center gap-2">
                       <Truck size={15} className="text-emerald-700 shrink-0" />
                       <div>
-                        <span className="font-semibold">Express Delivery: {pincodeResult.etd}</span>
+                        <span className="font-semibold">Estimated Delivery: {pincodeResult.etd}</span>
                         <span className="text-[10px] text-emerald-700 block">
                           Dispatched via {pincodeResult.courierName} with live GPS tracking
                         </span>
@@ -679,6 +820,65 @@ function CheckoutPage() {
                 )}
               </div>
 
+              {/* Delivery Speed Selection */}
+              <div className="bg-background border border-border p-6 space-y-3">
+                <h3 className="text-sm font-semibold uppercase tracking-wider flex items-center gap-2 text-ink border-b border-border pb-3">
+                  <Truck size={16} className="text-clay" /> Delivery Speed
+                </h3>
+
+                <button
+                  type="button"
+                  onClick={() => handleSelectShippingMethod("standard")}
+                  className={`w-full p-4 border-2 flex items-center justify-between transition-colors text-left ${
+                    shippingMethod === "standard" ? "border-clay bg-cream/30" : "border-border hover:border-clay/50"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`size-4 rounded-full border-2 shrink-0 flex items-center justify-center ${
+                        shippingMethod === "standard" ? "border-clay" : "border-border"
+                      }`}
+                    >
+                      {shippingMethod === "standard" && <span className="size-2 rounded-full bg-clay" />}
+                    </span>
+                    <div>
+                      <p className="text-xs font-semibold text-ink">Standard Delivery</p>
+                      <p className="text-[10px] text-muted-foreground">Arrives in 5–7 business days</p>
+                    </div>
+                  </div>
+                  <span className="text-[10px] tracked font-bold uppercase text-clay shrink-0">Free</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleSelectShippingMethod("express")}
+                  className={`w-full p-4 border-2 flex items-center justify-between transition-colors text-left ${
+                    shippingMethod === "express" ? "border-clay bg-cream/30" : "border-border hover:border-clay/50"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`size-4 rounded-full border-2 shrink-0 flex items-center justify-center ${
+                        shippingMethod === "express" ? "border-clay" : "border-border"
+                      }`}
+                    >
+                      {shippingMethod === "express" && <span className="size-2 rounded-full bg-clay" />}
+                    </span>
+                    <div>
+                      <p className="text-xs font-semibold text-ink flex items-center gap-1.5">
+                        <Zap size={12} className="text-clay" /> Express Delivery
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">
+                        Arrives in 3–5 business days
+                        {!expressIsFree && ` · complimentary over ${formatPrice(FREE_SHIPPING_THRESHOLD)}`}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-[10px] tracked font-bold uppercase text-clay shrink-0 tabular-nums">
+                    {expressIsFree ? "Free" : formatPrice(EXPRESS_SHIPPING_FEE)}
+                  </span>
+                </button>
+              </div>
               {/* Payment Selection */}
               <div className="bg-background border border-border p-6 space-y-3">
                 <h3 className="text-sm font-semibold uppercase tracking-wider flex items-center gap-2 text-ink border-b border-border pb-3">
@@ -799,7 +999,7 @@ function CheckoutPage() {
                     <span className="tabular-nums text-ink font-medium">{formatPrice(subtotal)}</span>
                   </div>
                   <div className="flex justify-between text-muted-foreground">
-                    <span>Express Shipping</span>
+                    <span>{shippingMethod === "express" ? "Express Shipping" : "Standard Shipping"}</span>
                     <span className="tabular-nums font-medium">
                       {shippingPrice === 0 ? <span className="text-clay font-bold">FREE</span> : formatPrice(shippingPrice)}
                     </span>
@@ -816,7 +1016,6 @@ function CheckoutPage() {
 
                 <div className="pt-2 text-[10px] text-muted-foreground space-y-1.5 border-t border-border/60">
                   <p className="flex items-center gap-2"><Truck size={12} className="text-clay" /> Dispatch within 24–48 Hours</p>
-                  <p className="flex items-center gap-2"><ShieldCheck size={12} className="text-clay" /> Premium Packaging</p>
                 </div>
 
                 <div className="pt-4 border-t border-border/60">

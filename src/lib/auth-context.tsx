@@ -275,7 +275,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         (window as any).__recaptchaVerifier = null;
       }
 
-      return handleSyncResponse(syncRes, phoneNumber);
+      // No name fallback here — passing `phoneNumber` put the number in the
+      // account's name field, which then prefilled every "Full Name" input.
+      return handleSyncResponse(syncRes, result.user.displayName || undefined);
     } catch (error: any) {
       console.error("❌ [Verify OTP Error]:", { code: error?.code, message: error?.message, error });
       const rawError = error?.code

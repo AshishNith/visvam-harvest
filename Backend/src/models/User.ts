@@ -1,5 +1,18 @@
 import mongoose, { Document, Schema } from "mongoose";
 
+export interface IAddress {
+  _id?: mongoose.Types.ObjectId;
+  label?: string;
+  fullName: string;
+  phone: string;
+  street: string;
+  city: string;
+  state: string;
+  pincode: string;
+  country: string;
+  isDefault: boolean;
+}
+
 export interface IUser extends Document {
   firebaseUid?: string;
   email?: string;
@@ -9,6 +22,8 @@ export interface IUser extends Document {
   phone?: string;
   avatar?: string;
   profileCompleted: boolean;
+  // Legacy single address, kept so older accounts keep rendering while the
+  // controller folds it into `addresses` on first read.
   address?: {
     street?: string;
     city?: string;
@@ -16,9 +31,30 @@ export interface IUser extends Document {
     zipCode?: string;
     country?: string;
   };
+  addresses: IAddress[];
   createdAt: Date;
   updatedAt: Date;
 }
+
+/**
+ * A customer can keep several delivery addresses and choose one at checkout.
+ * Field names mirror the checkout form (`pincode`, not the legacy `zipCode`)
+ * so a saved address can be handed straight to an order without remapping.
+ */
+const AddressSchema = new Schema<IAddress>(
+  {
+    label: { type: String, trim: true, default: "Home" },
+    fullName: { type: String, required: true, trim: true },
+    phone: { type: String, required: true, trim: true },
+    street: { type: String, required: true, trim: true },
+    city: { type: String, required: true, trim: true },
+    state: { type: String, required: true, trim: true },
+    pincode: { type: String, required: true, trim: true },
+    country: { type: String, default: "India", trim: true },
+    isDefault: { type: Boolean, default: false },
+  },
+  { _id: true, timestamps: true }
+);
 
 const UserSchema = new Schema<IUser>(
   {
@@ -71,6 +107,10 @@ const UserSchema = new Schema<IUser>(
       state: String,
       zipCode: String,
       country: String,
+    },
+    addresses: {
+      type: [AddressSchema],
+      default: [],
     },
   },
   {

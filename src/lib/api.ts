@@ -228,6 +228,7 @@ export interface SubmitOrderData {
   shippingAddress: ShippingAddress;
   guestEmail?: string;
   paymentMethod: string;
+  shippingMethod?: "standard" | "express";
 }
 
 const LOCAL_ORDERS_KEY = "visvam_local_user_orders";
@@ -449,6 +450,152 @@ export async function changePassword(data: { currentPassword: string; newPasswor
     return await res.json();
   } catch (error: any) {
     return { success: false, message: error.message || "Failed to change password" };
+  }
+}
+
+// ─── Saved Addresses API ──────────────────────────────────────────
+export type SavedAddress = {
+  _id: string;
+  label?: string;
+  fullName: string;
+  phone: string;
+  street: string;
+  city: string;
+  state: string;
+  pincode: string;
+  country?: string;
+  isDefault: boolean;
+};
+
+export type AddressInput = {
+  label?: string;
+  fullName: string;
+  phone: string;
+  street: string;
+  city: string;
+  state: string;
+  pincode: string;
+  isDefault?: boolean;
+};
+
+type AddressResponse = { success: boolean; data?: SavedAddress[]; message?: string };
+
+// Every write returns the full updated list, so callers can replace their
+// state outright instead of re-fetching after each change.
+export async function fetchMyAddresses(): Promise<AddressResponse> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/addresses`, { headers: authHeaders() });
+    return await res.json();
+  } catch (error: any) {
+    return { success: false, message: error.message || "Failed to load addresses" };
+  }
+}
+
+export async function createAddress(data: AddressInput): Promise<AddressResponse> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/addresses`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify(data),
+    });
+    return await res.json();
+  } catch (error: any) {
+    return { success: false, message: error.message || "Failed to save address" };
+  }
+}
+
+export async function updateAddress(addressId: string, data: Partial<AddressInput>): Promise<AddressResponse> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/addresses/${addressId}`, {
+      method: "PUT",
+      headers: authHeaders(),
+      body: JSON.stringify(data),
+    });
+    return await res.json();
+  } catch (error: any) {
+    return { success: false, message: error.message || "Failed to update address" };
+  }
+}
+
+export async function deleteAddress(addressId: string): Promise<AddressResponse> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/addresses/${addressId}`, {
+      method: "DELETE",
+      headers: authHeaders(),
+    });
+    return await res.json();
+  } catch (error: any) {
+    return { success: false, message: error.message || "Failed to remove address" };
+  }
+}
+
+export async function setDefaultAddress(addressId: string): Promise<AddressResponse> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/addresses/${addressId}/default`, {
+      method: "PATCH",
+      headers: authHeaders(),
+    });
+    return await res.json();
+  } catch (error: any) {
+    return { success: false, message: error.message || "Failed to set default address" };
+  }
+}
+
+// ─── Account Settings API ─────────────────────────────────────────
+export async function fetchNewsletterPreference(): Promise<{
+  success: boolean;
+  data?: { subscribed: boolean; available: boolean };
+  message?: string;
+}> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/newsletter/me`, { headers: authHeaders() });
+    return await res.json();
+  } catch (error: any) {
+    return { success: false, message: error.message || "Failed to load preference" };
+  }
+}
+
+export async function setNewsletterPreference(subscribed: boolean) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/newsletter/me`, {
+      method: "PUT",
+      headers: authHeaders(),
+      body: JSON.stringify({ subscribed }),
+    });
+    return await res.json();
+  } catch (error: any) {
+    return { success: false, message: error.message || "Failed to update preference" };
+  }
+}
+
+export async function uploadAvatar(file: File): Promise<{ success: boolean; url?: string; message?: string }> {
+  try {
+    const form = new FormData();
+    form.append("file", file);
+
+    // Deliberately not using authHeaders(): setting Content-Type by hand strips
+    // the multipart boundary the browser needs to generate for FormData.
+    const token = getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/upload/avatar`, {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      body: form,
+    });
+    return await res.json();
+  } catch (error: any) {
+    return { success: false, message: error.message || "Failed to upload picture" };
+  }
+}
+
+export async function deleteMyAccount() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/auth/account`, {
+      method: "DELETE",
+      headers: authHeaders(),
+    });
+    return await res.json();
+  } catch (error: any) {
+    return { success: false, message: error.message || "Failed to delete account" };
   }
 }
 

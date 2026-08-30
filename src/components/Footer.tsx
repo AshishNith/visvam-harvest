@@ -109,8 +109,9 @@ export function Footer() {
               className="h-7 w-auto object-contain"
             />
           </Link>
-          <div className="text-[9px] tracked text-muted-foreground text-center">
-            © 2026 Viśvam
+          <div className="text-[9px] tracked text-muted-foreground text-center space-y-1">
+            <p>© 2026 Viśvam</p>
+            <p>Tej Kripa Private Limited &nbsp;&bull;&nbsp; GST No. 09AANCT2392L1ZM</p>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-6 text-[10px] tracked">
             <Link to="/privacy" className="hover:text-clay transition">Privacy</Link>

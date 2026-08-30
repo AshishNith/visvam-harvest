@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { loginUser, syncUser, getUserProfile, updateUserProfile, changePassword, completeProfile } from "../controllers/authController.js";
+import { loginUser, syncUser, getUserProfile, updateUserProfile, changePassword, completeProfile, deleteMyAccount } from "../controllers/authController.js";
 import { authenticate } from "../middleware/authMiddleware.js";
 import { authLimiter } from "../middleware/rateLimiter.js";
 
@@ -18,5 +18,6 @@ router.post("/complete-profile", authenticate, completeProfile);
 router.get("/profile", authenticate, getUserProfile);
 router.put("/profile", authenticate, updateUserProfile);
 router.put("/change-password", authenticate, changePassword);
+router.delete("/account", authenticate, deleteMyAccount);
 
 export default router;

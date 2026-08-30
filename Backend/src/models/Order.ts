@@ -51,6 +51,7 @@ export interface IOrder extends Document {
     country: string;
   };
   paymentMethod: string;
+  shippingMethod: "standard" | "express";
   paymentResult?: IPaymentResult;
   itemsPrice: number;
   taxPrice: number;
@@ -117,6 +118,14 @@ const OrderSchema = new Schema<IOrder>(
       type: String,
       required: true,
       default: "Card / Pickup",
+    },
+    // Chosen by the customer at checkout. Standard is always free; express
+    // carries a fee unless the order clears the free-express threshold.
+    shippingMethod: {
+      type: String,
+      enum: ["standard", "express"],
+      required: true,
+      default: "standard",
     },
     paymentResult: {
       razorpayOrderId: { type: String, index: true },

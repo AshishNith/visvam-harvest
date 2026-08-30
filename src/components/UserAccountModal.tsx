@@ -220,7 +220,7 @@ export function UserAccountModal({ isOpen, onClose }: UserAccountModalProps) {
               <User size={18} strokeWidth={1.5} />
             </div>
             <div>
-              <h3 className="font-display italic text-lg text-ink">Viśvam Royal Account</h3>
+              <h3 className="font-display italic text-lg text-ink">Viśvam Account</h3>
               <p className="text-[10px] tracked text-muted-foreground uppercase">Viśvam Member Portal</p>
             </div>
           </div>
@@ -257,7 +257,7 @@ export function UserAccountModal({ isOpen, onClose }: UserAccountModalProps) {
                 {user.email && <p className="text-xs text-muted-foreground truncate">{user.email}</p>}
                 {user.phone && <p className="text-xs text-muted-foreground truncate">{user.phone}</p>}
                 <span className="inline-block mt-1 text-[9px] tracked text-clay border border-clay/30 px-2 py-0.5 uppercase bg-background font-semibold">
-                  Royal Member
+                  Member
                 </span>
               </div>
             </div>

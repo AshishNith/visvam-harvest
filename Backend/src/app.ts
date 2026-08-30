@@ -16,6 +16,7 @@ import newsletterRoutes from "./routes/newsletterRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import addressRoutes from "./routes/addressRoutes.js";
 import shippingRoutes from "./routes/shippingRoutes.js";
 import merchandisingRoutes from "./routes/merchandisingRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
@@ -132,6 +133,7 @@ app.use("/api/v1/newsletter", newsletterRoutes);
 app.use("/api/v1/upload", uploadRoutes);
 app.use("/api/v1/reviews", reviewRoutes);
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/addresses", addressRoutes);
 app.use("/api/v1/merchandising", merchandisingRoutes);
 app.use("/api/v1/payments", paymentRoutes);
 

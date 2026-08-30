@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Newsletter } from "../models/Newsletter.js";
+import { AuthenticatedRequest } from "../middleware/authMiddleware.js";
 import { sendSubscriptionConfirmationEmail } from "../services/emailService.js";
 import { z } from "zod";
 
@@ -81,6 +82,61 @@ export const getNewsletterSubscribers = async (req: Request, res: Response): Pro
 
 // @desc    Delete subscriber (Admin)
 // @route   DELETE /api/v1/newsletter/:id
+// @desc    Read the signed-in customer's own newsletter status
+// @route   GET /api/v1/newsletter/me
+// @access  Private
+export const getMySubscription = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const user = (req as AuthenticatedRequest).user;
+    if (!user?.email) {
+      // Phone-only accounts have no inbox to send to, so there is nothing to toggle.
+      res.status(200).json({ success: true, data: { subscribed: false, available: false } });
+      return;
+    }
+
+    const record = await Newsletter.findOne({ email: user.email.toLowerCase() });
+    res.status(200).json({
+      success: true,
+      data: { subscribed: record?.status === "subscribed", available: true },
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Subscribe or unsubscribe the signed-in customer
+// @route   PUT /api/v1/newsletter/me
+// @access  Private
+export const setMySubscription = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const authReq = req as AuthenticatedRequest;
+    const user = authReq.user;
+    if (!user?.email) {
+      res.status(400).json({ success: false, message: "Add an email to your profile first" });
+      return;
+    }
+
+    const subscribed = Boolean(authReq.body.subscribed);
+    const email = user.email.toLowerCase();
+
+    // Upsert rather than create: unsubscribing and resubscribing should reuse
+    // the same row instead of colliding with the unique email index.
+    await Newsletter.findOneAndUpdate(
+      { email },
+      { email, status: subscribed ? "subscribed" : "unsubscribed" },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: subscribed ? "Subscribed to the newsletter" : "Unsubscribed from the newsletter",
+      data: { subscribed },
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // @access  Admin
 export const deleteSubscriber = async (req: Request, res: Response): Promise<void> => {
   try {

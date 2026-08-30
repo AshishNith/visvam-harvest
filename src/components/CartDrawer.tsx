@@ -2,11 +2,19 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { X, Minus, Plus, ShoppingBag, Truck, ArrowRight, ArrowLeft, Loader2, MapPin, CheckCircle2 } from "lucide-react";
 import { useCart, formatPrice, type ShippingAddress } from "@/lib/cart-context";
-import { products } from "@/lib/products";
-import { submitOrderToBackend } from "@/lib/api";
+import type { Product } from "@/lib/products";
+import { fetchProductBySlugFromBackend, submitOrderToBackend } from "@/lib/api";
+import { sanitizeNameInput } from "@/lib/name";
+import { CityStateFields } from "@/components/CityStateFields";
 import { toast } from "sonner";
 
 const FREE_SHIPPING_THRESHOLD = 3499;
+
+// The admin-curated "Pairs perfectly with" list is only returned by the
+// single-product endpoint, so a product added from a listing card carries no
+// relatedProducts. Fetch them per slug and cache at module scope — reopening
+// the bag or bumping a quantity then costs no extra requests.
+const relatedCache = new Map<string, Product[]>();
 
 type CheckoutStep = "cart" | "address" | "confirm";
 
@@ -51,6 +59,42 @@ export function CartDrawer() {
   useEffect(() => {
     setAddressForm(shippingAddress);
   }, [shippingAddress]);
+
+  // "Pairs perfectly with" picks for whatever is currently in the bag.
+  const [relatedBySlug, setRelatedBySlug] = useState<Record<string, Product[]>>({});
+
+  useEffect(() => {
+    if (!isOpen) return;
+    let cancelled = false;
+
+    (async () => {
+      const slugs = Array.from(
+        new Set(items.map((i) => i?.product?.slug).filter(Boolean) as string[])
+      );
+
+      // Items added from a product page already carry their picks inline.
+      for (const item of items) {
+        const slug = item?.product?.slug;
+        if (!slug || relatedCache.has(slug)) continue;
+        if (item.product.relatedProducts?.length) {
+          relatedCache.set(slug, item.product.relatedProducts);
+        }
+      }
+
+      const missing = slugs.filter((slug) => !relatedCache.has(slug));
+      if (missing.length) {
+        const fetched = await Promise.all(missing.map((slug) => fetchProductBySlugFromBackend(slug)));
+        missing.forEach((slug, i) => relatedCache.set(slug, fetched[i]?.relatedProducts || []));
+      }
+
+      if (cancelled) return;
+      setRelatedBySlug(Object.fromEntries(slugs.map((slug) => [slug, relatedCache.get(slug) || []])));
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, items]);
 
   if (!isOpen) return null;
 
@@ -127,20 +171,20 @@ export function CartDrawer() {
     closeCart();
   };
 
-  const FREQUENT_SLUGS = [
-    "kashmiri-snow-walnuts",
-    "california-jumbo-almonds",
-    "king-w240-cashews",
-  ];
-
-  const prioritizedProducts = [
-    ...FREQUENT_SLUGS.map((slug) => products.find((p) => p.slug === slug)).filter((p): p is (typeof products)[0] => Boolean(p)),
-    ...products.filter((p) => !FREQUENT_SLUGS.includes(p.slug)),
-  ];
-
-  const suggestions = prioritizedProducts
-    .filter((p) => !items.find((i) => i?.product?.slug === p?.slug))
-    .slice(0, 3);
+  // Recommendations are the union of each bag item's curated picks, in cart
+  // order, deduped and with anything already in the bag dropped.
+  const seenSlugs = new Set(items.map((i) => i?.product?.slug).filter(Boolean) as string[]);
+  const suggestions: Product[] = [];
+  for (const item of items) {
+    const slug = item?.product?.slug;
+    if (!slug) continue;
+    for (const pick of relatedBySlug[slug] || []) {
+      if (!pick?.slug || seenSlugs.has(pick.slug)) continue;
+      seenSlugs.add(pick.slug);
+      suggestions.push(pick);
+    }
+  }
+  const visibleSuggestions = suggestions.slice(0, 3);
 
   return (
     <div className="fixed inset-0 z-[100]">
@@ -281,13 +325,13 @@ export function CartDrawer() {
                     </ul>
                   )}
 
-                  {suggestions.length > 0 && (
+                  {visibleSuggestions.length > 0 && (
                     <div className="mt-14 pt-8 border-t border-border/60">
                       <h5 className="text-[10px] tracked font-semibold text-muted-foreground mb-4 uppercase">
-                        Frequently Bought Together
+                        Pairs Perfectly With
                       </h5>
                       <ul className="space-y-3">
-                        {suggestions.map((p) => (
+                        {visibleSuggestions.map((p) => (
                           <li key={p.slug} className="bg-cream/60 p-3 flex items-center gap-4 border border-border/30">
                             <img
                               src={p.images?.[0] || ""}
@@ -346,7 +390,7 @@ export function CartDrawer() {
                     <input
                       type="text"
                       value={addressForm.fullName}
-                      onChange={(e) => setAddressForm({ ...addressForm, fullName: e.target.value })}
+                      onChange={(e) => setAddressForm({ ...addressForm, fullName: sanitizeNameInput(e.target.value) })}
                       placeholder="Enter your full name"
                       className="w-full px-3 py-2.5 text-xs border border-border focus:border-clay outline-none bg-transparent"
                       required
@@ -378,28 +422,15 @@ export function CartDrawer() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-[10px] tracked text-muted-foreground mb-1 uppercase">City *</label>
-                      <input
-                        type="text"
-                        value={addressForm.city}
-                        onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
-                        placeholder="City"
-                        className="w-full px-3 py-2.5 text-xs border border-border focus:border-clay outline-none bg-transparent"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] tracked text-muted-foreground mb-1 uppercase">State *</label>
-                      <input
-                        type="text"
-                        value={addressForm.state}
-                        onChange={(e) => setAddressForm({ ...addressForm, state: e.target.value })}
-                        placeholder="State"
-                        className="w-full px-3 py-2.5 text-xs border border-border focus:border-clay outline-none bg-transparent"
-                        required
-                      />
-                    </div>
+                    <CityStateFields
+                      city={addressForm.city}
+                      state={addressForm.state}
+                      onCityChange={(city) => setAddressForm({ ...addressForm, city })}
+                      onStateChange={(state) => setAddressForm({ ...addressForm, state })}
+                      inputClass="w-full px-3 py-2.5 text-xs border border-border focus:border-clay outline-none bg-transparent"
+                      labelClass="block text-[10px] tracked text-muted-foreground mb-1 uppercase"
+                      required
+                    />
                   </div>
 
                   <div>

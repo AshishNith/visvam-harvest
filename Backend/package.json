@@ -9,7 +9,9 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "seed": "tsx src/scripts/seed.ts",
-    "upload-images": "tsx src/scripts/uploadToCloudinary.ts"
+    "upload-images": "tsx src/scripts/uploadToCloudinary.ts",
+    "fix-email-index": "tsx src/scripts/fixEmailIndex.ts",
+    "migrate-cluster": "tsx src/scripts/migrateToNewCluster.ts"
   },
   "keywords": [
     "visvam",

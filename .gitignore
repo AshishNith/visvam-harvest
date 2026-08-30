@@ -38,3 +38,7 @@ Backend/.env.*
 
 # Full-resolution source photography / footage — kept locally, never bundled or tracked
 design-assets/
+
+# Credential exports and audit deliverables — never commit (public repo)
+api-keys-*.csv
+*.docx

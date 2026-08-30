@@ -125,7 +125,10 @@ export const syncUser = async (req: Request, res: Response): Promise<void> => {
       console.log(`✅ [Auth Sync]: Updated existing user ${user.name} (${user._id})`);
     } else {
       // Create new user — use whatever identity we have
-      const displayName = name || firebaseName || (email ? email.split("@")[0] : firebasePhone || "Viśvam Customer");
+      // Deliberately does NOT fall back to the phone number: that value ends up
+      // in the "Full Name" field on the complete-profile screen. Phone-only
+      // signups get the neutral placeholder and are asked for a real name.
+      const displayName = name || firebaseName || (email ? email.split("@")[0] : "") || "Viśvam Customer";
       user = await User.create({
         firebaseUid,
         email: email || undefined,
@@ -350,6 +353,41 @@ export const updateUserByAdmin = async (req: Request, res: Response): Promise<vo
 };
 
 // @desc    Delete user (Admin)
+// @desc    Close the signed-in customer's own account
+// @route   DELETE /api/v1/auth/account
+// @access  Private
+export const deleteMyAccount = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const user = (req as AuthenticatedRequest).user;
+    if (!user) {
+      res.status(401).json({ success: false, message: "Not authenticated" });
+      return;
+    }
+
+    // Admins would lock themselves out of the panel, and the account may be the
+    // only one with access — make them go through an admin instead.
+    if (user.role === "admin") {
+      res.status(403).json({
+        success: false,
+        message: "Admin accounts cannot be self-deleted. Contact support.",
+      });
+      return;
+    }
+
+    // Orders are deliberately left in place: they are financial records and
+    // are still needed for fulfilment, returns, and accounting.
+    await User.findByIdAndDelete(user._id);
+
+    res.status(200).json({
+      success: true,
+      message: "Your account has been deleted. Past orders are retained for our records.",
+    });
+  } catch (error: any) {
+    console.error("Delete account error:", error);
+    res.status(500).json({ success: false, message: error.message || "Failed to delete account" });
+  }
+};
+
 // @route   DELETE /api/v1/users/:id
 // @access  Admin
 export const deleteUserByAdmin = async (req: Request, res: Response): Promise<void> => {

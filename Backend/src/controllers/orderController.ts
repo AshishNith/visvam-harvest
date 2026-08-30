@@ -5,6 +5,13 @@ import { Product } from "../models/Product.js";
 import { User } from "../models/User.js";
 import { AuthenticatedRequest } from "../middleware/authMiddleware.js";
 
+// Standard delivery is always free; express costs a flat fee unless the order
+// clears the threshold the storefront advertises ("Complimentary Express
+// Shipping on orders over ₹3,499"). Shipping is never charged unless the
+// customer actually picks express.
+const EXPRESS_SHIPPING_FEE = 79;
+const FREE_EXPRESS_THRESHOLD = 3499;
+
 // @desc    Create new order
 // @route   POST /api/v1/orders
 // @access  Public / Protected
@@ -17,6 +24,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       pickupSlot,
       shippingAddress,
       paymentMethod,
+      shippingMethod,
       guestEmail,
     } = authReq.body;
 
@@ -51,7 +59,9 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
 
     const itemsPrice = sanitizedOrderItems.reduce((acc: number, item: any) => acc + item.price * item.qty, 0);
     const taxPrice = Number((itemsPrice * 0.05).toFixed(2));
-    const shippingPrice = itemsPrice >= 999 ? 0 : 79;
+    const selectedShippingMethod = String(shippingMethod) === "express" ? "express" : "standard";
+    const shippingPrice =
+      selectedShippingMethod === "express" && itemsPrice < FREE_EXPRESS_THRESHOLD ? EXPRESS_SHIPPING_FEE : 0;
     const totalPrice = Number((itemsPrice + taxPrice + shippingPrice).toFixed(2));
 
     const order = await Order.create({
@@ -71,6 +81,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         country: shippingAddress?.country || "India",
       },
       paymentMethod: paymentMethod || "Cash on Delivery",
+      shippingMethod: selectedShippingMethod,
       itemsPrice,
       taxPrice,
       shippingPrice,
