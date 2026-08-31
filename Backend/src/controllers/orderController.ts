@@ -4,12 +4,39 @@ import { Order } from "../models/Order.js";
 import { Product } from "../models/Product.js";
 import { User } from "../models/User.js";
 import { AuthenticatedRequest } from "../middleware/authMiddleware.js";
+import { ShiprocketService } from "../services/shiprocketService.js";
+import { orderWeightKg } from "../utils/shippingWeight.js";
 
-// One flat delivery charge, waived once the order clears the threshold the
-// storefront advertises ("Free delivery on orders above ₹3,499"). Mirrored in
-// src/routes/checkout.tsx, but this is the authority on what gets charged.
-const DELIVERY_CHARGE = 79;
+// Delivery is quoted live per PIN code by Shiprocket, then waived once the
+// order clears the threshold the storefront advertises ("Free delivery on
+// orders above ₹3,499"). Mirrored in src/routes/checkout.tsx, but this is the
+// authority on what actually gets charged — the client is never trusted for a
+// shipping price.
 const FREE_DELIVERY_THRESHOLD = 3499;
+
+// Used only when Shiprocket can't be reached or quotes nothing usable. Better
+// to charge a known-sane figure than to ship free by accident.
+const FALLBACK_DELIVERY_CHARGE = 79;
+
+/**
+ * The live courier rate for a destination, rounded up to whole rupees.
+ * Returns the fallback if the lookup fails, the PIN is unserviceable, or the
+ * response carries no rate.
+ */
+async function quoteDeliveryCharge(
+  pincode: string,
+  weightKg: number,
+  isCod: boolean
+): Promise<number> {
+  try {
+    const quote = await ShiprocketService.checkServiceability(pincode, weightKg, isCod);
+    const rate = Number((quote as any)?.courierRate);
+    if (quote?.success && Number.isFinite(rate) && rate > 0) return Math.ceil(rate);
+  } catch (error) {
+    console.error("Shiprocket rate lookup failed, using fallback delivery charge:", error);
+  }
+  return FALLBACK_DELIVERY_CHARGE;
+}
 
 // @desc    Create new order
 // @route   POST /api/v1/orders
@@ -52,12 +79,29 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         qty: Math.max(1, Number(item.qty) || 1),
         price: Number(item.price) || 0,
         image: typeof item.image === "string" ? item.image : (Array.isArray(item.images) ? item.images[0] : "") || "",
+        variantTitle: typeof item.variantTitle === "string" ? item.variantTitle : undefined,
+        variantSku: typeof item.variantSku === "string" ? item.variantSku : undefined,
+        selectedOptions:
+          item.selectedOptions && typeof item.selectedOptions === "object" ? item.selectedOptions : undefined,
+        serving: typeof item.serving === "string" ? item.serving : undefined,
       });
     }
 
     const itemsPrice = sanitizedOrderItems.reduce((acc: number, item: any) => acc + item.price * item.qty, 0);
     const taxPrice = Number((itemsPrice * 0.05).toFixed(2));
-    const shippingPrice = itemsPrice >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_CHARGE;
+
+    const deliveryPincode = String(
+      shippingAddress?.pincode || shippingAddress?.postalCode || ""
+    ).replace(/\D/g, "");
+    const isCod = String(paymentMethod || "").toLowerCase().includes("cash");
+
+    const shippingPrice =
+      itemsPrice >= FREE_DELIVERY_THRESHOLD
+        ? 0
+        : deliveryPincode.length === 6
+          ? await quoteDeliveryCharge(deliveryPincode, orderWeightKg(sanitizedOrderItems), isCod)
+          : FALLBACK_DELIVERY_CHARGE;
+
     const totalPrice = Number((itemsPrice + taxPrice + shippingPrice).toFixed(2));
 
     const order = await Order.create({

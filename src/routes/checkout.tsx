@@ -27,6 +27,7 @@ import {
   type SavedAddress,
 } from "@/lib/api";
 import { CityStateFields } from "@/components/CityStateFields";
+import { cartWeightKg } from "@/lib/shipping-weight";
 import { prefillableName, sanitizeNameInput } from "@/lib/name";
 import { loadRazorpayScript } from "@/lib/razorpay";
 import { toast } from "sonner";
@@ -48,11 +49,14 @@ export const Route = createFileRoute("/checkout")({
   component: CheckoutPage,
 });
 
-// One flat delivery charge, waived above the threshold. Mirrors the same rule
-// in Backend/src/controllers/orderController.ts, which is the authority on
-// what actually gets charged.
+// Delivery is quoted live per PIN code by Shiprocket and waived above the
+// threshold. Mirrors Backend/src/controllers/orderController.ts, which is the
+// authority on what actually gets charged — this side only displays it.
 const FREE_SHIPPING_THRESHOLD = 3499;
-const DELIVERY_CHARGE = 79;
+
+// Shown before a PIN code is known, and used if the live quote fails. Must
+// match FALLBACK_DELIVERY_CHARGE on the server.
+const FALLBACK_DELIVERY_CHARGE = 79;
 
 /** Saved addresses store a `pincode`; the checkout form expects the same shape. */
 const toShippingAddress = (address: SavedAddress): ShippingAddress => ({
@@ -96,22 +100,26 @@ function CheckoutPage() {
     isServiceable?: boolean;
     etd?: string;
     courierName?: string;
+    courierRate?: number;
     region?: string;
   } | null>(null);
 
-  // Auto-check Shiprocket serviceability when 6-digit PIN code is entered
+  // Auto-check Shiprocket serviceability and pricing when a 6-digit PIN code
+  // is entered. Re-runs on cart or payment-mode changes too, because Shiprocket
+  // quotes on destination, weight and COD together.
   useEffect(() => {
     const pin = addressForm.pincode ? addressForm.pincode.replace(/\D/g, "") : "";
     if (pin.length === 6) {
       let isCurrent = true;
       setPincodeChecking(true);
-      checkPincodeServiceability(pin)
+      checkPincodeServiceability(pin, cartWeightKg(items), paymentMethod === "cod")
         .then((res) => {
           if (isCurrent && res.success) {
             setPincodeResult({
               isServiceable: res.isServiceable,
               etd: res.etd || "2–3 Business Days",
               courierName: res.courierName || "Blue Dart Air",
+              courierRate: res.courierRate,
               region: res.region,
             });
           }
@@ -126,7 +134,7 @@ function CheckoutPage() {
     } else {
       setPincodeResult(null);
     }
-  }, [addressForm.pincode]);
+  }, [addressForm.pincode, items, paymentMethod]);
 
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
@@ -261,7 +269,21 @@ function CheckoutPage() {
   };
 
   const freeDelivery = subtotal >= FREE_SHIPPING_THRESHOLD;
-  const shippingPrice = freeDelivery ? 0 : DELIVERY_CHARGE;
+  // Rounded up to whole rupees the same way the server does, so the figure
+  // shown here is the figure charged.
+  const quotedDelivery =
+    typeof pincodeResult?.courierRate === "number" && pincodeResult.courierRate > 0
+      ? Math.ceil(pincodeResult.courierRate)
+      : undefined;
+  // A PIN code is the only thing that yields a real number. Until one is
+  // entered we show nothing rather than a placeholder figure — real rates run
+  // well above the fallback, so a stand-in would understate the total badly.
+  const pincodeReady = (addressForm.pincode || "").replace(/\D/g, "").length === 6;
+  const quoteFailed = pincodeReady && !pincodeChecking && quotedDelivery === undefined;
+  const deliveryKnown = freeDelivery || quotedDelivery !== undefined || quoteFailed;
+  const shippingPrice = freeDelivery
+    ? 0
+    : (quotedDelivery ?? (quoteFailed ? FALLBACK_DELIVERY_CHARGE : 0));
   const amountToFreeDelivery = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const deliveryProgress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
   const taxPrice = Math.round(subtotal * 0.05);
@@ -315,6 +337,8 @@ function CheckoutPage() {
           qty,
           price: selectedVariant?.price ?? product.price,
           image: product.images[0] || "",
+          // Sent so the server derives the same parcel weight this page quoted on.
+          serving: product.serving,
           variantTitle: selectedVariant?.title,
           variantSku: selectedVariant?.sku,
           selectedOptions: selectedVariant?.options,
@@ -806,25 +830,41 @@ function CheckoutPage() {
                 )}
               </div>
 
-              {/* Delivery Charges */}
+              {/* Delivery Charges — quoted live per PIN code */}
               <div className="bg-background border border-border p-6 space-y-3">
                 <h3 className="text-sm font-semibold uppercase tracking-wider flex items-center gap-2 text-ink border-b border-border pb-3">
                   <Truck size={16} className="text-clay" /> Delivery
                 </h3>
 
                 <div className="flex items-start justify-between gap-4">
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-xs font-semibold text-ink">
-                      {freeDelivery ? "Free delivery unlocked" : "Flat delivery charge"}
+                      {freeDelivery
+                        ? "Free delivery unlocked"
+                        : pincodeChecking
+                          ? "Checking rates for your PIN code…"
+                          : quotedDelivery !== undefined
+                            ? `Delivery to ${addressForm.pincode}`
+                            : "Enter your PIN code for exact charges"}
                     </p>
                     <p className="text-[10px] text-muted-foreground mt-0.5">
                       {freeDelivery
                         ? `Your order is above ${formatPrice(FREE_SHIPPING_THRESHOLD)}`
-                        : `Free on orders above ${formatPrice(FREE_SHIPPING_THRESHOLD)} · add ${formatPrice(amountToFreeDelivery)} more`}
+                        : quotedDelivery !== undefined
+                          ? `via ${pincodeResult?.courierName} · free above ${formatPrice(FREE_SHIPPING_THRESHOLD)} · add ${formatPrice(amountToFreeDelivery)} more`
+                          : `Charges vary by destination · free above ${formatPrice(FREE_SHIPPING_THRESHOLD)}`}
                     </p>
                   </div>
                   <span className="text-[11px] tracked font-bold uppercase text-clay shrink-0 tabular-nums">
-                    {freeDelivery ? "Free" : formatPrice(DELIVERY_CHARGE)}
+                    {freeDelivery ? (
+                      "Free"
+                    ) : pincodeChecking ? (
+                      <Loader2 size={13} className="animate-spin" />
+                    ) : deliveryKnown ? (
+                      formatPrice(shippingPrice)
+                    ) : (
+                      <span className="text-muted-foreground normal-case tracking-normal">—</span>
+                    )}
                   </span>
                 </div>
 
@@ -958,7 +998,13 @@ function CheckoutPage() {
                   <div className="flex justify-between text-muted-foreground">
                     <span>Delivery</span>
                     <span className="tabular-nums font-medium">
-                      {shippingPrice === 0 ? <span className="text-clay font-bold">FREE</span> : formatPrice(shippingPrice)}
+                      {!deliveryKnown ? (
+                        <span className="text-muted-foreground text-[10px]">Enter PIN code</span>
+                      ) : shippingPrice === 0 ? (
+                        <span className="text-clay font-bold">FREE</span>
+                      ) : (
+                        formatPrice(shippingPrice)
+                      )}
                     </span>
                   </div>
                   <div className="flex justify-between text-muted-foreground">

@@ -221,6 +221,7 @@ export interface SubmitOrderData {
     qty: number;
     price: number;
     image?: string;
+    serving?: string;
     variantTitle?: string;
     variantSku?: string;
     selectedOptions?: Record<string, string>;
@@ -599,7 +600,11 @@ export async function deleteMyAccount() {
 }
 
 // ─── Shiprocket Logistics API ─────────────────────────────────────
-export async function checkPincodeServiceability(pincode: string, weightKg: number = 0.5): Promise<{
+export async function checkPincodeServiceability(
+  pincode: string,
+  weightKg: number = 0.5,
+  isCod: boolean = false
+): Promise<{
   success: boolean;
   isServiceable?: boolean;
   estimatedDays?: number;
@@ -614,7 +619,7 @@ export async function checkPincodeServiceability(pincode: string, weightKg: numb
     const res = await fetch(`${API_BASE_URL}/shipping/check-serviceability`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ pincode, weightKg }),
+      body: JSON.stringify({ pincode, weightKg, isCod }),
     });
     return await res.json();
   } catch (error: any) {

@@ -10,6 +10,8 @@ export interface IOrderItem {
   variantTitle?: string;
   variantSku?: string;
   selectedOptions?: Record<string, string>;
+  /** Pack size text ("500g Pouch") — the weight fallback for variant-less items. */
+  serving?: string;
 }
 
 export interface IShiprocketDetails {
@@ -91,6 +93,7 @@ const OrderSchema = new Schema<IOrder>(
         variantTitle: { type: String },
         variantSku: { type: String },
         selectedOptions: { type: Map, of: String },
+        serving: { type: String },
       },
     ],
     pickupLane: {
