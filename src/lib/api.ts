@@ -228,7 +228,6 @@ export interface SubmitOrderData {
   shippingAddress: ShippingAddress;
   guestEmail?: string;
   paymentMethod: string;
-  shippingMethod?: "standard" | "express";
 }
 
 const LOCAL_ORDERS_KEY = "visvam_local_user_orders";

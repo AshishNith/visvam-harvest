@@ -5,12 +5,11 @@ import { Product } from "../models/Product.js";
 import { User } from "../models/User.js";
 import { AuthenticatedRequest } from "../middleware/authMiddleware.js";
 
-// Standard delivery is always free; express costs a flat fee unless the order
-// clears the threshold the storefront advertises ("Complimentary Express
-// Shipping on orders over ₹3,499"). Shipping is never charged unless the
-// customer actually picks express.
-const EXPRESS_SHIPPING_FEE = 79;
-const FREE_EXPRESS_THRESHOLD = 3499;
+// One flat delivery charge, waived once the order clears the threshold the
+// storefront advertises ("Free delivery on orders above ₹3,499"). Mirrored in
+// src/routes/checkout.tsx, but this is the authority on what gets charged.
+const DELIVERY_CHARGE = 79;
+const FREE_DELIVERY_THRESHOLD = 3499;
 
 // @desc    Create new order
 // @route   POST /api/v1/orders
@@ -24,7 +23,6 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       pickupSlot,
       shippingAddress,
       paymentMethod,
-      shippingMethod,
       guestEmail,
     } = authReq.body;
 
@@ -59,9 +57,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
 
     const itemsPrice = sanitizedOrderItems.reduce((acc: number, item: any) => acc + item.price * item.qty, 0);
     const taxPrice = Number((itemsPrice * 0.05).toFixed(2));
-    const selectedShippingMethod = String(shippingMethod) === "express" ? "express" : "standard";
-    const shippingPrice =
-      selectedShippingMethod === "express" && itemsPrice < FREE_EXPRESS_THRESHOLD ? EXPRESS_SHIPPING_FEE : 0;
+    const shippingPrice = itemsPrice >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_CHARGE;
     const totalPrice = Number((itemsPrice + taxPrice + shippingPrice).toFixed(2));
 
     const order = await Order.create({
@@ -81,7 +77,6 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         country: shippingAddress?.country || "India",
       },
       paymentMethod: paymentMethod || "Cash on Delivery",
-      shippingMethod: selectedShippingMethod,
       itemsPrice,
       taxPrice,
       shippingPrice,

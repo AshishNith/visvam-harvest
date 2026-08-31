@@ -14,7 +14,6 @@ import {
   Mail,
   CreditCard,
   Banknote,
-  Zap,
 } from "lucide-react";
 import { useCart, formatPrice, type ShippingAddress } from "@/lib/cart-context";
 import { useAuth } from "@/lib/auth-context";
@@ -49,14 +48,11 @@ export const Route = createFileRoute("/checkout")({
   component: CheckoutPage,
 });
 
-// Express delivery is the only paid option, and it is complimentary once the
-// order clears this threshold. Standard delivery is always free. Mirrors the
-// same rule in Backend/src/controllers/orderController.ts, which is the
-// authority on what actually gets charged.
+// One flat delivery charge, waived above the threshold. Mirrors the same rule
+// in Backend/src/controllers/orderController.ts, which is the authority on
+// what actually gets charged.
 const FREE_SHIPPING_THRESHOLD = 3499;
-const EXPRESS_SHIPPING_FEE = 79;
-
-type ShippingMethod = "standard" | "express";
+const DELIVERY_CHARGE = 79;
 
 /** Saved addresses store a `pincode`; the checkout form expects the same shape. */
 const toShippingAddress = (address: SavedAddress): ShippingAddress => ({
@@ -90,8 +86,6 @@ function CheckoutPage() {
   const [submittingOrder, setSubmittingOrder] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "cod">("razorpay");
-  // Defaults to standard - express is never applied unless the customer picks it.
-  const [shippingMethod, setShippingMethod] = useState<ShippingMethod>("standard");
   // Set once the underlying Order document is created, so a retry after a
   // cancelled/failed payment reuses it instead of creating a duplicate order.
   const [pendingOrderId, setPendingOrderId] = useState<string | null>(null);
@@ -266,19 +260,12 @@ function CheckoutPage() {
     setAddressForm({ fullName: prefillableName(user?.name), phone: "", street: "", city: "", state: "", pincode: "" });
   };
 
-  const expressIsFree = subtotal >= FREE_SHIPPING_THRESHOLD;
-  const shippingPrice = shippingMethod === "express" && !expressIsFree ? EXPRESS_SHIPPING_FEE : 0;
+  const freeDelivery = subtotal >= FREE_SHIPPING_THRESHOLD;
+  const shippingPrice = freeDelivery ? 0 : DELIVERY_CHARGE;
+  const amountToFreeDelivery = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+  const deliveryProgress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
   const taxPrice = Math.round(subtotal * 0.05);
   const totalPrice = subtotal + shippingPrice + taxPrice;
-
-  // The Order document is created before payment and priced server-side, so a
-  // delivery-speed change after that point has to void the pending order -
-  // otherwise the customer pays the total from the previous selection.
-  const handleSelectShippingMethod = (method: ShippingMethod) => {
-    if (method === shippingMethod) return;
-    setShippingMethod(method);
-    setPendingOrderId(null);
-  };
 
   // Validate Address
   const validateAddress = (): boolean => {
@@ -338,7 +325,6 @@ function CheckoutPage() {
           shippingAddress: addressForm,
           guestEmail: user?.email || "",
           paymentMethod: paymentMethod === "razorpay" ? "Razorpay" : "Cash on Delivery",
-          shippingMethod,
         });
 
         if (!res.success || !res.data?._id) {
@@ -820,65 +806,36 @@ function CheckoutPage() {
                 )}
               </div>
 
-              {/* Delivery Speed Selection */}
+              {/* Delivery Charges */}
               <div className="bg-background border border-border p-6 space-y-3">
                 <h3 className="text-sm font-semibold uppercase tracking-wider flex items-center gap-2 text-ink border-b border-border pb-3">
-                  <Truck size={16} className="text-clay" /> Delivery Speed
+                  <Truck size={16} className="text-clay" /> Delivery
                 </h3>
 
-                <button
-                  type="button"
-                  onClick={() => handleSelectShippingMethod("standard")}
-                  className={`w-full p-4 border-2 flex items-center justify-between transition-colors text-left ${
-                    shippingMethod === "standard" ? "border-clay bg-cream/30" : "border-border hover:border-clay/50"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <span
-                      className={`size-4 rounded-full border-2 shrink-0 flex items-center justify-center ${
-                        shippingMethod === "standard" ? "border-clay" : "border-border"
-                      }`}
-                    >
-                      {shippingMethod === "standard" && <span className="size-2 rounded-full bg-clay" />}
-                    </span>
-                    <div>
-                      <p className="text-xs font-semibold text-ink">Standard Delivery</p>
-                      <p className="text-[10px] text-muted-foreground">Arrives in 5–7 business days</p>
-                    </div>
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-xs font-semibold text-ink">
+                      {freeDelivery ? "Free delivery unlocked" : "Flat delivery charge"}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">
+                      {freeDelivery
+                        ? `Your order is above ${formatPrice(FREE_SHIPPING_THRESHOLD)}`
+                        : `Free on orders above ${formatPrice(FREE_SHIPPING_THRESHOLD)} · add ${formatPrice(amountToFreeDelivery)} more`}
+                    </p>
                   </div>
-                  <span className="text-[10px] tracked font-bold uppercase text-clay shrink-0">Free</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleSelectShippingMethod("express")}
-                  className={`w-full p-4 border-2 flex items-center justify-between transition-colors text-left ${
-                    shippingMethod === "express" ? "border-clay bg-cream/30" : "border-border hover:border-clay/50"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <span
-                      className={`size-4 rounded-full border-2 shrink-0 flex items-center justify-center ${
-                        shippingMethod === "express" ? "border-clay" : "border-border"
-                      }`}
-                    >
-                      {shippingMethod === "express" && <span className="size-2 rounded-full bg-clay" />}
-                    </span>
-                    <div>
-                      <p className="text-xs font-semibold text-ink flex items-center gap-1.5">
-                        <Zap size={12} className="text-clay" /> Express Delivery
-                      </p>
-                      <p className="text-[10px] text-muted-foreground">
-                        Arrives in 3–5 business days
-                        {!expressIsFree && ` · complimentary over ${formatPrice(FREE_SHIPPING_THRESHOLD)}`}
-                      </p>
-                    </div>
-                  </div>
-                  <span className="text-[10px] tracked font-bold uppercase text-clay shrink-0 tabular-nums">
-                    {expressIsFree ? "Free" : formatPrice(EXPRESS_SHIPPING_FEE)}
+                  <span className="text-[11px] tracked font-bold uppercase text-clay shrink-0 tabular-nums">
+                    {freeDelivery ? "Free" : formatPrice(DELIVERY_CHARGE)}
                   </span>
-                </button>
+                </div>
+
+                <div className="w-full h-[3px] bg-ink/10 overflow-hidden">
+                  <div
+                    className="h-full bg-clay transition-all duration-700 ease-out"
+                    style={{ width: `${deliveryProgress}%` }}
+                  />
+                </div>
               </div>
+
               {/* Payment Selection */}
               <div className="bg-background border border-border p-6 space-y-3">
                 <h3 className="text-sm font-semibold uppercase tracking-wider flex items-center gap-2 text-ink border-b border-border pb-3">
@@ -999,7 +956,7 @@ function CheckoutPage() {
                     <span className="tabular-nums text-ink font-medium">{formatPrice(subtotal)}</span>
                   </div>
                   <div className="flex justify-between text-muted-foreground">
-                    <span>{shippingMethod === "express" ? "Express Shipping" : "Standard Shipping"}</span>
+                    <span>Delivery</span>
                     <span className="tabular-nums font-medium">
                       {shippingPrice === 0 ? <span className="text-clay font-bold">FREE</span> : formatPrice(shippingPrice)}
                     </span>
