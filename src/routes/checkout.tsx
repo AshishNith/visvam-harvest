@@ -27,6 +27,7 @@ import {
   type SavedAddress,
 } from "@/lib/api";
 import { CityStateFields } from "@/components/CityStateFields";
+import { PincodeField } from "@/components/PincodeField";
 import { cartWeightKg } from "@/lib/shipping-weight";
 import { prefillableName, sanitizeNameInput } from "@/lib/name";
 import { loadRazorpayScript } from "@/lib/razorpay";
@@ -790,18 +791,15 @@ function CheckoutPage() {
                     labelClass="block text-[10px] tracked text-muted-foreground uppercase mb-1"
                     required
                   />
-                  <div>
-                    <label className="block text-[10px] tracked text-muted-foreground uppercase mb-1">Pincode *</label>
-                    <input
-                      type="text"
-                      value={addressForm.pincode}
-                      onChange={(e) => setAddressForm({ ...addressForm, pincode: e.target.value.replace(/\D/g, "").slice(0, 6) })}
-                      placeholder="560001"
-                      maxLength={6}
-                      className="w-full px-3 py-2 text-xs border border-border outline-none focus:border-clay bg-transparent"
-                      required
-                    />
-                  </div>
+                  <PincodeField
+                    city={addressForm.city}
+                    state={addressForm.state}
+                    pincode={addressForm.pincode}
+                    onPincodeChange={(pincode) => setAddressForm({ ...addressForm, pincode })}
+                    inputClass="w-full px-3 py-2 text-xs border border-border outline-none focus:border-clay bg-transparent"
+                    labelClass="block text-[10px] tracked text-muted-foreground uppercase mb-1"
+                    required
+                  />
                 </div>
 
                 {/* Shiprocket Delivery Estimation Badge */}
@@ -818,9 +816,6 @@ function CheckoutPage() {
                       <Truck size={15} className="text-emerald-700 shrink-0" />
                       <div>
                         <span className="font-semibold">Estimated Delivery: {pincodeResult.etd}</span>
-                        <span className="text-[10px] text-emerald-700 block">
-                          Dispatched via {pincodeResult.courierName} with live GPS tracking
-                        </span>
                       </div>
                     </div>
                     <span className="text-[9px] uppercase font-bold font-mono bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">

@@ -45,6 +45,7 @@ import {
 import { useCart, formatPrice } from "@/lib/cart-context";
 import { prefillableName, sanitizeNameInput } from "@/lib/name";
 import { CityStateFields } from "@/components/CityStateFields";
+import { PincodeField } from "@/components/PincodeField";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/profile")({
@@ -753,21 +754,15 @@ function ProfilePage() {
                       labelClass={labelClass}
                       required
                     />
-                    <div>
-                      <label className={labelClass}>Pincode *</label>
-                      <input
-                        type="text"
-                        value={addressForm.pincode}
-                        onChange={(e) =>
-                          setAddressForm({
-                            ...addressForm,
-                            pincode: e.target.value.replace(/\D/g, "").slice(0, 6),
-                          })
-                        }
-                        placeholder="6-digit"
-                        className={inputClass}
-                      />
-                    </div>
+                    <PincodeField
+                      city={addressForm.city}
+                      state={addressForm.state}
+                      pincode={addressForm.pincode}
+                      onPincodeChange={(pincode) => setAddressForm({ ...addressForm, pincode })}
+                      inputClass={inputClass}
+                      labelClass={labelClass}
+                      required
+                    />
                   </div>
 
                   <div className="flex items-center gap-3 pt-1">

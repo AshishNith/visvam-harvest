@@ -5,6 +5,7 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { useAuth } from "@/lib/auth-context";
 import { prefillableName, sanitizeNameInput } from "@/lib/name";
 import { CityStateFields } from "@/components/CityStateFields";
+import { PincodeField } from "@/components/PincodeField";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/complete-profile")({
@@ -183,17 +184,14 @@ function CompleteProfilePage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-[10px] tracked text-muted-foreground uppercase mb-1">Pincode</label>
-                <input
-                  type="text"
-                  value={zipCode}
-                  onChange={(e) => setZipCode(e.target.value)}
-                  placeholder="6-digit Pincode"
-                  maxLength={6}
-                  className="w-full px-3 py-2.5 text-xs border border-border focus:border-clay outline-none bg-transparent"
-                />
-              </div>
+              <PincodeField
+                city={city}
+                state={state}
+                pincode={zipCode}
+                onPincodeChange={setZipCode}
+                inputClass="w-full px-3 py-2.5 text-xs border border-border focus:border-clay outline-none bg-transparent"
+                labelClass="block text-[10px] tracked text-muted-foreground uppercase mb-1"
+              />
             </div>
 
             {/* Action Buttons */}

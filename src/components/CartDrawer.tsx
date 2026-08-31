@@ -6,6 +6,7 @@ import type { Product } from "@/lib/products";
 import { fetchProductBySlugFromBackend, submitOrderToBackend } from "@/lib/api";
 import { sanitizeNameInput } from "@/lib/name";
 import { CityStateFields } from "@/components/CityStateFields";
+import { PincodeField } from "@/components/PincodeField";
 import { toast } from "sonner";
 
 const FREE_SHIPPING_THRESHOLD = 3499;
@@ -433,18 +434,15 @@ export function CartDrawer() {
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-[10px] tracked text-muted-foreground mb-1 uppercase">Pincode *</label>
-                    <input
-                      type="text"
-                      value={addressForm.pincode}
-                      onChange={(e) => setAddressForm({ ...addressForm, pincode: e.target.value.replace(/\D/g, "").slice(0, 6) })}
-                      placeholder="560001"
-                      maxLength={6}
-                      className="w-full px-3 py-2.5 text-xs border border-border focus:border-clay outline-none bg-transparent"
-                      required
-                    />
-                  </div>
+                  <PincodeField
+                    city={addressForm.city}
+                    state={addressForm.state}
+                    pincode={addressForm.pincode}
+                    onPincodeChange={(pincode) => setAddressForm({ ...addressForm, pincode })}
+                    inputClass="w-full px-3 py-2.5 text-xs border border-border focus:border-clay outline-none bg-transparent"
+                    labelClass="block text-[10px] tracked text-muted-foreground mb-1 uppercase"
+                    required
+                  />
                 </div>
 
                 <div className="p-6 border-t border-border space-y-3 bg-background">
