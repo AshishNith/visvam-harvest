@@ -44,6 +44,7 @@ import {
 } from "@/lib/api";
 import { useCart, formatPrice } from "@/lib/cart-context";
 import { prefillableName, sanitizeNameInput } from "@/lib/name";
+import { sanitizePhoneInput, isValidIndianMobile } from "@/lib/phone";
 import { CityStateFields } from "@/components/CityStateFields";
 import { PincodeField } from "@/components/PincodeField";
 import { toast } from "sonner";
@@ -245,6 +246,9 @@ function ProfilePage() {
     ];
     for (const [field, label] of required) {
       if (!String(addressForm[field]).trim()) return toast.error(`${label} is required`);
+    }
+    if (!isValidIndianMobile(addressForm.phone)) {
+      return toast.error("Enter a valid 10-digit mobile number (starting 6–9)");
     }
     if (!/^\d{6}$/.test(addressForm.pincode.trim())) {
       return toast.error("Pincode must be 6 digits");
@@ -726,8 +730,12 @@ function ProfilePage() {
                     <label className={labelClass}>Phone Number *</label>
                     <input
                       type="tel"
+                      inputMode="numeric"
+                      maxLength={10}
                       value={addressForm.phone}
-                      onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value })}
+                      onChange={(e) =>
+                        setAddressForm({ ...addressForm, phone: sanitizePhoneInput(e.target.value) })
+                      }
                       placeholder="10-digit mobile number"
                       className={inputClass}
                     />

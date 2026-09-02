@@ -15,6 +15,90 @@ let cachedAuthToken: CachedToken | null = null;
 
 const SHIPROCKET_API_BASE = "https://apiv2.shiprocket.in/v1/external";
 
+/**
+ * Shiprocket rejects anything that isn't a bare 10-digit Indian mobile number
+ * with `422 Phone number is in invalid format` — no "+91", no spaces, no
+ * dashes. Numbers reach us in every shape, including from orders placed before
+ * the checkout field was sanitised, so normalise at the boundary.
+ */
+function toShiprocketPhone(raw?: string): string {
+  const digits = String(raw || "").replace(/\D/g, "");
+  // "919876543210" -> "9876543210"; "09876543210" -> "9876543210"
+  const local = digits.length > 10 ? digits.slice(-10) : digits;
+  return local.length === 10 ? local : "";
+}
+
+export type CourierOption = {
+  id: number;
+  name: string;
+  rate: number;
+  etd: string;
+  estimatedDays: number | string;
+};
+
+export type ServiceabilityResult =
+  | {
+      success: true;
+      isServiceable: boolean;
+      city: string;
+      state: string;
+      estimatedDays: number | string;
+      etd: string;
+      courierName: string;
+      courierRate: number;
+      availableCouriers: CourierOption[];
+    }
+  | { success: false; isServiceable: false; message: string };
+
+export type AwbResult =
+  | { success: true; awbCode: string; courierName: string; courierId?: number }
+  | { success: false; message: string };
+
+export type ShipmentResult =
+  | {
+      success: true;
+      orderId: number;
+      shipmentId: number;
+      /** Absent when the order reached Shiprocket but no courier could be assigned. */
+      awbCode?: string;
+      courierName?: string;
+      courierId?: number;
+      trackingUrl?: string;
+      labelUrl?: string;
+      /** Why AWB assignment did not happen, when it did not. */
+      awbError?: string;
+    }
+  | { success: false; message: string };
+
+export type TrackingResult =
+  | {
+      success: true;
+      awbCode: string;
+      currentStatus: string;
+      currentLocation: string;
+      etd: string;
+      courier?: string;
+      timeline: Array<{ date: string; activity: string; location: string; completed?: boolean }>;
+    }
+  | { success: false; message: string };
+
+/** Pulls the most useful error text out of a Shiprocket error body. */
+function shiprocketError(data: any, fallback: string): string {
+  if (!data) return fallback;
+  if (typeof data.message === "string" && data.message) {
+    // `errors` carries the per-field detail, e.g. { billing_phone: [...] }
+    const fields = data.errors && typeof data.errors === "object" ? data.errors : null;
+    if (fields) {
+      const detail = Object.entries(fields)
+        .map(([field, msgs]) => `${field}: ${Array.isArray(msgs) ? msgs.join(", ") : msgs}`)
+        .join("; ");
+      if (detail) return `${data.message} (${detail})`;
+    }
+    return data.message;
+  }
+  return fallback;
+}
+
 export class ShiprocketService {
   private static getConfig(): ShiprocketAuthConfig {
     return {
@@ -44,7 +128,7 @@ export class ShiprocketService {
     }
 
     try {
-      const response = await fetch("https://apiv2.shiprocket.in/v1/external/auth/login", {
+      const response = await fetch(`${SHIPROCKET_API_BASE}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -73,98 +157,154 @@ export class ShiprocketService {
 
   /**
    * Check delivery pincode serviceability and estimated delivery timeframe.
+   *
+   * Returns `success: false` when Shiprocket can't be reached or quotes
+   * nothing — callers decide what to charge. Never invents a rate: a made-up
+   * figure here becomes the delivery fee the customer is actually billed.
    */
   public static async checkServiceability(
     deliveryPincode: string,
     weightKg: number = 0.5,
     isCod: boolean = false
-  ) {
-    const pickupPincode = process.env.SHIPROCKET_PICKUP_PINCODE || "248001";
-    const token = await this.getToken();
-
-    if (token) {
-      try {
-        const url = `${SHIPROCKET_API_BASE}/courier/serviceability/?pickup_postcode=${pickupPincode}&delivery_postcode=${deliveryPincode}&weight=${weightKg}&cod=${isCod ? 1 : 0}`;
-        const response = await fetch(url, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = (await response.json()) as any;
-        if (response.ok && data?.status === 200 && data?.data) {
-          const availableCouriers = data.data.available_courier_companies || [];
-          const recommended = data.data.recommended_courier_company_id
-            ? availableCouriers.find((c: any) => c.courier_company_id === data.data.recommended_courier_company_id)
-            : availableCouriers[0];
-
-          return {
-            success: true,
-            isServiceable: availableCouriers.length > 0,
-            city: data.data.delivery_city || "",
-            state: data.data.delivery_state || "",
-            estimatedDays: recommended?.estimated_delivery_days || 3,
-            etd: recommended?.etd || "2–3 Days",
-            courierName: recommended?.courier_name || "Blue Dart Air",
-            courierRate: recommended?.rate || 79,
-            availableCouriers: availableCouriers.slice(0, 4).map((c: any) => ({
-              id: c.courier_company_id,
-              name: c.courier_name,
-              rate: c.rate,
-              etd: c.etd,
-              estimatedDays: c.estimated_delivery_days,
-            })),
-          };
-        }
-      } catch (err) {
-        console.error("Shiprocket live serviceability check failed, using fallback:", err);
-      }
-    }
-
-    // Realistic Simulation / Fallback for testing and instant pincode responsiveness
-    const cleanPin = deliveryPincode.replace(/\D/g, "");
+  ): Promise<ServiceabilityResult> {
+    const cleanPin = String(deliveryPincode).replace(/\D/g, "");
     if (cleanPin.length !== 6) {
       return { success: false, isServiceable: false, message: "Invalid 6-digit Indian PIN code" };
     }
 
-    // Compute realistic Indian regional estimated delivery days
-    let estimatedDays = 3;
-    let region = "Standard Delivery";
-    if (cleanPin.startsWith("11") || cleanPin.startsWith("12") || cleanPin.startsWith("20") || cleanPin.startsWith("24")) {
-      estimatedDays = 2;
-      region = "North Metro (Express 48h)";
-    } else if (cleanPin.startsWith("40") || cleanPin.startsWith("56") || cleanPin.startsWith("50") || cleanPin.startsWith("60")) {
-      estimatedDays = 3;
-      region = "Major Metro (Express Air)";
-    } else {
-      estimatedDays = 4;
-      region = "Pan-India Tier 2/3";
+    const pickupPincode = process.env.SHIPROCKET_PICKUP_PINCODE || "248001";
+    const token = await this.getToken();
+    if (!token) {
+      return {
+        success: false,
+        isServiceable: false,
+        message: "Shipping is not configured. Please contact support.",
+      };
     }
 
-    return {
-      success: true,
-      isServiceable: true,
-      simulated: true,
-      estimatedDays,
-      etd: `${estimatedDays} Business Days`,
-      region,
-      courierName: "Blue Dart Air",
-      courierRate: weightKg <= 0.5 ? 79 : 129,
-      availableCouriers: [
-        { id: 1, name: "Blue Dart Air", rate: 79, etd: `${estimatedDays} Days`, estimatedDays },
-        { id: 2, name: "Delhivery Surface", rate: 69, etd: `${estimatedDays + 1} Days`, estimatedDays: estimatedDays + 1 },
-        { id: 3, name: "DTDC Express", rate: 75, etd: `${estimatedDays} Days`, estimatedDays },
-      ],
-    };
+    try {
+      const url = `${SHIPROCKET_API_BASE}/courier/serviceability/?pickup_postcode=${pickupPincode}&delivery_postcode=${cleanPin}&weight=${weightKg}&cod=${isCod ? 1 : 0}`;
+      const response = await fetch(url, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = (await response.json()) as any;
+      if (response.ok && data?.status === 200 && data?.data) {
+        const availableCouriers = data.data.available_courier_companies || [];
+        if (availableCouriers.length === 0) {
+          return {
+            success: false,
+            isServiceable: false,
+            message: "No courier currently delivers to this PIN code.",
+          };
+        }
+
+        const recommended =
+          (data.data.recommended_courier_company_id
+            ? availableCouriers.find(
+                (c: any) => c.courier_company_id === data.data.recommended_courier_company_id
+              )
+            : null) || availableCouriers[0];
+
+        return {
+          success: true,
+          isServiceable: true,
+          city: data.data.delivery_city || "",
+          state: data.data.delivery_state || "",
+          estimatedDays: recommended?.estimated_delivery_days ?? "",
+          etd: recommended?.etd || "",
+          courierName: recommended?.courier_name || "",
+          courierRate: Number(recommended?.rate) || 0,
+          availableCouriers: availableCouriers.slice(0, 4).map((c: any) => ({
+            id: c.courier_company_id,
+            name: c.courier_name,
+            rate: c.rate,
+            etd: c.etd,
+            estimatedDays: c.estimated_delivery_days,
+          })),
+        };
+      }
+
+      const message = shiprocketError(
+        data,
+        `Shiprocket serviceability check failed (HTTP ${response.status}).`
+      );
+      console.warn("Shiprocket serviceability error:", message);
+      return { success: false, isServiceable: false, message };
+    } catch (err) {
+      console.error("Shiprocket serviceability request failed:", err);
+      return {
+        success: false,
+        isServiceable: false,
+        message: "Could not reach Shiprocket to check this PIN code.",
+      };
+    }
+  }
+
+  /**
+   * Requests a courier + AWB for an existing Shiprocket shipment.
+   *
+   * Split out from order creation so a retry after an AWB failure (an empty
+   * wallet, an inactive pickup address) does not create a duplicate order.
+   */
+  public static async assignAwb(shipmentId: number | string): Promise<AwbResult> {
+    const token = await this.getToken();
+    if (!token) {
+      return { success: false, message: "Shiprocket is not configured." };
+    }
+
+    try {
+      const response = await fetch(`${SHIPROCKET_API_BASE}/courier/assign/awb`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ shipment_id: Number(shipmentId) }),
+      });
+
+      const data = (await response.json()) as any;
+      const assigned = data?.response?.data;
+      if (response.ok && assigned?.awb_code) {
+        return {
+          success: true,
+          awbCode: String(assigned.awb_code),
+          courierName: assigned.courier_name || "",
+          courierId: assigned.courier_company_id,
+        };
+      }
+
+      return {
+        success: false,
+        message: shiprocketError(data, `AWB assignment failed (HTTP ${response.status}).`),
+      };
+    } catch (err) {
+      console.error("Shiprocket AWB assignment request failed:", err);
+      return { success: false, message: "Could not reach Shiprocket to assign an AWB." };
+    }
   }
 
   /**
    * Creates an Ad-hoc Order in Shiprocket and requests AWB assignment.
+   *
+   * A failure is reported as a failure — this never fabricates a waybill.
+   * If the order is created but no courier can be assigned, that is reported
+   * as a partial success carrying `awbError`, because the order genuinely does
+   * exist in Shiprocket and must not be created a second time.
    */
-  public static async createOrderAndAssignAWB(order: IOrder) {
+  public static async createOrderAndAssignAWB(order: IOrder): Promise<ShipmentResult> {
     const config = this.getConfig();
     const token = await this.getToken();
+    if (!token) {
+      return {
+        success: false,
+        message:
+          "Shiprocket is not configured (SHIPROCKET_EMAIL / SHIPROCKET_PASSWORD missing on the server).",
+      };
+    }
 
     const orderIdStr = String(order._id);
     const orderNumber = orderIdStr.substring(orderIdStr.length - 8).toUpperCase();
@@ -188,7 +328,7 @@ export class ShiprocketService {
       billing_state: order.shippingAddress?.state || "Delhi",
       billing_country: "India",
       billing_email: order.shippingAddress?.email || order.guestEmail || "care@visvam.in",
-      billing_phone: order.shippingAddress?.phone || "9999999999",
+      billing_phone: toShiprocketPhone(order.shippingAddress?.phone) || "9999999999",
       shipping_is_billing: true,
       order_items: order.orderItems.map((item) => ({
         name: item.name,
@@ -211,187 +351,150 @@ export class ShiprocketService {
       weight: totalWeightKg,
     };
 
-    if (token) {
-      try {
-        // Step 1: Create Order in Shiprocket
-        const createRes = await fetch(`${SHIPROCKET_API_BASE}/orders/create/adhoc`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(payload),
-        });
+    let srOrderId: number;
+    let srShipmentId: number;
 
-        const createData = (await createRes.json()) as any;
-        if (createRes.ok && createData?.order_id && createData?.shipment_id) {
-          const srOrderId = createData.order_id;
-          const srShipmentId = createData.shipment_id;
+    try {
+      const createRes = await fetch(`${SHIPROCKET_API_BASE}/orders/create/adhoc`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
 
-          // Step 2: Request AWB Assignment
-          let awbCode = createData.awb_code || "";
-          let courierName = createData.courier_name || "Blue Dart Air";
-          let courierId = createData.courier_company_id || undefined;
-
-          if (!awbCode) {
-            try {
-              const awbRes = await fetch(`${SHIPROCKET_API_BASE}/courier/assign/awb`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                  shipment_id: srShipmentId,
-                }),
-              });
-              const awbData = (await awbRes.json()) as any;
-              if (awbRes.ok && awbData?.response?.data?.awb_code) {
-                awbCode = awbData.response.data.awb_code;
-                courierName = awbData.response.data.courier_name || courierName;
-                courierId = awbData.response.data.courier_company_id || courierId;
-              }
-            } catch (awbErr) {
-              console.warn("Shiprocket AWB auto-assignment deferred:", awbErr);
-            }
-          }
-
-          return {
-            success: true,
-            orderId: srOrderId,
-            shipmentId: srShipmentId,
-            awbCode: awbCode || `SR${srShipmentId}`,
-            courierName,
-            courierId,
-            trackingUrl: `https://shiprocket.co/tracking/${awbCode || srShipmentId}`,
-            labelUrl: `${SHIPROCKET_API_BASE}/shipments/print/manifest?shipment_id=${srShipmentId}`,
-            status: "MANIFESTED",
-          };
-        } else {
-          console.warn("Shiprocket create order responded with error:", createData);
-        }
-      } catch (err) {
-        console.error("Shiprocket API call error, falling back to simulated generation:", err);
+      const createData = (await createRes.json()) as any;
+      if (!createRes.ok || !createData?.order_id || !createData?.shipment_id) {
+        const message = shiprocketError(
+          createData,
+          `Shiprocket rejected the order (HTTP ${createRes.status}).`
+        );
+        console.warn("Shiprocket create order failed:", message);
+        return { success: false, message };
       }
+
+      srOrderId = createData.order_id;
+      srShipmentId = createData.shipment_id;
+
+      // Some accounts return the AWB straight from order creation.
+      if (createData.awb_code) {
+        return {
+          success: true,
+          orderId: srOrderId,
+          shipmentId: srShipmentId,
+          awbCode: String(createData.awb_code),
+          courierName: createData.courier_name || "",
+          courierId: createData.courier_company_id,
+          trackingUrl: `https://shiprocket.co/tracking/${createData.awb_code}`,
+        };
+      }
+    } catch (err) {
+      console.error("Shiprocket create order request failed:", err);
+      return { success: false, message: "Could not reach Shiprocket to create the order." };
     }
 
-    // Simulation fallback when offline or sandbox credentials not yet configured
-    const simulatedShipmentId = Math.floor(10000000 + Math.random() * 90000000);
-    const simulatedAwb = `BLUEDART${Math.floor(100000000 + Math.random() * 900000000)}`;
+    // Order exists in Shiprocket from here on — an AWB failure must still
+    // return the ids so the caller can retry assignment without duplicating it.
+    const awb = await this.assignAwb(srShipmentId);
+    if (!awb.success) {
+      return {
+        success: true,
+        orderId: srOrderId,
+        shipmentId: srShipmentId,
+        awbError: awb.message,
+      };
+    }
 
     return {
       success: true,
-      simulated: true,
-      orderId: simulatedShipmentId,
-      shipmentId: simulatedShipmentId,
-      awbCode: simulatedAwb,
-      courierName: "Blue Dart Express Air",
-      courierId: 1,
-      trackingUrl: `https://shiprocket.co/tracking/${simulatedAwb}`,
-      labelUrl: `https://shiprocket.co/print/label/${simulatedShipmentId}`,
-      invoiceUrl: `https://shiprocket.co/print/invoice/${simulatedShipmentId}`,
-      status: "MANIFESTED",
+      orderId: srOrderId,
+      shipmentId: srShipmentId,
+      awbCode: awb.awbCode,
+      courierName: awb.courierName,
+      courierId: awb.courierId,
+      trackingUrl: `https://shiprocket.co/tracking/${awb.awbCode}`,
     };
   }
 
   /**
-   * Track Shipment Status by AWB Code
+   * Track Shipment Status by AWB Code.
    */
-  public static async trackShipment(awbCode: string) {
+  public static async trackShipment(awbCode: string): Promise<TrackingResult> {
     const token = await this.getToken();
-
-    if (token && !awbCode.startsWith("BLUEDART")) {
-      try {
-        const response = await fetch(`${SHIPROCKET_API_BASE}/courier/track/awb/${awbCode}`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = (await response.json()) as any;
-        if (response.ok && data?.tracking_data) {
-          const trackData = data.tracking_data;
-          return {
-            success: true,
-            awbCode,
-            currentStatus: trackData.shipment_status || "IN_TRANSIT",
-            currentLocation: trackData.current_location || "Hub",
-            etd: trackData.etd || "2 Days",
-            timeline: (trackData.scans || []).map((scan: any) => ({
-              date: scan.date,
-              activity: scan.activity,
-              location: scan.location,
-            })),
-          };
-        }
-      } catch (err) {
-        console.warn("Live AWB tracking API error:", err);
-      }
+    if (!token) {
+      return { success: false, message: "Shiprocket is not configured." };
     }
 
-    // Realistic Tracking Timeline Simulation for demonstration
-    return {
-      success: true,
-      simulated: true,
-      awbCode,
-      currentStatus: "IN_TRANSIT",
-      currentLocation: "New Delhi Sorting Hub",
-      etd: "2 Business Days",
-      courier: "Blue Dart Air",
-      timeline: [
-        {
-          date: new Date(Date.now() - 36 * 3600 * 1000).toLocaleString("en-IN"),
-          activity: "Manifested & Handed over to Blue Dart courier partner",
-          location: "Viśvam Dispatch Warehouse, Dehradun",
-          completed: true,
+    try {
+      const response = await fetch(`${SHIPROCKET_API_BASE}/courier/track/awb/${awbCode}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        {
-          date: new Date(Date.now() - 18 * 3600 * 1000).toLocaleString("en-IN"),
-          activity: "Arrived at Regional Air Hub",
-          location: "IGI Airport Sorting Center, New Delhi",
-          completed: true,
-        },
-        {
-          date: new Date().toLocaleString("en-IN"),
-          activity: "Package sorted for Destination Hub transit",
-          location: "In Transit",
-          completed: true,
-        },
-        {
-          date: "Estimated Next Step",
-          activity: "Out for Delivery by Courier Agent",
-          location: "Destination Delivery Hub",
-          completed: false,
-        },
-      ],
-    };
+      });
+
+      const data = (await response.json()) as any;
+      const trackData = data?.tracking_data;
+      if (response.ok && trackData) {
+        // Shiprocket answers 200 with an error inside the body for an AWB it
+        // does not recognise, rather than a 404.
+        if (trackData.error) {
+          return { success: false, message: String(trackData.error) };
+        }
+
+        return {
+          success: true,
+          awbCode,
+          currentStatus: trackData.shipment_status || "IN_TRANSIT",
+          currentLocation: trackData.current_location || "",
+          etd: trackData.etd || "",
+          courier: trackData.shipment_track?.[0]?.courier_name || undefined,
+          timeline: (trackData.shipment_track_activities || trackData.scans || []).map((scan: any) => ({
+            date: scan.date,
+            activity: scan.activity,
+            location: scan.location,
+            completed: true,
+          })),
+        };
+      }
+
+      return {
+        success: false,
+        message: shiprocketError(data, `Tracking lookup failed (HTTP ${response.status}).`),
+      };
+    } catch (err) {
+      console.error("Shiprocket tracking request failed:", err);
+      return { success: false, message: "Could not reach Shiprocket for tracking." };
+    }
   }
 
   /**
    * Fetch printable shipping label URL for an order shipment.
+   * Returns null when Shiprocket cannot produce one.
    */
-  public static async getShippingLabel(shipmentId: number | string): Promise<string> {
+  public static async getShippingLabel(shipmentId: number | string): Promise<string | null> {
     const token = await this.getToken();
-    if (token) {
-      try {
-        const response = await fetch(`${SHIPROCKET_API_BASE}/courier/generate/label`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ shipment_id: [Number(shipmentId)] }),
-        });
-        const data = (await response.json()) as any;
-        if (response.ok && data?.label_url) {
-          return data.label_url;
-        }
-      } catch (err) {
-        console.warn("Could not retrieve live label URL:", err);
-      }
-    }
+    if (!token) return null;
 
-    return `https://shiprocket.co/print/label/${shipmentId}`;
+    try {
+      const response = await fetch(`${SHIPROCKET_API_BASE}/courier/generate/label`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ shipment_id: [Number(shipmentId)] }),
+      });
+      const data = (await response.json()) as any;
+      if (response.ok && data?.label_url) {
+        return data.label_url;
+      }
+      console.warn("Shiprocket label generation failed:", shiprocketError(data, "unknown error"));
+      return null;
+    } catch (err) {
+      console.warn("Could not retrieve live label URL:", err);
+      return null;
+    }
   }
 }

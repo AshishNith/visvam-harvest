@@ -11,7 +11,8 @@
     "seed": "tsx src/scripts/seed.ts",
     "upload-images": "tsx src/scripts/uploadToCloudinary.ts",
     "fix-email-index": "tsx src/scripts/fixEmailIndex.ts",
-    "migrate-cluster": "tsx src/scripts/migrateToNewCluster.ts"
+    "migrate-cluster": "tsx src/scripts/migrateToNewCluster.ts",
+    "clear-simulated-shipments": "tsx src/scripts/clearSimulatedShipments.ts"
   },
   "keywords": [
     "visvam",

@@ -51,34 +51,84 @@ export const createShipment = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-    // Call Shiprocket Service
-    const shipResult = await ShiprocketService.createOrderAndAssignAWB(order);
-
-    if (!shipResult.success) {
-      res.status(500).json({
+    if (order.shiprocket?.awbCode) {
+      res.status(400).json({
         success: false,
-        message: "Failed to create shipment in Shiprocket",
+        message: `This order already has AWB ${order.shiprocket.awbCode}.`,
       });
       return;
     }
 
-    // Update MongoDB Order document
-    order.status = "Shipped";
+    // The order may already exist in Shiprocket from an earlier attempt whose
+    // AWB assignment failed (empty wallet, inactive pickup address). Retry just
+    // the assignment rather than creating a duplicate order.
+    if (order.shiprocket?.shipmentId) {
+      const retry = await ShiprocketService.assignAwb(order.shiprocket.shipmentId);
+      if (!retry.success) {
+        res.status(502).json({
+          success: false,
+          message: `Order is already in Shiprocket (shipment #${order.shiprocket.shipmentId}) but no courier could be assigned: ${retry.message}`,
+        });
+        return;
+      }
+
+      order.status = "Shipped";
+      order.shiprocket = {
+        ...order.shiprocket,
+        awbCode: retry.awbCode,
+        courierName: retry.courierName,
+        courierId: retry.courierId,
+        trackingUrl: `https://shiprocket.co/tracking/${retry.awbCode}`,
+        status: "MANIFESTED",
+        lastTrackedAt: new Date(),
+      };
+      await order.save();
+
+      res.status(200).json({
+        success: true,
+        message: `Shipment manifested with ${retry.courierName}! AWB: ${retry.awbCode}`,
+        data: { orderId: order._id, status: order.status, shiprocket: order.shiprocket },
+      });
+      return;
+    }
+
+    const shipResult = await ShiprocketService.createOrderAndAssignAWB(order);
+
+    if (!shipResult.success) {
+      res.status(502).json({ success: false, message: shipResult.message });
+      return;
+    }
+
+    // The Shiprocket order exists — record its ids even when no courier was
+    // assigned, so a retry resumes from AWB assignment instead of duplicating.
     order.shiprocket = {
+      ...(order.shiprocket || {}),
       orderId: shipResult.orderId,
       shipmentId: shipResult.shipmentId,
       awbCode: shipResult.awbCode,
       courierName: shipResult.courierName,
       courierId: shipResult.courierId,
       labelUrl: shipResult.labelUrl,
-      manifestUrl: shipResult.labelUrl,
-      invoiceUrl: shipResult.invoiceUrl,
       trackingUrl: shipResult.trackingUrl,
-      status: "MANIFESTED",
+      status: shipResult.awbCode ? "MANIFESTED" : "AWB_PENDING",
       lastTrackedAt: new Date(),
     };
 
+    // Only a real waybill means the parcel is actually going somewhere.
+    if (shipResult.awbCode) {
+      order.status = "Shipped";
+    }
+
     await order.save();
+
+    if (!shipResult.awbCode) {
+      res.status(502).json({
+        success: false,
+        message: `Order created in Shiprocket (shipment #${shipResult.shipmentId}) but no courier could be assigned: ${shipResult.awbError}`,
+        data: { orderId: order._id, status: order.status, shiprocket: order.shiprocket },
+      });
+      return;
+    }
 
     res.status(200).json({
       success: true,
@@ -113,6 +163,8 @@ export const getShipmentTracking = async (req: Request, res: Response): Promise<
       if (order && order.shiprocket?.awbCode) {
         awbCode = order.shiprocket.awbCode;
       } else {
+        // Not yet handed to a courier. This is the order's own status, not a
+        // courier scan — no waybill exists to look up.
         res.status(200).json({
           success: true,
           status: order?.status || "Pending",
@@ -120,13 +172,13 @@ export const getShipmentTracking = async (req: Request, res: Response): Promise<
           timeline: [
             {
               date: order ? new Date(order.createdAt).toLocaleString("en-IN") : new Date().toLocaleString("en-IN"),
-              activity: "Order confirmed & packaging underway in cold-chain facility",
-              location: "Viśvam Dispatch Center, Dehradun",
+              activity: "Order confirmed and being packed",
+              location: "Viśvam Dispatch Centre",
               completed: true,
             },
             {
               date: "Next Step",
-              activity: "Courier partner pickup & AWB generation",
+              activity: "Courier pickup & AWB generation",
               location: "Dispatch Hub",
               completed: false,
             },
@@ -137,7 +189,7 @@ export const getShipmentTracking = async (req: Request, res: Response): Promise<
     }
 
     const trackingResult = await ShiprocketService.trackShipment(awbCode);
-    res.status(200).json(trackingResult);
+    res.status(trackingResult.success ? 200 : 502).json(trackingResult);
   } catch (error: any) {
     console.error("Tracking error:", error);
     res.status(500).json({
@@ -164,6 +216,14 @@ export const getShippingLabel = async (req: Request, res: Response): Promise<voi
     }
 
     const labelUrl = await ShiprocketService.getShippingLabel(order.shiprocket.shipmentId);
+    if (!labelUrl) {
+      res.status(502).json({
+        success: false,
+        message: "Shiprocket could not generate a label for this shipment yet.",
+      });
+      return;
+    }
+
     res.status(200).json({ success: true, labelUrl });
   } catch (error: any) {
     console.error("Get label error:", error);

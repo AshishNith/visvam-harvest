@@ -30,6 +30,7 @@ import { CityStateFields } from "@/components/CityStateFields";
 import { PincodeField } from "@/components/PincodeField";
 import { cartWeightKg } from "@/lib/shipping-weight";
 import { prefillableName, sanitizeNameInput } from "@/lib/name";
+import { sanitizePhoneInput, isValidIndianMobile } from "@/lib/phone";
 import { loadRazorpayScript } from "@/lib/razorpay";
 import { toast } from "sonner";
 import type { ConfirmationResult } from "@/lib/firebase";
@@ -293,7 +294,7 @@ function CheckoutPage() {
   // Validate Address
   const validateAddress = (): boolean => {
     if (!addressForm.fullName.trim()) { toast.error("Full Name is required"); return false; }
-    if (!addressForm.phone.trim() || addressForm.phone.length < 10) { toast.error("Valid 10-digit phone number is required"); return false; }
+    if (!isValidIndianMobile(addressForm.phone)) { toast.error("Enter a valid 10-digit mobile number (starting 6–9)"); return false; }
     if (!addressForm.street.trim()) { toast.error("Street Address is required"); return false; }
     if (!addressForm.city.trim()) { toast.error("City is required"); return false; }
     if (!addressForm.state.trim()) { toast.error("State is required"); return false; }
@@ -762,9 +763,13 @@ function CheckoutPage() {
                     <label className="block text-[10px] tracked text-muted-foreground uppercase mb-1">Phone Number *</label>
                     <input
                       type="tel"
+                      inputMode="numeric"
+                      maxLength={10}
                       value={addressForm.phone}
-                      onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value })}
-                      placeholder="+91 98765 43210"
+                      onChange={(e) =>
+                        setAddressForm({ ...addressForm, phone: sanitizePhoneInput(e.target.value) })
+                      }
+                      placeholder="10-digit mobile number"
                       className="w-full px-3 py-2 text-xs border border-border outline-none focus:border-clay bg-transparent"
                       required
                     />
