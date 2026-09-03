@@ -88,8 +88,12 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
-          <Link to="/" className="flex items-center gap-3 group">
+        {/* Stacked and centred up to xl — the 3-across row only has room on real
+            desktop widths. Forcing it onto tablets (768–1023) made the centred
+            copyright block overlap the wordmark, and 1024–1279 left the links
+            orphaned on a second line. */}
+        <div className="pt-10 flex flex-col xl:flex-row xl:flex-wrap justify-between items-center gap-x-6 gap-y-6">
+          <Link to="/" className="flex items-center gap-3 group shrink-0">
             <img
               src={logoEmblem}
               alt="Viśvam Emblem"
@@ -109,11 +113,11 @@ export function Footer() {
               className="h-7 w-auto object-contain"
             />
           </Link>
-          <div className="text-[9px] tracked text-muted-foreground text-center space-y-1">
+          <div className="text-[9px] tracked text-muted-foreground text-center space-y-1 min-w-0">
             <p>© 2026 Viśvam</p>
             <p>Tej Kripa Private Limited &nbsp;&bull;&nbsp; GST No. 09AANCT2392L1ZM</p>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-6 text-[10px] tracked">
+          <div className="flex flex-wrap items-center justify-center gap-6 text-[10px] tracked shrink-0">
             <Link to="/privacy" className="hover:text-clay transition">Privacy</Link>
             <Link to="/terms" className="hover:text-clay transition">Terms</Link>
             <Link to="/cookies" className="hover:text-clay transition">Cookie Notice</Link>
