@@ -92,7 +92,11 @@ function CheckoutPage() {
   const [addressesLoading, setAddressesLoading] = useState(false);
   const [submittingOrder, setSubmittingOrder] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState<string | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "cod">("razorpay");
+  // Online payment is temporarily disabled — COD is the only method for now.
+  const ONLINE_PAYMENT_ENABLED = false;
+  const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "cod">(
+    ONLINE_PAYMENT_ENABLED ? "razorpay" : "cod"
+  );
   // Set once the underlying Order document is created, so a retry after a
   // cancelled/failed payment reuses it instead of creating a duplicate order.
   const [pendingOrderId, setPendingOrderId] = useState<string | null>(null);
@@ -904,26 +908,34 @@ function CheckoutPage() {
 
                 <button
                   type="button"
-                  onClick={() => setPaymentMethod("razorpay")}
-                  className={`w-full p-4 border-2 flex items-center justify-between transition-colors text-left ${
-                    paymentMethod === "razorpay" ? "border-clay bg-cream/30" : "border-border hover:border-clay/50"
+                  onClick={() => ONLINE_PAYMENT_ENABLED && setPaymentMethod("razorpay")}
+                  disabled={!ONLINE_PAYMENT_ENABLED}
+                  aria-disabled={!ONLINE_PAYMENT_ENABLED}
+                  className={`w-full p-4 border-2 flex items-center justify-between text-left transition-colors ${
+                    !ONLINE_PAYMENT_ENABLED
+                      ? "border-border bg-ink/[0.03] opacity-60 cursor-not-allowed"
+                      : paymentMethod === "razorpay"
+                        ? "border-clay bg-cream/30"
+                        : "border-border hover:border-clay/50"
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <div
                       className={`w-4 h-4 rounded-full border-4 bg-white shrink-0 ${
-                        paymentMethod === "razorpay" ? "border-clay" : "border-border"
+                        ONLINE_PAYMENT_ENABLED && paymentMethod === "razorpay" ? "border-clay" : "border-border"
                       }`}
                     />
                     <div className="flex items-center gap-2">
                       <CreditCard size={16} className="text-clay shrink-0" />
                       <div>
                         <p className="text-xs font-semibold text-ink">Pay Online</p>
-                        <p className="text-[10px] text-muted-foreground">Card, UPI, Netbanking & Wallets via Razorpay</p>
+                        <p className="text-[10px] text-muted-foreground">Card, UPI, Netbanking &amp; Wallets via Razorpay</p>
                       </div>
                     </div>
                   </div>
-                  <span className="text-[10px] uppercase font-bold text-clay bg-clay/10 px-2 py-0.5 shrink-0">Secure</span>
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground bg-ink/10 px-2 py-0.5 shrink-0 whitespace-nowrap">
+                    {ONLINE_PAYMENT_ENABLED ? "Secure" : "Available Soon"}
+                  </span>
                 </button>
 
                 <button
