@@ -3,6 +3,7 @@ import crypto from "crypto";
 import { Order } from "../models/Order.js";
 import { getRazorpayInstance, isRazorpayConfigured } from "../config/razorpay.js";
 import { ensureShiprocketOrder } from "../services/orderFulfillment.js";
+import { sendOrderConfirmationEmail } from "../services/emailService.js";
 
 // @desc    Create a Razorpay order for an existing Viśvam order
 // @route   POST /api/v1/payments/razorpay/order
@@ -101,7 +102,8 @@ export const verifyRazorpayPayment = async (req: Request, res: Response): Promis
       return;
     }
 
-    if (!order.isPaid) {
+    const wasUnpaid = !order.isPaid;
+    if (wasUnpaid) {
       order.isPaid = true;
       order.paidAt = new Date();
       order.status = "Processing";
@@ -112,6 +114,12 @@ export const verifyRazorpayPayment = async (req: Request, res: Response): Promis
         razorpaySignature: razorpay_signature,
       };
       await order.save();
+
+      // Confirmation email goes out on first payment only — never on a retry
+      // of an already-paid order. Fire-and-forget.
+      sendOrderConfirmationEmail(order).catch((err) =>
+        console.error(`Order confirmation email failed for ${String(order._id)}:`, err)
+      );
     }
 
     // Payment is confirmed — hand the order to Shiprocket's "New" tab.
@@ -165,8 +173,13 @@ export const razorpayWebhook = async (req: Request, res: Response): Promise<void
           razorpayPaymentId: paymentEntity.id,
         };
         await order.save();
-        // Safety net path too: make sure the paid order reaches Shiprocket.
+        // Safety net path too: make sure the paid order reaches Shiprocket and
+        // the customer gets a confirmation, in case the browser never returned
+        // to call /verify.
         await ensureShiprocketOrder(order);
+        sendOrderConfirmationEmail(order).catch((err) =>
+          console.error(`Order confirmation email failed for ${String(order._id)}:`, err)
+        );
       }
     }
 

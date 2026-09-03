@@ -6,6 +6,7 @@ import { User } from "../models/User.js";
 import { AuthenticatedRequest } from "../middleware/authMiddleware.js";
 import { ShiprocketService } from "../services/shiprocketService.js";
 import { ensureShiprocketOrder } from "../services/orderFulfillment.js";
+import { sendOrderConfirmationEmail } from "../services/emailService.js";
 import { getNumericSetting } from "./settingsController.js";
 import { orderWeightKg } from "../utils/shippingWeight.js";
 
@@ -166,6 +167,13 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     // clears (see paymentController). Best-effort — never fail placement on it.
     if (isCod) {
       await ensureShiprocketOrder(order);
+
+      // Confirmation email — fire-and-forget, mirrors the newsletter flow.
+      // Only for COD here: a prepaid order is still unpaid at this point, so
+      // its confirmation is sent from paymentController once payment verifies.
+      sendOrderConfirmationEmail(order).catch((err) =>
+        console.error(`Order confirmation email failed for ${String(order._id)}:`, err)
+      );
     }
 
     res.status(201).json({
