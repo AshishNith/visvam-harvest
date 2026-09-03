@@ -20,23 +20,22 @@ const FREE_DELIVERY_THRESHOLD = 3499;
 // to charge a known-sane figure than to ship free by accident.
 const FALLBACK_DELIVERY_CHARGE = 79;
 
-// Delivery is charged at the live courier rate, nothing added. Cash-on-Delivery
-// orders carry a separate surcharge (`codHandlingFee`, editable in Admin Panel →
-// Merchandising) which is its own line on the order, not folded into shipping —
-// so it still applies on free-delivery orders.
+// Delivery is charged at the live courier rate, nothing added. It is ALWAYS
+// quoted at the prepaid rate — never Shiprocket's COD rate, which bundles a
+// percent-of-order-value collection fee and would make the delivery line swing
+// the moment a customer switched to COD. Cash-on-Delivery instead carries a
+// separate, flat surcharge (`codHandlingFee`, editable in Admin Panel →
+// Merchandising) that is its own line on the order, so it also still applies on
+// free-delivery orders.
 
 /**
- * The live courier rate for a destination, rounded up to whole rupees.
+ * The live prepaid courier rate for a destination, rounded up to whole rupees.
  * Returns the fallback if the lookup fails, the PIN is unserviceable, or the
  * response carries no rate.
  */
-async function quoteDeliveryCharge(
-  pincode: string,
-  weightKg: number,
-  isCod: boolean
-): Promise<number> {
+async function quoteDeliveryCharge(pincode: string, weightKg: number): Promise<number> {
   try {
-    const quote = await ShiprocketService.checkServiceability(pincode, weightKg, isCod);
+    const quote = await ShiprocketService.checkServiceability(pincode, weightKg, false);
     const rate = Number((quote as any)?.courierRate);
     if (quote?.success && Number.isFinite(rate) && rate > 0) return Math.ceil(rate);
   } catch (error) {
@@ -108,7 +107,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       itemsPrice >= FREE_DELIVERY_THRESHOLD
         ? 0
         : deliveryPincode.length === 6
-          ? await quoteDeliveryCharge(deliveryPincode, orderWeightKg(sanitizedOrderItems), isCod)
+          ? await quoteDeliveryCharge(deliveryPincode, orderWeightKg(sanitizedOrderItems))
           : FALLBACK_DELIVERY_CHARGE;
 
     // COD costs more to service, so it carries a surcharge. Deliberately NOT

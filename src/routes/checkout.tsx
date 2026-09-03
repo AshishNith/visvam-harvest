@@ -121,14 +121,15 @@ function CheckoutPage() {
   } | null>(null);
 
   // Auto-check Shiprocket serviceability and pricing when a 6-digit PIN code
-  // is entered. Re-runs on cart or payment-mode changes too, because Shiprocket
-  // quotes on destination, weight and COD together.
+  // is entered. Always quoted at the prepaid rate (isCod = false): Shiprocket's
+  // COD rate bundles a collection fee, which would make the delivery line jump
+  // when the customer picks COD. The flat COD handling fee is a separate line.
   useEffect(() => {
     const pin = addressForm.pincode ? addressForm.pincode.replace(/\D/g, "") : "";
     if (pin.length === 6) {
       let isCurrent = true;
       setPincodeChecking(true);
-      checkPincodeServiceability(pin, cartWeightKg(items), paymentMethod === "cod")
+      checkPincodeServiceability(pin, cartWeightKg(items), false)
         .then((res) => {
           if (isCurrent && res.success) {
             setPincodeResult({
@@ -150,7 +151,7 @@ function CheckoutPage() {
     } else {
       setPincodeResult(null);
     }
-  }, [addressForm.pincode, items, paymentMethod]);
+  }, [addressForm.pincode, items]);
 
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
