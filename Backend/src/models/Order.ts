@@ -12,6 +12,12 @@ export interface IOrderItem {
   selectedOptions?: Record<string, string>;
   /** Pack size text ("500g Pouch") — the weight fallback for variant-less items. */
   serving?: string;
+  /**
+   * Gross packed weight per unit in kg, captured at order time. Preferred over
+   * parsing a number out of the title, and frozen here so a later catalogue
+   * edit can't change what an existing order was quoted on.
+   */
+  weightKg?: number;
 }
 
 export interface IShiprocketDetails {
@@ -57,6 +63,8 @@ export interface IOrder extends Document {
   itemsPrice: number;
   taxPrice: number;
   shippingPrice: number;
+  /** Cash-on-Delivery surcharge. Zero for prepaid orders. */
+  codFee: number;
   totalPrice: number;
   isPaid: boolean;
   paidAt?: Date;
@@ -94,6 +102,7 @@ const OrderSchema = new Schema<IOrder>(
         variantSku: { type: String },
         selectedOptions: { type: Map, of: String },
         serving: { type: String },
+        weightKg: { type: Number, min: 0 },
       },
     ],
     pickupLane: {
@@ -137,6 +146,11 @@ const OrderSchema = new Schema<IOrder>(
       default: 0.0,
     },
     shippingPrice: {
+      type: Number,
+      required: true,
+      default: 0.0,
+    },
+    codFee: {
       type: Number,
       required: true,
       default: 0.0,

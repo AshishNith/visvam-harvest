@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import crypto from "crypto";
 import { Order } from "../models/Order.js";
 import { getRazorpayInstance, isRazorpayConfigured } from "../config/razorpay.js";
+import { ensureShiprocketOrder } from "../services/orderFulfillment.js";
 
 // @desc    Create a Razorpay order for an existing Viśvam order
 // @route   POST /api/v1/payments/razorpay/order
@@ -113,6 +114,9 @@ export const verifyRazorpayPayment = async (req: Request, res: Response): Promis
       await order.save();
     }
 
+    // Payment is confirmed — hand the order to Shiprocket's "New" tab.
+    await ensureShiprocketOrder(order);
+
     res.status(200).json({ success: true, message: "Payment verified successfully", data: order });
   } catch (error: any) {
     console.error("Razorpay payment verification error:", error);
@@ -161,6 +165,8 @@ export const razorpayWebhook = async (req: Request, res: Response): Promise<void
           razorpayPaymentId: paymentEntity.id,
         };
         await order.save();
+        // Safety net path too: make sure the paid order reaches Shiprocket.
+        await ensureShiprocketOrder(order);
       }
     }
 

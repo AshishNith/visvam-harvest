@@ -599,6 +599,48 @@ export async function deleteMyAccount() {
   }
 }
 
+// ─── Store settings ───────────────────────────────────────────────
+// Store-wide knobs the admin edits in the Admin Panel. Only the values the
+// storefront needs to price an order are read here. Cached at module scope
+// like merchandising — checkout re-renders often and this never changes
+// mid-session.
+export type StoreSettings = {
+  /** Surcharge on Cash-on-Delivery orders. Prepaid orders pay nothing extra. */
+  codHandlingFee: number;
+};
+
+const STORE_SETTINGS_FALLBACK: StoreSettings = { codHandlingFee: 10 };
+
+let storeSettingsCache: StoreSettings | null = null;
+let storeSettingsInflight: Promise<StoreSettings> | null = null;
+
+export async function fetchStoreSettings(): Promise<StoreSettings> {
+  if (storeSettingsCache) return storeSettingsCache;
+  if (storeSettingsInflight) return storeSettingsInflight;
+
+  storeSettingsInflight = (async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/settings`);
+      if (!res.ok) return STORE_SETTINGS_FALLBACK;
+      const json = await res.json();
+      const fee = Number(json?.data?.codHandlingFee);
+      const settings: StoreSettings = {
+        codHandlingFee: Number.isFinite(fee) && fee >= 0 ? fee : STORE_SETTINGS_FALLBACK.codHandlingFee,
+      };
+      storeSettingsCache = settings;
+      return settings;
+    } catch {
+      // The server stays the authority on what is actually charged, so a
+      // failure here only risks a stale display, never a wrong bill.
+      return STORE_SETTINGS_FALLBACK;
+    } finally {
+      storeSettingsInflight = null;
+    }
+  })();
+
+  return storeSettingsInflight;
+}
+
 // ─── Shiprocket Logistics API ─────────────────────────────────────
 export async function checkPincodeServiceability(
   pincode: string,

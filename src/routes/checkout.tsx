@@ -20,6 +20,7 @@ import { useAuth } from "@/lib/auth-context";
 import {
   submitOrderToBackend,
   checkPincodeServiceability,
+  fetchStoreSettings,
   createRazorpayOrder,
   verifyRazorpayPayment,
   fetchMyAddresses,
@@ -95,6 +96,19 @@ function CheckoutPage() {
   // Set once the underlying Order document is created, so a retry after a
   // cancelled/failed payment reuses it instead of creating a duplicate order.
   const [pendingOrderId, setPendingOrderId] = useState<string | null>(null);
+
+  // COD surcharge, set by the admin in Merchandising. Falls back to the same
+  // default the server uses; the server stays the authority on what is charged.
+  const [codHandlingFee, setCodHandlingFee] = useState(10);
+  useEffect(() => {
+    let isCurrent = true;
+    fetchStoreSettings().then((s) => {
+      if (isCurrent) setCodHandlingFee(s.codHandlingFee);
+    });
+    return () => {
+      isCurrent = false;
+    };
+  }, []);
 
   // Shiprocket Pincode Serviceability State
   const [pincodeChecking, setPincodeChecking] = useState(false);
@@ -273,6 +287,7 @@ function CheckoutPage() {
   const freeDelivery = subtotal >= FREE_SHIPPING_THRESHOLD;
   // Rounded up to whole rupees the same way the server does, so the figure
   // shown here is the figure charged.
+  // The live courier rate exactly as Shiprocket quoted it — nothing added.
   const quotedDelivery =
     typeof pincodeResult?.courierRate === "number" && pincodeResult.courierRate > 0
       ? Math.ceil(pincodeResult.courierRate)
@@ -289,7 +304,10 @@ function CheckoutPage() {
   const amountToFreeDelivery = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const deliveryProgress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
   const taxPrice = Math.round(subtotal * 0.05);
-  const totalPrice = subtotal + shippingPrice + taxPrice;
+  // COD surcharge is its own line, not part of delivery, so it still applies
+  // once delivery becomes free. Mirrors the server's codFee calculation.
+  const codFee = paymentMethod === "cod" ? codHandlingFee : 0;
+  const totalPrice = subtotal + shippingPrice + taxPrice + codFee;
 
   // Validate Address
   const validateAddress = (): boolean => {
@@ -341,6 +359,7 @@ function CheckoutPage() {
           image: product.images[0] || "",
           // Sent so the server derives the same parcel weight this page quoted on.
           serving: product.serving,
+          weightKg: selectedVariant?.weightKg ?? product?.weightKg,
           variantTitle: selectedVariant?.title,
           variantSku: selectedVariant?.sku,
           selectedOptions: selectedVariant?.options,
@@ -923,7 +942,10 @@ function CheckoutPage() {
                       <Banknote size={16} className="text-clay shrink-0" />
                       <div>
                         <p className="text-xs font-semibold text-ink">Cash on Delivery (COD)</p>
-                        <p className="text-[10px] text-muted-foreground">Pay with cash or UPI upon delivery</p>
+                        <p className="text-[10px] text-muted-foreground">
+                          Pay with cash or UPI upon delivery
+                          {codHandlingFee > 0 && ` · ${formatPrice(codHandlingFee)} handling fee`}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -1007,6 +1029,12 @@ function CheckoutPage() {
                       )}
                     </span>
                   </div>
+                  {codFee > 0 && (
+                    <div className="flex justify-between text-muted-foreground">
+                      <span>COD handling fee</span>
+                      <span className="tabular-nums text-ink font-medium">{formatPrice(codFee)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-muted-foreground">
                     <span>GST (5%)</span>
                     <span className="tabular-nums text-ink font-medium">{formatPrice(taxPrice)}</span>

@@ -17,6 +17,12 @@ export interface IProductVariant {
   stock: number;
   image?: string;
   isDefault?: boolean;
+  /**
+   * Gross packed weight of this pack in kg. When set it is used verbatim for
+   * Shiprocket rate lookups; otherwise the weight is guessed by parsing a
+   * number out of the title ("500g"), which breaks on titles like "Family Pack".
+   */
+  weightKg?: number;
 }
 
 export interface IProduct extends Document {
@@ -36,6 +42,8 @@ export interface IProduct extends Document {
   stock: number;
   rating: number;
   numReviews: number;
+  /** Gross packed weight in kg for products without variants. */
+  weightKg?: number;
   hasVariants?: boolean;
   variantAttributes?: IVariantAttribute[];
   variants?: IProductVariant[];
@@ -121,6 +129,10 @@ const ProductSchema = new Schema<IProduct>(
       type: Number,
       default: 0,
     },
+    weightKg: {
+      type: Number,
+      min: 0,
+    },
     hasVariants: {
       type: Boolean,
       default: false,
@@ -141,6 +153,7 @@ const ProductSchema = new Schema<IProduct>(
         stock: { type: Number, default: 0 },
         image: { type: String },
         isDefault: { type: Boolean, default: false },
+        weightKg: { type: Number, min: 0 },
       },
     ],
     relatedProducts: {

@@ -5,6 +5,8 @@ import { Product } from "../models/Product.js";
 import { User } from "../models/User.js";
 import { AuthenticatedRequest } from "../middleware/authMiddleware.js";
 import { ShiprocketService } from "../services/shiprocketService.js";
+import { ensureShiprocketOrder } from "../services/orderFulfillment.js";
+import { getNumericSetting } from "./settingsController.js";
 import { orderWeightKg } from "../utils/shippingWeight.js";
 
 // Delivery is quoted live per PIN code by Shiprocket, then waived once the
@@ -17,6 +19,11 @@ const FREE_DELIVERY_THRESHOLD = 3499;
 // Used only when Shiprocket can't be reached or quotes nothing usable. Better
 // to charge a known-sane figure than to ship free by accident.
 const FALLBACK_DELIVERY_CHARGE = 79;
+
+// Delivery is charged at the live courier rate, nothing added. Cash-on-Delivery
+// orders carry a separate surcharge (`codHandlingFee`, editable in Admin Panel →
+// Merchandising) which is its own line on the order, not folded into shipping —
+// so it still applies on free-delivery orders.
 
 /**
  * The live courier rate for a destination, rounded up to whole rupees.
@@ -84,6 +91,8 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         selectedOptions:
           item.selectedOptions && typeof item.selectedOptions === "object" ? item.selectedOptions : undefined,
         serving: typeof item.serving === "string" ? item.serving : undefined,
+        // Trusted only as a weight hint for the courier quote, never for price.
+        weightKg: Number(item.weightKg) > 0 ? Number(item.weightKg) : undefined,
       });
     }
 
@@ -102,7 +111,11 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
           ? await quoteDeliveryCharge(deliveryPincode, orderWeightKg(sanitizedOrderItems), isCod)
           : FALLBACK_DELIVERY_CHARGE;
 
-    const totalPrice = Number((itemsPrice + taxPrice + shippingPrice).toFixed(2));
+    // COD costs more to service, so it carries a surcharge. Deliberately NOT
+    // folded into shippingPrice: a free-delivery order still owes this fee.
+    const codFee = isCod ? await getNumericSetting("codHandlingFee") : 0;
+
+    const totalPrice = Number((itemsPrice + taxPrice + shippingPrice + codFee).toFixed(2));
 
     const order = await Order.create({
       user: authReq.user?._id,
@@ -124,6 +137,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       itemsPrice,
       taxPrice,
       shippingPrice,
+      codFee,
       totalPrice,
       status: "Pending",
     });
@@ -146,6 +160,13 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       } catch (err) {
         console.warn("Could not auto-update user saved address:", err);
       }
+    }
+
+    // COD orders enter Shiprocket's "New" tab right away so the team can pick a
+    // courier from the Admin Panel. Prepaid orders are pushed once payment
+    // clears (see paymentController). Best-effort — never fail placement on it.
+    if (isCod) {
+      await ensureShiprocketOrder(order);
     }
 
     res.status(201).json({

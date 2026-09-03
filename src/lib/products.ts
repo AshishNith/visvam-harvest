@@ -15,6 +15,8 @@ export interface IProductVariant {
   stock: number;
   image?: string;
   isDefault?: boolean;
+  /** Gross packed weight in kg — drives the Shiprocket delivery rate. */
+  weightKg?: number;
 }
 
 export type Product = {
@@ -29,6 +31,8 @@ export type Product = {
   description: string;
   serving: string;
   stock?: number;
+  /** Gross packed weight in kg for products without variants. */
+  weightKg?: number;
   benefits?: string[];
   bestseller?: boolean;
   isNew?: boolean;

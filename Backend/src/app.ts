@@ -20,6 +20,7 @@ import addressRoutes from "./routes/addressRoutes.js";
 import shippingRoutes from "./routes/shippingRoutes.js";
 import merchandisingRoutes from "./routes/merchandisingRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import settingsRoutes from "./routes/settingsRoutes.js";
 
 import { checkDbConnection } from "./config/db.js";
 import { apiLimiter } from "./middleware/rateLimiter.js";
@@ -136,6 +137,7 @@ app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/addresses", addressRoutes);
 app.use("/api/v1/merchandising", merchandisingRoutes);
 app.use("/api/v1/payments", paymentRoutes);
+app.use("/api/v1/settings", settingsRoutes);
 
 // Error Handling Middlewares
 app.use(notFound);

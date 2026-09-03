@@ -1,4 +1,5 @@
 import { IOrder } from "../models/Order.js";
+import { orderWeightKg } from "../utils/shippingWeight.js";
 
 interface ShiprocketAuthConfig {
   email: string;
@@ -31,7 +32,16 @@ function toShiprocketPhone(raw?: string): string {
 export type CourierOption = {
   id: number;
   name: string;
+  /** What Shiprocket bills in total — freight PLUS COD and other charges. */
   rate: number;
+  /** Freight alone, so a scary total can be explained rather than guessed at. */
+  freightCharge?: number;
+  /** COD collection fee, a % of order value. Dominates `rate` on big COD orders. */
+  codCharges?: number;
+  /** Surface (road) vs air. Air runs several times the price for dry goods. */
+  isSurface?: boolean;
+  /** Shiprocket's delivery-performance score, 0-5. */
+  rating?: number;
   etd: string;
   estimatedDays: number | string;
 };
@@ -46,6 +56,8 @@ export type ServiceabilityResult =
       etd: string;
       courierName: string;
       courierRate: number;
+      /** Courier the quote is based on — the cheapest serviceable one. */
+      quotedCourierId?: number;
       availableCouriers: CourierOption[];
     }
   | { success: false; isServiceable: false; message: string };
@@ -202,26 +214,41 @@ export class ShiprocketService {
           };
         }
 
-        const recommended =
-          (data.data.recommended_courier_company_id
-            ? availableCouriers.find(
-                (c: any) => c.courier_company_id === data.data.recommended_courier_company_id
-              )
-            : null) || availableCouriers[0];
+        // Shiprocket's `recommended_courier_company_id` is chosen by their own
+        // priority/performance engine, NOT by price — it is routinely an air
+        // service several hundred rupees above the cheapest serviceable option.
+        // Quoting that to the customer while the team then ships surface made
+        // the checkout price, the order's shippingPrice and the Admin Panel's
+        // courier list all disagree. Always quote the cheapest serviceable
+        // courier, and hand back the options price-sorted so the Admin Panel
+        // picker lists that same courier first.
+        const sorted = [...availableCouriers].sort(
+          (a: any, b: any) => (Number(a.rate) || 0) - (Number(b.rate) || 0)
+        );
+        const cheapest = sorted[0];
 
         return {
           success: true,
           isServiceable: true,
           city: data.data.delivery_city || "",
           state: data.data.delivery_state || "",
-          estimatedDays: recommended?.estimated_delivery_days ?? "",
-          etd: recommended?.etd || "",
-          courierName: recommended?.courier_name || "",
-          courierRate: Number(recommended?.rate) || 0,
-          availableCouriers: availableCouriers.slice(0, 4).map((c: any) => ({
+          // ETA must come from the same courier as the price, or the checkout
+          // promises one courier's speed at another courier's cost.
+          estimatedDays: cheapest?.estimated_delivery_days ?? "",
+          etd: cheapest?.etd || "",
+          courierName: cheapest?.courier_name || "",
+          courierRate: Number(cheapest?.rate) || 0,
+          quotedCourierId: cheapest?.courier_company_id,
+          // Was `.slice(0, 4)` on the UNSORTED list, which could hide both the
+          // cheapest courier and the one the customer was actually quoted.
+          availableCouriers: sorted.slice(0, 10).map((c: any) => ({
             id: c.courier_company_id,
             name: c.courier_name,
-            rate: c.rate,
+            rate: Number(c.rate) || 0,
+            freightCharge: Number(c.freight_charge) || 0,
+            codCharges: Number(c.cod_charges) || 0,
+            isSurface: Boolean(c.is_surface),
+            rating: Number(c.rating) || undefined,
             etd: c.etd,
             estimatedDays: c.estimated_delivery_days,
           })),
@@ -250,10 +277,20 @@ export class ShiprocketService {
    * Split out from order creation so a retry after an AWB failure (an empty
    * wallet, an inactive pickup address) does not create a duplicate order.
    */
-  public static async assignAwb(shipmentId: number | string): Promise<AwbResult> {
+  public static async assignAwb(
+    shipmentId: number | string,
+    courierId?: number | string
+  ): Promise<AwbResult> {
     const token = await this.getToken();
     if (!token) {
       return { success: false, message: "Shiprocket is not configured." };
+    }
+
+    // Omitting courier_id lets Shiprocket auto-pick via the account's courier
+    // priority rules; passing one forces that specific courier company.
+    const body: Record<string, number> = { shipment_id: Number(shipmentId) };
+    if (courierId != null && Number(courierId) > 0) {
+      body.courier_id = Number(courierId);
     }
 
     try {
@@ -263,7 +300,7 @@ export class ShiprocketService {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ shipment_id: Number(shipmentId) }),
+        body: JSON.stringify(body),
       });
 
       const data = (await response.json()) as any;
@@ -287,33 +324,20 @@ export class ShiprocketService {
     }
   }
 
-  /**
-   * Creates an Ad-hoc Order in Shiprocket and requests AWB assignment.
-   *
-   * A failure is reported as a failure — this never fabricates a waybill.
-   * If the order is created but no courier can be assigned, that is reported
-   * as a partial success carrying `awbError`, because the order genuinely does
-   * exist in Shiprocket and must not be created a second time.
-   */
-  public static async createOrderAndAssignAWB(order: IOrder): Promise<ShipmentResult> {
+  /** Builds the Ad-hoc Order payload Shiprocket expects for a Viśvam order. */
+  private static buildAdhocPayload(order: IOrder) {
     const config = this.getConfig();
-    const token = await this.getToken();
-    if (!token) {
-      return {
-        success: false,
-        message:
-          "Shiprocket is not configured (SHIPROCKET_EMAIL / SHIPROCKET_PASSWORD missing on the server).",
-      };
-    }
-
     const orderIdStr = String(order._id);
     const orderNumber = orderIdStr.substring(orderIdStr.length - 8).toUpperCase();
     const orderDate = new Date(order.createdAt).toISOString().split("T")[0];
 
-    // Estimate total package weight (default 500g per item if unspecified)
-    const totalWeightKg = Math.max(0.5, order.orderItems.reduce((acc, i) => acc + i.qty * 0.5, 0));
+    // The SAME figure the delivery charge was quoted on. This used to be its
+    // own flat 0.5kg-per-unit sum, which declared double the weight for 250g
+    // packs (paying freight on 2kg for a 1kg parcel) and under-declared 500g
+    // orders. orderWeightKg is the single source of truth for parcel weight.
+    const totalWeightKg = orderWeightKg(order.orderItems);
 
-    const payload = {
+    return {
       order_id: `VISVAM-${orderNumber}`,
       order_date: orderDate,
       pickup_location: config.pickupLocation,
@@ -339,7 +363,12 @@ export class ShiprocketService {
         tax: 0,
         hsn: 80211,
       })),
-      payment_method: order.isPaid || order.paymentMethod.toLowerCase().includes("card") || order.paymentMethod.toLowerCase().includes("prepaid") ? "Prepaid" : "COD",
+      payment_method:
+        order.isPaid ||
+        order.paymentMethod.toLowerCase().includes("card") ||
+        order.paymentMethod.toLowerCase().includes("prepaid")
+          ? "Prepaid"
+          : "COD",
       shipping_charges: order.shippingPrice || 0,
       giftwrap_charges: 0,
       transaction_charges: 0,
@@ -350,10 +379,26 @@ export class ShiprocketService {
       height: 10,
       weight: totalWeightKg,
     };
+  }
 
-    let srOrderId: number;
-    let srShipmentId: number;
-
+  /**
+   * Creates the Ad-hoc Order in Shiprocket. No courier or AWB is requested here
+   * — the order simply appears in the Shiprocket dashboard's "New" tab.
+   */
+  private static async createAdhocOrder(
+    token: string,
+    order: IOrder
+  ): Promise<
+    | {
+        success: true;
+        orderId: number;
+        shipmentId: number;
+        awbCode?: string;
+        courierName?: string;
+        courierId?: number;
+      }
+    | { success: false; message: string }
+  > {
     try {
       const createRes = await fetch(`${SHIPROCKET_API_BASE}/orders/create/adhoc`, {
         method: "POST",
@@ -361,7 +406,7 @@ export class ShiprocketService {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(this.buildAdhocPayload(order)),
       });
 
       const createData = (await createRes.json()) as any;
@@ -374,42 +419,108 @@ export class ShiprocketService {
         return { success: false, message };
       }
 
-      srOrderId = createData.order_id;
-      srShipmentId = createData.shipment_id;
-
-      // Some accounts return the AWB straight from order creation.
-      if (createData.awb_code) {
-        return {
-          success: true,
-          orderId: srOrderId,
-          shipmentId: srShipmentId,
-          awbCode: String(createData.awb_code),
-          courierName: createData.courier_name || "",
-          courierId: createData.courier_company_id,
-          trackingUrl: `https://shiprocket.co/tracking/${createData.awb_code}`,
-        };
-      }
+      return {
+        success: true,
+        orderId: createData.order_id,
+        shipmentId: createData.shipment_id,
+        // Some accounts return the AWB straight from order creation.
+        awbCode: createData.awb_code ? String(createData.awb_code) : undefined,
+        courierName: createData.courier_name || undefined,
+        courierId: createData.courier_company_id || undefined,
+      };
     } catch (err) {
       console.error("Shiprocket create order request failed:", err);
       return { success: false, message: "Could not reach Shiprocket to create the order." };
     }
+  }
+
+  /**
+   * Pushes an order into Shiprocket WITHOUT assigning a courier, so it lands in
+   * the dashboard's "New" tab. Called the moment an order is placed / paid; the
+   * courier is chosen later from the Admin Panel.
+   */
+  public static async createShipmentOnly(order: IOrder): Promise<ShipmentResult> {
+    const token = await this.getToken();
+    if (!token) {
+      return {
+        success: false,
+        message:
+          "Shiprocket is not configured (SHIPROCKET_EMAIL / SHIPROCKET_PASSWORD missing on the server).",
+      };
+    }
+
+    const created = await this.createAdhocOrder(token, order);
+    if (!created.success) return created;
+
+    return {
+      success: true,
+      orderId: created.orderId,
+      shipmentId: created.shipmentId,
+      awbCode: created.awbCode,
+      courierName: created.courierName,
+      courierId: created.courierId,
+      trackingUrl: created.awbCode
+        ? `https://shiprocket.co/tracking/${created.awbCode}`
+        : undefined,
+    };
+  }
+
+  /**
+   * Creates an Ad-hoc Order in Shiprocket and requests AWB assignment.
+   *
+   * Pass `courierId` to force a specific courier company; omit it to let
+   * Shiprocket pick using the account's courier-priority rules.
+   *
+   * A failure is reported as a failure — this never fabricates a waybill.
+   * If the order is created but no courier can be assigned, that is reported
+   * as a partial success carrying `awbError`, because the order genuinely does
+   * exist in Shiprocket and must not be created a second time.
+   */
+  public static async createOrderAndAssignAWB(
+    order: IOrder,
+    courierId?: number | string
+  ): Promise<ShipmentResult> {
+    const token = await this.getToken();
+    if (!token) {
+      return {
+        success: false,
+        message:
+          "Shiprocket is not configured (SHIPROCKET_EMAIL / SHIPROCKET_PASSWORD missing on the server).",
+      };
+    }
+
+    const created = await this.createAdhocOrder(token, order);
+    if (!created.success) return created;
+
+    // Some accounts return the AWB straight from order creation.
+    if (created.awbCode) {
+      return {
+        success: true,
+        orderId: created.orderId,
+        shipmentId: created.shipmentId,
+        awbCode: created.awbCode,
+        courierName: created.courierName,
+        courierId: created.courierId,
+        trackingUrl: `https://shiprocket.co/tracking/${created.awbCode}`,
+      };
+    }
 
     // Order exists in Shiprocket from here on — an AWB failure must still
     // return the ids so the caller can retry assignment without duplicating it.
-    const awb = await this.assignAwb(srShipmentId);
+    const awb = await this.assignAwb(created.shipmentId, courierId);
     if (!awb.success) {
       return {
         success: true,
-        orderId: srOrderId,
-        shipmentId: srShipmentId,
+        orderId: created.orderId,
+        shipmentId: created.shipmentId,
         awbError: awb.message,
       };
     }
 
     return {
       success: true,
-      orderId: srOrderId,
-      shipmentId: srShipmentId,
+      orderId: created.orderId,
+      shipmentId: created.shipmentId,
       awbCode: awb.awbCode,
       courierName: awb.courierName,
       courierId: awb.courierId,

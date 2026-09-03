@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Order } from "../models/Order.js";
 import { ShiprocketService } from "../services/shiprocketService.js";
+import { orderWeightKg } from "../utils/shippingWeight.js";
 
 // @desc    Check Pincode Serviceability & Delivery Timeframe
 // @route   POST /api/v1/shipping/check-serviceability
@@ -23,6 +24,9 @@ export const checkServiceability = async (req: Request, res: Response): Promise<
       Boolean(isCod)
     );
 
+    // Rates go out exactly as Shiprocket quoted them — the customer is charged
+    // the courier rate, nothing added. The COD surcharge is a separate line on
+    // the order (see orderController), not a markup on delivery.
     res.status(200).json(result);
   } catch (error: any) {
     console.error("Shipping serviceability controller error:", error);
@@ -39,6 +43,10 @@ export const checkServiceability = async (req: Request, res: Response): Promise<
 export const createShipment = async (req: Request, res: Response): Promise<void> => {
   try {
     const { orderId } = req.params;
+    // Optional: a specific Shiprocket courier_company_id chosen in the Admin
+    // Panel. Omitted / falsy => let Shiprocket auto-pick.
+    const rawCourierId = (req.body ?? {}).courierId;
+    const courierId = Number(rawCourierId) > 0 ? Number(rawCourierId) : undefined;
 
     const order = await Order.findById(orderId);
     if (!order) {
@@ -63,7 +71,7 @@ export const createShipment = async (req: Request, res: Response): Promise<void>
     // AWB assignment failed (empty wallet, inactive pickup address). Retry just
     // the assignment rather than creating a duplicate order.
     if (order.shiprocket?.shipmentId) {
-      const retry = await ShiprocketService.assignAwb(order.shiprocket.shipmentId);
+      const retry = await ShiprocketService.assignAwb(order.shiprocket.shipmentId, courierId);
       if (!retry.success) {
         res.status(502).json({
           success: false,
@@ -92,7 +100,7 @@ export const createShipment = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-    const shipResult = await ShiprocketService.createOrderAndAssignAWB(order);
+    const shipResult = await ShiprocketService.createOrderAndAssignAWB(order, courierId);
 
     if (!shipResult.success) {
       res.status(502).json({ success: false, message: shipResult.message });
@@ -144,6 +152,46 @@ export const createShipment = async (req: Request, res: Response): Promise<void>
     res.status(500).json({
       success: false,
       message: error.message || "Failed to create shipment",
+    });
+  }
+};
+
+// @desc    List couriers that can service a placed order's destination
+// @route   GET /api/v1/shipping/orders/:orderId/couriers
+// @access  Admin / Protected
+export const getOrderCouriers = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { orderId } = req.params;
+    const order = await Order.findById(orderId);
+    if (!order) {
+      res.status(404).json({ success: false, message: "Order not found" });
+      return;
+    }
+
+    const pincode = String(order.shippingAddress?.postalCode || "").replace(/\D/g, "");
+    if (pincode.length !== 6) {
+      res.status(400).json({
+        success: false,
+        message: "This order has no valid 6-digit delivery PIN code.",
+      });
+      return;
+    }
+
+    const isCod = !order.isPaid && /cod|cash/i.test(order.paymentMethod || "");
+    const weightKg = orderWeightKg(order.orderItems as any);
+    const result = await ShiprocketService.checkServiceability(pincode, weightKg, isCod);
+
+    // Echo back what the quote was actually based on. Without this an operator
+    // seeing a ₹400 rate cannot tell whether it is heavy freight, a COD
+    // collection fee on a big order, or a parcel weight that came out wrong.
+    res.status(result.success ? 200 : 502).json(
+      result.success ? { ...result, weightKg, isCod } : result
+    );
+  } catch (error: any) {
+    console.error("Get order couriers error:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Failed to load couriers for this order",
     });
   }
 };
