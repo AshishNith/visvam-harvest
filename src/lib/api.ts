@@ -229,6 +229,8 @@ export interface SubmitOrderData {
   shippingAddress: ShippingAddress;
   guestEmail?: string;
   paymentMethod: string;
+  /** "pickup" = customer collects from the warehouse; omitted/"ship" = couriered. */
+  fulfillmentMethod?: "ship" | "pickup";
 }
 
 const LOCAL_ORDERS_KEY = "visvam_local_user_orders";

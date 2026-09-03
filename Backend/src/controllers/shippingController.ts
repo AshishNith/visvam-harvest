@@ -54,6 +54,14 @@ export const createShipment = async (req: Request, res: Response): Promise<void>
       return;
     }
 
+    if (order.fulfillmentMethod === "pickup") {
+      res.status(400).json({
+        success: false,
+        message: "This is a warehouse-pickup order — the customer collects it in person. It is not shipped.",
+      });
+      return;
+    }
+
     if (order.status === "Cancelled") {
       res.status(400).json({ success: false, message: "Cannot ship a cancelled order" });
       return;
@@ -168,6 +176,14 @@ export const getOrderCouriers = async (req: Request, res: Response): Promise<voi
       return;
     }
 
+    if (order.fulfillmentMethod === "pickup") {
+      res.status(400).json({
+        success: false,
+        message: "This is a warehouse-pickup order — no courier is booked for it.",
+      });
+      return;
+    }
+
     const pincode = String(order.shippingAddress?.postalCode || "").replace(/\D/g, "");
     if (pincode.length !== 6) {
       res.status(400).json({
@@ -208,6 +224,35 @@ export const getShipmentTracking = async (req: Request, res: Response): Promise<
     // Check if input is a MongoDB Order ID
     if (awbOrOrderId && awbOrOrderId.match(/^[0-9a-fA-F]{24}$/)) {
       const order = await Order.findById(awbOrOrderId);
+
+      // Warehouse pickup — there is no courier journey to track. Report the
+      // order's own state and where to collect it.
+      if (order && order.fulfillmentMethod === "pickup") {
+        const collected = order.status === "Completed";
+        res.status(200).json({
+          success: true,
+          status: order.status,
+          message: collected
+            ? "Collected from the Viśvam warehouse."
+            : "Ready for collection at the Viśvam warehouse, F-329 2nd floor, Sector 63, Noida 201309 (Mon–Sat, 9:30 AM–6:00 PM). Quote your order number.",
+          timeline: [
+            {
+              date: new Date(order.createdAt).toLocaleString("en-IN"),
+              activity: "Order confirmed — packed within 10–15 minutes",
+              location: "Viśvam Warehouse, Sector 63, Noida",
+              completed: true,
+            },
+            {
+              date: collected ? new Date(order.updatedAt).toLocaleString("en-IN") : "Any time during opening hours",
+              activity: collected ? "Collected by customer" : "Awaiting collection by customer",
+              location: "Viśvam Warehouse, Sector 63, Noida",
+              completed: collected,
+            },
+          ],
+        });
+        return;
+      }
+
       if (order && order.shiprocket?.awbCode) {
         awbCode = order.shiprocket.awbCode;
       } else {

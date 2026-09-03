@@ -992,7 +992,7 @@ function ProfilePage() {
                               <span>{formatPrice(order.itemsPrice)}</span>
                             </div>
                             <div className="flex justify-between text-muted-foreground">
-                              <span>Shipping</span>
+                              <span>{order.fulfillmentMethod === "pickup" ? "Pickup" : "Shipping"}</span>
                               <span>
                                 {order.shippingPrice === 0 ? (
                                   <span className="text-clay font-semibold">FREE</span>
@@ -1015,7 +1015,8 @@ function ProfilePage() {
                           {order.shippingAddress && (
                             <div className="border-t border-border/60 pt-3">
                               <h5 className="text-[10px] tracked font-semibold uppercase text-muted-foreground mb-1 flex items-center gap-1">
-                                <MapPin size={11} className="text-clay" /> Delivered To
+                                <MapPin size={11} className="text-clay" />
+                                {order.fulfillmentMethod === "pickup" ? "Ordered By (Warehouse Pickup)" : "Delivered To"}
                               </h5>
                               <p className="text-xs text-muted-foreground">
                                 {order.shippingAddress.fullName && `${order.shippingAddress.fullName}, `}

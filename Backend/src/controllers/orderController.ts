@@ -9,6 +9,7 @@ import { ensureShiprocketOrder } from "../services/orderFulfillment.js";
 import { sendOrderConfirmationEmail } from "../services/emailService.js";
 import { getNumericSetting } from "./settingsController.js";
 import { orderWeightKg } from "../utils/shippingWeight.js";
+import { isPickupEligible } from "../config/pickup.js";
 
 // Delivery is quoted live per PIN code by Shiprocket, then waived once the
 // order clears the threshold the storefront advertises ("Free delivery on
@@ -55,6 +56,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       orderItems,
       pickupLane,
       pickupSlot,
+      fulfillmentMethod,
       shippingAddress,
       paymentMethod,
       guestEmail,
@@ -99,13 +101,31 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     const itemsPrice = sanitizedOrderItems.reduce((acc: number, item: any) => acc + item.price * item.qty, 0);
     const taxPrice = Number((itemsPrice * 0.05).toFixed(2));
 
+    const wantsPickup = String(fulfillmentMethod || "").toLowerCase() === "pickup";
     const deliveryPincode = String(
       shippingAddress?.pincode || shippingAddress?.postalCode || ""
     ).replace(/\D/g, "");
-    const isCod = String(paymentMethod || "").toLowerCase().includes("cash");
+    const deliveryCity = String(shippingAddress?.city || "");
 
-    const shippingPrice =
-      itemsPrice >= FREE_DELIVERY_THRESHOLD
+    // Warehouse pickup is Delhi NCR only — re-check server-side, never trust the
+    // client that the order qualifies. A pickup order carries no courier cost
+    // and no COD surcharge, and is kept out of Shiprocket entirely.
+    if (wantsPickup && !isPickupEligible({ pincode: deliveryPincode, city: deliveryCity })) {
+      res.status(400).json({
+        success: false,
+        message: "Warehouse pickup is only available for Delhi NCR addresses.",
+      });
+      return;
+    }
+
+    // "Cash on Delivery" only applies to shipped orders. A pickup order paid at
+    // the counter is a separate method ("Pay on Pickup") with no surcharge.
+    const isCod =
+      !wantsPickup && String(paymentMethod || "").toLowerCase().includes("cash");
+
+    const shippingPrice = wantsPickup
+      ? 0
+      : itemsPrice >= FREE_DELIVERY_THRESHOLD
         ? 0
         : deliveryPincode.length === 6
           ? await quoteDeliveryCharge(deliveryPincode, orderWeightKg(sanitizedOrderItems))
@@ -123,6 +143,10 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       orderItems: sanitizedOrderItems,
       pickupLane: pickupLane || "riverside",
       pickupSlot: pickupSlot || "ASAP",
+      fulfillmentMethod: wantsPickup ? "pickup" : "ship",
+      // The customer's real address is kept even for pickup — it's useful
+      // context for the team, and `fulfillmentMethod` is what flags a pickup
+      // order everywhere it matters (no courier, never sent to Shiprocket).
       shippingAddress: {
         fullName: shippingAddress?.fullName || authReq.user?.name || "Customer",
         address: shippingAddress?.street || shippingAddress?.address || "",
@@ -142,7 +166,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       status: "Pending",
     });
 
-    // Auto-update user profile phone and saved address in MongoDB
+    // Auto-update user profile phone and saved address in MongoDB.
     if (authReq.user) {
       try {
         const userDoc = await User.findById(authReq.user._id);
@@ -162,15 +186,24 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       }
     }
 
-    // COD orders enter Shiprocket's "New" tab right away so the team can pick a
-    // courier from the Admin Panel. Prepaid orders are pushed once payment
-    // clears (see paymentController). Best-effort — never fail placement on it.
-    if (isCod) {
+    // Confirmation email — fire-and-forget. Sent now for any order that won't
+    // have a later payment step: COD, or a pickup order paid at the counter. A
+    // prepaid (Razorpay) order is still unpaid here, so its confirmation is
+    // sent from paymentController once payment verifies.
+    const isPrepaidPending = String(paymentMethod || "").toLowerCase().includes("razorpay");
+
+    if (wantsPickup) {
+      // Pickup orders never touch Shiprocket — the customer collects in person.
+      if (!isPrepaidPending) {
+        sendOrderConfirmationEmail(order).catch((err) =>
+          console.error(`Order confirmation email failed for ${String(order._id)}:`, err)
+        );
+      }
+    } else if (isCod) {
+      // COD orders enter Shiprocket's "New" tab right away so the team can pick
+      // a courier from the Admin Panel. Best-effort — never fail placement.
       await ensureShiprocketOrder(order);
 
-      // Confirmation email — fire-and-forget, mirrors the newsletter flow.
-      // Only for COD here: a prepaid order is still unpaid at this point, so
-      // its confirmation is sent from paymentController once payment verifies.
       sendOrderConfirmationEmail(order).catch((err) =>
         console.error(`Order confirmation email failed for ${String(order._id)}:`, err)
       );

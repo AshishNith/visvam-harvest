@@ -1,14 +1,18 @@
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/SiteLayout";
-import { CheckCircle2, Package, Truck, ArrowRight, ShieldCheck, PhoneCall, Calendar } from "lucide-react";
+import { CheckCircle2, Package, Truck, ArrowRight, ShieldCheck, PhoneCall, Store, Clock, Navigation } from "lucide-react";
 import { formatPrice } from "@/lib/cart-context";
+import { WAREHOUSE } from "@/lib/pickup";
 
 export const Route = createFileRoute("/order-success")({
-  validateSearch: (search: Record<string, unknown>) => {
-    return {
+  validateSearch: (
+    search: Record<string, unknown>
+  ): { orderId: string; amount: number; pickup?: 1 } => {
+    const base = {
       orderId: (search.orderId as string) || "",
       amount: search.amount ? Number(search.amount) : 0,
     };
+    return search.pickup ? { ...base, pickup: 1 } : base;
   },
   head: () => ({
     meta: [
@@ -20,8 +24,9 @@ export const Route = createFileRoute("/order-success")({
 });
 
 function OrderSuccessPage() {
-  const { orderId, amount } = useSearch({ from: "/order-success" });
+  const { orderId, amount, pickup } = useSearch({ from: "/order-success" });
   const displayId = orderId || `VIS-${Math.floor(100000 + Math.random() * 900000)}`;
+  const isPickup = Boolean(pickup);
 
   const today = new Date();
   const deliveryMin = new Date(today);
@@ -53,27 +58,71 @@ function OrderSuccessPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left pt-6 border-t border-border/40">
-              <div className="bg-background p-4 border border-border/40 space-y-1">
-                <div className="flex items-center gap-2 text-clay mb-2">
-                  <Truck size={16} />
-                  <span className="text-[10px] font-mono uppercase font-bold tracking-wider">Estimated Delivery</span>
+            {isPickup ? (
+              <div className="text-left pt-6 border-t border-border/40 space-y-4">
+                <div className="bg-background p-4 border border-border/40 space-y-2">
+                  <div className="flex items-center gap-2 text-clay mb-1">
+                    <Store size={16} />
+                    <span className="text-[10px] font-mono uppercase font-bold tracking-wider">Collect From</span>
+                  </div>
+                  <p className="text-xs font-semibold text-ink">{WAREHOUSE.name}</p>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    {WAREHOUSE.lines.map((line) => (
+                      <span key={line}>
+                        {line}
+                        <br />
+                      </span>
+                    ))}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+                    <Clock size={12} className="text-clay shrink-0" /> {WAREHOUSE.hours}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+                    <PhoneCall size={12} className="text-clay shrink-0" /> {WAREHOUSE.phone}
+                  </p>
+                  <a
+                    href={WAREHOUSE.mapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-clay border-b border-clay/50 hover:text-ink hover:border-ink transition-colors pb-0.5"
+                  >
+                    <Navigation size={12} /> Get directions
+                  </a>
                 </div>
-                <p className="text-xs font-semibold text-ink">
-                  {formatDate(deliveryMin)} – {formatDate(deliveryMax)}
-                </p>
-                <p className="text-[11px] text-muted-foreground">Express courier dispatch</p>
+                <div className="bg-background p-4 border border-border/40 space-y-1">
+                  <div className="flex items-center gap-2 text-clay mb-2">
+                    <ShieldCheck size={16} />
+                    <span className="text-[10px] font-mono uppercase font-bold tracking-wider">Ready to collect</span>
+                  </div>
+                  <p className="text-xs font-semibold text-ink">Packed within 10–15 minutes</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    Come any time during opening hours and quote your order reference <strong className="text-ink font-mono">{displayId}</strong>.
+                  </p>
+                </div>
               </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left pt-6 border-t border-border/40">
+                <div className="bg-background p-4 border border-border/40 space-y-1">
+                  <div className="flex items-center gap-2 text-clay mb-2">
+                    <Truck size={16} />
+                    <span className="text-[10px] font-mono uppercase font-bold tracking-wider">Estimated Delivery</span>
+                  </div>
+                  <p className="text-xs font-semibold text-ink">
+                    {formatDate(deliveryMin)} – {formatDate(deliveryMax)}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground">Express courier dispatch</p>
+                </div>
 
-              <div className="bg-background p-4 border border-border/40 space-y-1">
-                <div className="flex items-center gap-2 text-clay mb-2">
-                  <ShieldCheck size={16} />
-                  <span className="text-[10px] font-mono uppercase font-bold tracking-wider">Packaging</span>
+                <div className="bg-background p-4 border border-border/40 space-y-1">
+                  <div className="flex items-center gap-2 text-clay mb-2">
+                    <ShieldCheck size={16} />
+                    <span className="text-[10px] font-mono uppercase font-bold tracking-wider">Packaging</span>
+                  </div>
+                  <p className="text-xs font-semibold text-ink">Bespoke Presentation</p>
+                  <p className="text-[11px] text-muted-foreground">Carefully packed for protected transit</p>
                 </div>
-                <p className="text-xs font-semibold text-ink">Bespoke Presentation</p>
-                <p className="text-[11px] text-muted-foreground">Carefully packed for protected transit</p>
               </div>
-            </div>
+            )}
 
             {amount > 0 && (
               <div className="flex justify-between items-center bg-sand/40 p-4 text-xs font-medium text-ink">
@@ -83,14 +132,16 @@ function OrderSuccessPage() {
             )}
 
             <div className="pt-4 border-t border-border/40 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link
-                to="/track"
-                search={{ orderId: displayId }}
-                className="group inline-flex items-center gap-2 text-white bg-ink text-[11px] font-semibold uppercase tracking-widest py-3 px-6 hover:bg-clay transition-all duration-300 w-full sm:w-auto justify-center"
-              >
-                <Truck size={14} className="text-clay" />
-                <span>Track Live Shipment</span>
-              </Link>
+              {!isPickup && (
+                <Link
+                  to="/track"
+                  search={{ orderId: displayId }}
+                  className="group inline-flex items-center gap-2 text-white bg-ink text-[11px] font-semibold uppercase tracking-widest py-3 px-6 hover:bg-clay transition-all duration-300 w-full sm:w-auto justify-center"
+                >
+                  <Truck size={14} className="text-clay" />
+                  <span>Track Live Shipment</span>
+                </Link>
+              )}
 
               <Link
                 to="/profile"

@@ -14,6 +14,9 @@ import {
   Mail,
   CreditCard,
   Banknote,
+  Store,
+  Clock,
+  Navigation,
 } from "lucide-react";
 import { useCart, formatPrice, type ShippingAddress } from "@/lib/cart-context";
 import { useAuth } from "@/lib/auth-context";
@@ -29,6 +32,7 @@ import {
 } from "@/lib/api";
 import { CityStateFields } from "@/components/CityStateFields";
 import { PincodeField } from "@/components/PincodeField";
+import { WAREHOUSE, isPickupEligible } from "@/lib/pickup";
 import { cartWeightKg } from "@/lib/shipping-weight";
 import { prefillableName, sanitizeNameInput } from "@/lib/name";
 import { sanitizePhoneInput, isValidIndianMobile } from "@/lib/phone";
@@ -97,6 +101,12 @@ function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "cod">(
     ONLINE_PAYMENT_ENABLED ? "razorpay" : "cod"
   );
+
+  // Fulfilment: "ship" couriers the order; "pickup" lets a Delhi NCR customer
+  // collect it from the Sector 63 warehouse — no delivery charge, never pushed
+  // to Shiprocket. The pickup choice only appears once the address the customer
+  // has entered is inside NCR (checked by PIN code / city).
+  const [fulfillment, setFulfillment] = useState<"ship" | "pickup">("ship");
   // Set once the underlying Order document is created, so a retry after a
   // cancelled/failed payment reuses it instead of creating a duplicate order.
   const [pendingOrderId, setPendingOrderId] = useState<string | null>(null);
@@ -129,6 +139,10 @@ function CheckoutPage() {
   // COD rate bundles a collection fee, which would make the delivery line jump
   // when the customer picks COD. The flat COD handling fee is a separate line.
   useEffect(() => {
+    if (fulfillment === "pickup") {
+      setPincodeResult(null);
+      return;
+    }
     const pin = addressForm.pincode ? addressForm.pincode.replace(/\D/g, "") : "";
     if (pin.length === 6) {
       let isCurrent = true;
@@ -155,7 +169,21 @@ function CheckoutPage() {
     } else {
       setPincodeResult(null);
     }
-  }, [addressForm.pincode, items]);
+  }, [addressForm.pincode, items, fulfillment]);
+
+  // Whether warehouse pickup can be offered — driven entirely by the address
+  // the customer has entered (PIN code, or city as a fallback). The pickup
+  // choice is hidden until this is true.
+  const pickupEligible = isPickupEligible({
+    pincode: (addressForm.pincode || "").replace(/\D/g, ""),
+    city: addressForm.city,
+  });
+
+  // If the address stops qualifying (customer edits the PIN / city), fall back
+  // to shipping so they can't submit a pickup order the server would reject.
+  useEffect(() => {
+    if (fulfillment === "pickup" && !pickupEligible) setFulfillment("ship");
+  }, [fulfillment, pickupEligible]);
 
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
@@ -289,6 +317,7 @@ function CheckoutPage() {
     setAddressForm({ fullName: prefillableName(user?.name), phone: "", street: "", city: "", state: "", pincode: "" });
   };
 
+  const isPickup = fulfillment === "pickup";
   const freeDelivery = subtotal >= FREE_SHIPPING_THRESHOLD;
   // Rounded up to whole rupees the same way the server does, so the figure
   // shown here is the figure charged.
@@ -302,19 +331,24 @@ function CheckoutPage() {
   // well above the fallback, so a stand-in would understate the total badly.
   const pincodeReady = (addressForm.pincode || "").replace(/\D/g, "").length === 6;
   const quoteFailed = pincodeReady && !pincodeChecking && quotedDelivery === undefined;
-  const deliveryKnown = freeDelivery || quotedDelivery !== undefined || quoteFailed;
-  const shippingPrice = freeDelivery
+  // Pickup: no courier, so delivery is a settled ₹0 and there's no COD surcharge.
+  const deliveryKnown = isPickup || freeDelivery || quotedDelivery !== undefined || quoteFailed;
+  const shippingPrice = isPickup
     ? 0
-    : (quotedDelivery ?? (quoteFailed ? FALLBACK_DELIVERY_CHARGE : 0));
+    : freeDelivery
+      ? 0
+      : (quotedDelivery ?? (quoteFailed ? FALLBACK_DELIVERY_CHARGE : 0));
   const amountToFreeDelivery = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const deliveryProgress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
   const taxPrice = Math.round(subtotal * 0.05);
   // COD surcharge is its own line, not part of delivery, so it still applies
-  // once delivery becomes free. Mirrors the server's codFee calculation.
-  const codFee = paymentMethod === "cod" ? codHandlingFee : 0;
+  // once delivery becomes free. Mirrors the server's codFee calculation. Never
+  // applied to a pickup order — "pay on pickup" is not Cash on Delivery.
+  const codFee = !isPickup && paymentMethod === "cod" ? codHandlingFee : 0;
   const totalPrice = subtotal + shippingPrice + taxPrice + codFee;
 
-  // Validate Address
+  // Validate Address. The full address is always collected — its PIN/city is
+  // also what decides pickup eligibility — so the same checks apply either way.
   const validateAddress = (): boolean => {
     if (!addressForm.fullName.trim()) { toast.error("Full Name is required"); return false; }
     if (!isValidIndianMobile(addressForm.phone)) { toast.error("Enter a valid 10-digit mobile number (starting 6–9)"); return false; }
@@ -374,7 +408,13 @@ function CheckoutPage() {
           orderItems,
           shippingAddress: addressForm,
           guestEmail: user?.email || "",
-          paymentMethod: paymentMethod === "razorpay" ? "Razorpay" : "Cash on Delivery",
+          fulfillmentMethod: fulfillment,
+          paymentMethod:
+            paymentMethod === "razorpay"
+              ? "Razorpay"
+              : isPickup
+                ? "Pay on Pickup"
+                : "Cash on Delivery",
         });
 
         if (!res.success || !res.data?._id) {
@@ -394,8 +434,11 @@ function CheckoutPage() {
       if (paymentMethod === "cod") {
         clearCart();
         setPendingOrderId(null);
-        toast.success("Order submitted successfully!");
-        navigate({ to: "/order-success", search: { orderId: confirmedOrderId, amount: totalPrice } });
+        toast.success(isPickup ? "Pickup order placed!" : "Order submitted successfully!");
+        navigate({
+          to: "/order-success",
+          search: { orderId: confirmedOrderId, amount: totalPrice, pickup: isPickup ? 1 : undefined },
+        });
         return;
       }
 
@@ -446,7 +489,10 @@ function CheckoutPage() {
             clearCart();
             setPendingOrderId(null);
             toast.success("Payment successful! Order confirmed.");
-            navigate({ to: "/order-success", search: { orderId: confirmedOrderId, amount: totalPrice } });
+            navigate({
+              to: "/order-success",
+              search: { orderId: confirmedOrderId, amount: totalPrice, pickup: isPickup ? 1 : undefined },
+            });
           } else {
             toast.error(verifyRes.message || "Payment could not be verified. Contact us if the amount was deducted.");
           }
@@ -711,7 +757,8 @@ function CheckoutPage() {
                 </Link>
               </div>
 
-              {/* Delivery Address */}
+              {/* Delivery Address — always collected; its PIN/city also decides
+                  whether warehouse pickup is offered below. */}
               <div className="bg-background border border-border p-6 space-y-4">
                 <h3 className="text-sm font-semibold uppercase tracking-wider flex items-center gap-2 text-ink border-b border-border pb-3">
                   <MapPin size={16} className="text-clay" /> Shipping & Delivery Address
@@ -831,15 +878,15 @@ function CheckoutPage() {
                   />
                 </div>
 
-                {/* Shiprocket Delivery Estimation Badge */}
-                {pincodeChecking && (
+                {/* Shiprocket Delivery Estimation Badge — courier only */}
+                {!isPickup && pincodeChecking && (
                   <div className="flex items-center gap-2 text-xs text-muted-foreground bg-cream/50 p-2.5 rounded border border-border/60">
                     <Loader2 size={13} className="animate-spin text-clay" />
                     <span>Checking Shiprocket delivery serviceability...</span>
                   </div>
                 )}
 
-                {pincodeResult && !pincodeChecking && (
+                {!isPickup && pincodeResult && !pincodeChecking && (
                   <div className="flex items-center justify-between p-3 rounded bg-emerald-50/70 border border-emerald-200 text-emerald-900 text-xs animate-in fade-in">
                     <div className="flex items-center gap-2">
                       <Truck size={15} className="text-emerald-700 shrink-0" />
@@ -854,7 +901,92 @@ function CheckoutPage() {
                 )}
               </div>
 
-              {/* Delivery Charges — quoted live per PIN code */}
+              {/* Fulfilment — appears only when the entered address is in Delhi
+                  NCR. Anywhere else, there's nothing to choose: the order ships. */}
+              {pickupEligible && (
+                <div className="bg-background border border-border p-6 space-y-3">
+                  <h3 className="text-sm font-semibold uppercase tracking-wider flex items-center gap-2 text-ink border-b border-border pb-3">
+                    <Truck size={16} className="text-clay" /> How would you like to get this?
+                  </h3>
+
+                  <button
+                    type="button"
+                    onClick={() => setFulfillment("ship")}
+                    className={`w-full p-4 border-2 flex items-center justify-between text-left transition-colors ${
+                      !isPickup ? "border-clay bg-cream/30" : "border-border hover:border-clay/50"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-4 h-4 rounded-full border-4 bg-white shrink-0 ${!isPickup ? "border-clay" : "border-border"}`} />
+                      <div className="flex items-center gap-2">
+                        <Truck size={16} className="text-clay shrink-0" />
+                        <div>
+                          <p className="text-xs font-semibold text-ink">Ship to my address</p>
+                          <p className="text-[10px] text-muted-foreground">Delivered by courier · charge quoted by PIN code</p>
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setFulfillment("pickup")}
+                    className={`w-full p-4 border-2 flex items-center justify-between text-left transition-colors ${
+                      isPickup ? "border-clay bg-cream/30" : "border-border hover:border-clay/50"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-4 h-4 rounded-full border-4 bg-white shrink-0 ${isPickup ? "border-clay" : "border-border"}`} />
+                      <div className="flex items-center gap-2">
+                        <Store size={16} className="text-clay shrink-0" />
+                        <div>
+                          <p className="text-xs font-semibold text-ink">Store / Warehouse Pickup — Free</p>
+                          <p className="text-[10px] text-muted-foreground">Collect from our Sector 63, Noida unit · no delivery charge</p>
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-[10px] uppercase font-bold text-clay bg-clay/10 px-2 py-0.5 shrink-0">Free</span>
+                  </button>
+                </div>
+              )}
+
+              {/* Warehouse details — shown once pickup is chosen */}
+              {isPickup && (
+                <div className="bg-background border border-border p-6 space-y-3">
+                  <h3 className="text-sm font-semibold uppercase tracking-wider flex items-center gap-2 text-ink border-b border-border pb-3">
+                    <Store size={16} className="text-clay" /> Collect from
+                  </h3>
+                  <p className="text-xs font-semibold text-ink">{WAREHOUSE.name}</p>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    {WAREHOUSE.lines.map((line) => (
+                      <span key={line}>
+                        {line}
+                        <br />
+                      </span>
+                    ))}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+                    <Clock size={12} className="text-clay shrink-0" /> {WAREHOUSE.hours}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+                    <Phone size={12} className="text-clay shrink-0" /> {WAREHOUSE.phone}
+                  </p>
+                  <p className="text-[11px] text-ink bg-cream/50 border border-border/60 rounded p-2.5 leading-relaxed">
+                    {WAREHOUSE.readyNote} Bring your order number when you come.
+                  </p>
+                  <a
+                    href={WAREHOUSE.mapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-[11px] font-semibold tracked uppercase text-clay border-b border-clay/50 hover:text-ink hover:border-ink transition-colors pb-0.5"
+                  >
+                    <Navigation size={12} /> Get directions
+                  </a>
+                </div>
+              )}
+
+              {/* Delivery Charges — quoted live per PIN code. Not shown for pickup. */}
+              {!isPickup && (
               <div className="bg-background border border-border p-6 space-y-3">
                 <h3 className="text-sm font-semibold uppercase tracking-wider flex items-center gap-2 text-ink border-b border-border pb-3">
                   <Truck size={16} className="text-clay" /> Delivery
@@ -899,6 +1031,7 @@ function CheckoutPage() {
                   />
                 </div>
               </div>
+              )}
 
               {/* Payment Selection */}
               <div className="bg-background border border-border p-6 space-y-3">
@@ -954,10 +1087,15 @@ function CheckoutPage() {
                     <div className="flex items-center gap-2">
                       <Banknote size={16} className="text-clay shrink-0" />
                       <div>
-                        <p className="text-xs font-semibold text-ink">Cash on Delivery (COD)</p>
+                        <p className="text-xs font-semibold text-ink">
+                          {isPickup ? "Pay on Pickup" : "Cash on Delivery (COD)"}
+                        </p>
                         <p className="text-[10px] text-muted-foreground">
-                          Pay with cash or UPI upon delivery
-                          {codHandlingFee > 0 && ` · ${formatPrice(codHandlingFee)} handling fee`}
+                          {isPickup
+                            ? "Pay by cash or UPI when you collect · no extra fee"
+                            : `Pay with cash or UPI upon delivery${
+                                codHandlingFee > 0 ? ` · ${formatPrice(codHandlingFee)} handling fee` : ""
+                              }`}
                         </p>
                       </div>
                     </div>
@@ -982,7 +1120,9 @@ function CheckoutPage() {
                   </>
                 ) : (
                   <>
-                    <span>Confirm & Place Order — {formatPrice(totalPrice)}</span>
+                    <span>
+                      {isPickup ? "Confirm & Place Pickup Order" : "Confirm & Place Order"} — {formatPrice(totalPrice)}
+                    </span>
                     <ArrowRight size={16} className="text-clay" />
                   </>
                 )}
@@ -1031,9 +1171,11 @@ function CheckoutPage() {
                     <span className="tabular-nums text-ink font-medium">{formatPrice(subtotal)}</span>
                   </div>
                   <div className="flex justify-between text-muted-foreground">
-                    <span>Delivery</span>
+                    <span>{isPickup ? "Pickup" : "Delivery"}</span>
                     <span className="tabular-nums font-medium">
-                      {!deliveryKnown ? (
+                      {isPickup ? (
+                        <span className="text-clay font-bold">FREE</span>
+                      ) : !deliveryKnown ? (
                         <span className="text-muted-foreground text-[10px]">Enter PIN code</span>
                       ) : shippingPrice === 0 ? (
                         <span className="text-clay font-bold">FREE</span>
@@ -1059,7 +1201,11 @@ function CheckoutPage() {
                 </div>
 
                 <div className="pt-2 text-[10px] text-muted-foreground space-y-1.5 border-t border-border/60">
-                  <p className="flex items-center gap-2"><Truck size={12} className="text-clay" /> Dispatch within 24–48 Hours</p>
+                  {isPickup ? (
+                    <p className="flex items-center gap-2"><Store size={12} className="text-clay" /> Packed in 10–15 min · collect from Sector 63, Noida</p>
+                  ) : (
+                    <p className="flex items-center gap-2"><Truck size={12} className="text-clay" /> Dispatch within 24–48 Hours</p>
+                  )}
                 </div>
 
                 <div className="pt-4 border-t border-border/60">

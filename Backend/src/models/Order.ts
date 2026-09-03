@@ -48,6 +48,14 @@ export interface IOrder extends Document {
   orderItems: IOrderItem[];
   pickupLane: string;
   pickupSlot: string;
+  /**
+   * How the customer receives the order:
+   *  - "ship"   — couriered to `shippingAddress` (default; pushed to Shiprocket)
+   *  - "pickup" — collected in person from the Sector 63 warehouse. No courier,
+   *               no delivery charge, never sent to Shiprocket. Only offered to
+   *               Delhi NCR customers (see Backend/src/config/pickup.ts).
+   */
+  fulfillmentMethod: "ship" | "pickup";
   shippingAddress?: {
     fullName: string;
     address: string;
@@ -114,6 +122,12 @@ const OrderSchema = new Schema<IOrder>(
       type: String,
       required: true,
       default: "ASAP",
+    },
+    fulfillmentMethod: {
+      type: String,
+      enum: ["ship", "pickup"],
+      default: "ship",
+      index: true,
     },
     shippingAddress: {
       fullName: String,

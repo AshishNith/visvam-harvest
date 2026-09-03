@@ -13,6 +13,10 @@ import { ShiprocketService } from "./shiprocketService.js";
  * button.
  */
 export async function ensureShiprocketOrder(order: IOrder): Promise<void> {
+  // Warehouse-pickup orders are collected in person and must never reach
+  // Shiprocket. Guard here as the single choke point, so no current or future
+  // caller can push one by mistake.
+  if (order.fulfillmentMethod === "pickup") return;
   if (order.shiprocket?.shipmentId || order.shiprocket?.awbCode) return;
   if (!ShiprocketService.isConfigured()) return;
 

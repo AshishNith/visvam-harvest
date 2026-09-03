@@ -122,8 +122,11 @@ export const verifyRazorpayPayment = async (req: Request, res: Response): Promis
       );
     }
 
-    // Payment is confirmed — hand the order to Shiprocket's "New" tab.
-    await ensureShiprocketOrder(order);
+    // Payment is confirmed — hand the order to Shiprocket's "New" tab. Pickup
+    // orders are collected in person and never go to Shiprocket.
+    if (order.fulfillmentMethod !== "pickup") {
+      await ensureShiprocketOrder(order);
+    }
 
     res.status(200).json({ success: true, message: "Payment verified successfully", data: order });
   } catch (error: any) {
@@ -175,8 +178,10 @@ export const razorpayWebhook = async (req: Request, res: Response): Promise<void
         await order.save();
         // Safety net path too: make sure the paid order reaches Shiprocket and
         // the customer gets a confirmation, in case the browser never returned
-        // to call /verify.
-        await ensureShiprocketOrder(order);
+        // to call /verify. Pickup orders skip Shiprocket.
+        if (order.fulfillmentMethod !== "pickup") {
+          await ensureShiprocketOrder(order);
+        }
         sendOrderConfirmationEmail(order).catch((err) =>
           console.error(`Order confirmation email failed for ${String(order._id)}:`, err)
         );
