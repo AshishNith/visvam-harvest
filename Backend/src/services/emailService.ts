@@ -149,6 +149,14 @@ export function orderConfirmationHtml(order: IOrder): string {
               <td style="padding:16px 40px 8px;">
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                   ${totalRow("Subtotal", inr(order.itemsPrice))}
+                  ${
+                    order.discountAmount > 0
+                      ? totalRow(
+                          `Discount${order.couponCode ? ` (${esc(order.couponCode)})` : ""}`,
+                          "−" + inr(order.discountAmount)
+                        )
+                      : ""
+                  }
                   ${totalRow(
                     isPickup ? "Collection" : "Delivery",
                     isPickup ? "Store pickup" : order.shippingPrice > 0 ? inr(order.shippingPrice) : "Free"
@@ -244,6 +252,9 @@ function orderConfirmationText(order: IOrder): string {
     lines,
     ``,
     `Subtotal: ${inr(order.itemsPrice)}`,
+    order.discountAmount > 0
+      ? `Discount${order.couponCode ? ` (${order.couponCode})` : ""}: -${inr(order.discountAmount)}`
+      : ``,
     isPickup
       ? `Collection: Store pickup`
       : `Delivery: ${order.shippingPrice > 0 ? inr(order.shippingPrice) : "Free"}`,

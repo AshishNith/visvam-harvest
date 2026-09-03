@@ -991,6 +991,12 @@ function ProfilePage() {
                               <span>Subtotal</span>
                               <span>{formatPrice(order.itemsPrice)}</span>
                             </div>
+                            {Boolean(order.discountAmount) && (
+                              <div className="flex justify-between text-emerald-700">
+                                <span>Discount{order.couponCode ? ` (${order.couponCode})` : ""}</span>
+                                <span>−{formatPrice(order.discountAmount)}</span>
+                              </div>
+                            )}
                             <div className="flex justify-between text-muted-foreground">
                               <span>{order.fulfillmentMethod === "pickup" ? "Pickup" : "Shipping"}</span>
                               <span>

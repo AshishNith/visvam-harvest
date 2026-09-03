@@ -8,6 +8,7 @@ import { ShiprocketService } from "../services/shiprocketService.js";
 import { ensureShiprocketOrder } from "../services/orderFulfillment.js";
 import { sendOrderConfirmationEmail } from "../services/emailService.js";
 import { getNumericSetting } from "./settingsController.js";
+import { evaluateCoupon, redeemCoupon } from "./couponController.js";
 import { orderWeightKg } from "../utils/shippingWeight.js";
 import { isPickupEligible } from "../config/pickup.js";
 
@@ -60,6 +61,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       shippingAddress,
       paymentMethod,
       guestEmail,
+      couponCode: rawCouponCode,
     } = authReq.body;
 
     if (!orderItems || !Array.isArray(orderItems) || orderItems.length === 0) {
@@ -99,7 +101,35 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     }
 
     const itemsPrice = sanitizedOrderItems.reduce((acc: number, item: any) => acc + item.price * item.qty, 0);
-    const taxPrice = Number((itemsPrice * 0.05).toFixed(2));
+
+    // Coupon — the checkout only previews it; this is the authoritative check.
+    // Re-evaluate against the real items total and reject if it stopped being
+    // valid in between (expired, hit its cap, minimum not met) so the customer
+    // sees it before paying rather than being silently overcharged.
+    const customerEmail =
+      authReq.user?.email || guestEmail || shippingAddress?.email || "";
+    let couponCode = "";
+    let discountAmount = 0;
+    if (rawCouponCode && String(rawCouponCode).trim()) {
+      const evald = await evaluateCoupon(String(rawCouponCode), {
+        itemsSubtotal: itemsPrice,
+        email: customerEmail,
+      });
+      if (!evald.valid) {
+        res.status(400).json({
+          success: false,
+          message: `Coupon "${String(rawCouponCode).trim().toUpperCase()}" can't be applied: ${evald.reason}`,
+        });
+        return;
+      }
+      couponCode = evald.coupon.code;
+      discountAmount = evald.discountAmount;
+    }
+
+    // GST is charged on the discounted subtotal; free delivery below is still
+    // judged on the pre-discount `itemsPrice`.
+    const discountedItems = Math.max(0, itemsPrice - discountAmount);
+    const taxPrice = Number((discountedItems * 0.05).toFixed(2));
 
     const wantsPickup = String(fulfillmentMethod || "").toLowerCase() === "pickup";
     const deliveryPincode = String(
@@ -135,7 +165,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     // folded into shippingPrice: a free-delivery order still owes this fee.
     const codFee = isCod ? await getNumericSetting("codHandlingFee") : 0;
 
-    const totalPrice = Number((itemsPrice + taxPrice + shippingPrice + codFee).toFixed(2));
+    const totalPrice = Number((discountedItems + taxPrice + shippingPrice + codFee).toFixed(2));
 
     const order = await Order.create({
       user: authReq.user?._id,
@@ -159,12 +189,22 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       },
       paymentMethod: paymentMethod || "Cash on Delivery",
       itemsPrice,
+      couponCode: couponCode || undefined,
+      discountAmount,
       taxPrice,
       shippingPrice,
       codFee,
       totalPrice,
       status: "Pending",
     });
+
+    // Record the redemption now that the order exists. Fire-and-forget — a
+    // failure here must never fail an order that has already been placed.
+    if (couponCode) {
+      redeemCoupon(couponCode, customerEmail).catch((err) =>
+        console.error(`Coupon redemption update failed for ${couponCode}:`, err)
+      );
+    }
 
     // Auto-update user profile phone and saved address in MongoDB.
     if (authReq.user) {

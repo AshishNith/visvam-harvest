@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/SiteLayout";
-import { Mail, Phone, MapPin, Clock, ArrowRight, Loader2, CheckCircle2 } from "lucide-react";
+import { Mail, Phone, MapPin, ArrowRight, Loader2, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { submitContactInquiryToBackend } from "@/lib/api";
 
@@ -146,16 +146,6 @@ function ContactUs() {
                   <p className="text-xs text-muted-foreground leading-relaxed max-w-xs">
                     F-329, 2nd floor, sector 63, Noida, 201309
                   </p>
-                </div>
-              </div>
-
-              <div className="flex gap-4">
-                <div className="size-10 rounded-full bg-sand/50 grid place-items-center shrink-0 text-clay">
-                  <Clock size={18} />
-                </div>
-                <div>
-                  <h5 className="text-xs font-semibold uppercase tracking-wider text-ink mb-1">Logistics & Operations</h5>
-                  <p className="text-xs text-muted-foreground">Fulfillment & Operations Center</p>
                 </div>
               </div>
             </div>

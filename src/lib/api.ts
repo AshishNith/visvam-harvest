@@ -231,6 +231,8 @@ export interface SubmitOrderData {
   paymentMethod: string;
   /** "pickup" = customer collects from the warehouse; omitted/"ship" = couriered. */
   fulfillmentMethod?: "ship" | "pickup";
+  /** Coupon code the customer applied at checkout. The server re-validates it. */
+  couponCode?: string;
 }
 
 const LOCAL_ORDERS_KEY = "visvam_local_user_orders";
@@ -270,6 +272,33 @@ export async function submitOrderToBackend(orderData: SubmitOrderData) {
     return json;
   } catch (error: any) {
     return { success: false, message: error.message || "Failed to submit order" };
+  }
+}
+
+/**
+ * Checks a coupon code for the checkout — advisory only. The order endpoint
+ * re-validates and recomputes the discount from the real cart total.
+ */
+export async function validateCoupon(
+  code: string,
+  subtotal: number
+): Promise<{
+  success: boolean;
+  valid: boolean;
+  code?: string;
+  discountPercent?: number;
+  discountAmount?: number;
+  message?: string;
+}> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/coupons/validate`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify({ code, subtotal }),
+    });
+    return await res.json();
+  } catch (error: any) {
+    return { success: false, valid: false, message: error.message || "Could not check that coupon." };
   }
 }
 

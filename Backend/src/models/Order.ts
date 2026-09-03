@@ -69,6 +69,10 @@ export interface IOrder extends Document {
   paymentMethod: string;
   paymentResult?: IPaymentResult;
   itemsPrice: number;
+  /** Coupon code applied at checkout, uppercased. Absent when none was used. */
+  couponCode?: string;
+  /** Whole-rupee amount taken off the items subtotal by the coupon. 0 if none. */
+  discountAmount: number;
   taxPrice: number;
   shippingPrice: number;
   /** Cash-on-Delivery surcharge. Zero for prepaid orders. */
@@ -150,6 +154,16 @@ const OrderSchema = new Schema<IOrder>(
       razorpaySignature: String,
     },
     itemsPrice: {
+      type: Number,
+      required: true,
+      default: 0.0,
+    },
+    couponCode: {
+      type: String,
+      trim: true,
+      uppercase: true,
+    },
+    discountAmount: {
       type: Number,
       required: true,
       default: 0.0,

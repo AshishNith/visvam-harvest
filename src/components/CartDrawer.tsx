@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { X, Minus, Plus, ShoppingBag, Truck, ArrowRight, ArrowLeft, Loader2, MapPin, CheckCircle2 } from "lucide-react";
 import { useCart, formatPrice, type ShippingAddress } from "@/lib/cart-context";
@@ -40,6 +40,11 @@ export function CartDrawer() {
 
   const navigate = useNavigate();
 
+  // True while we're deliberately routing away from the bag (to /checkout or
+  // /order-success) rather than just dismissing it — the cleanup below then
+  // leaves history alone so it doesn't rewind the navigation we just started.
+  const navigatingAwayRef = useRef(false);
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -55,6 +60,28 @@ export function CartDrawer() {
       document.documentElement.style.overflow = "";
     };
   }, [isOpen, orderSuccess]);
+
+  // Make the phone / browser Back button close the bag instead of leaving the
+  // page. While the bag is open we hold one extra ("phantom") history entry so
+  // Back has something to pop; its popstate just closes the drawer. If the bag
+  // is dismissed instead (✕, overlay), we rewind that phantom ourselves so the
+  // URL history stays clean. When "Proceed to Checkout" routes away we leave
+  // history alone — rewinding here would cancel the navigation we just started.
+  useEffect(() => {
+    if (!isOpen) return;
+
+    navigatingAwayRef.current = false;
+    window.history.pushState({ cartDrawer: true }, "");
+    const onPopState = () => closeCart();
+    window.addEventListener("popstate", onPopState);
+
+    return () => {
+      window.removeEventListener("popstate", onPopState);
+      if (!navigatingAwayRef.current && window.history.state?.cartDrawer) {
+        window.history.back();
+      }
+    };
+  }, [isOpen, closeCart]);
 
   // Sync address form when shippingAddress changes
   useEffect(() => {
@@ -118,6 +145,8 @@ export function CartDrawer() {
 
   const handleProceedToAddress = () => {
     if (items.length === 0) return;
+    // Routing away, not dismissing — the effect cleanup must not rewind history.
+    navigatingAwayRef.current = true;
     closeCart();
     navigate({ to: "/checkout" });
   };
@@ -154,6 +183,7 @@ export function CartDrawer() {
       const orderId = res.data?._id || `VIS-${Math.floor(100000 + Math.random() * 900000)}`;
       toast.success(`Order placed successfully!`);
       clearCart();
+      navigatingAwayRef.current = true;
       closeCart();
       navigate({
         to: "/order-success",
@@ -223,7 +253,7 @@ export function CartDrawer() {
             </div>
             <h3 className="font-display italic text-3xl mb-3">Order Confirmed!</h3>
             <p className="text-sm text-muted-foreground max-w-xs leading-relaxed mb-8">
-              Your order will be carefully packed and dispatched within 24-48 hours via express courier.
+              Your order will be carefully packed and dispatched within 24-48 hours.
             </p>
             <button
               onClick={handleClose}

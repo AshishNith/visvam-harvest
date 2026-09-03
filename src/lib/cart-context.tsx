@@ -227,6 +227,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try { localStorage.removeItem(CART_STORAGE_KEY); } catch { /* ignore */ }
   }, []);
 
+  // Stable identities so consumers can safely depend on them in effects
+  // (the CartDrawer keys its browser-history handling on `closeCart`).
+  const openCart = useCallback(() => setIsOpen(true), []);
+  const closeCart = useCallback(() => setIsOpen(false), []);
+
   const subtotal = useMemo(() => items.reduce((s, i) => {
     const unitPrice = i?.selectedVariant?.price ?? i?.product?.price ?? 0;
     return s + unitPrice * (i?.qty || 0);
@@ -238,8 +243,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       value={{
         items,
         isOpen,
-        openCart: () => setIsOpen(true),
-        closeCart: () => setIsOpen(false),
+        openCart,
+        closeCart,
         add,
         remove,
         setQty,

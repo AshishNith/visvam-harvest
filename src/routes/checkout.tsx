@@ -17,6 +17,8 @@ import {
   Store,
   Clock,
   Navigation,
+  Tag,
+  X,
 } from "lucide-react";
 import { useCart, formatPrice, type ShippingAddress } from "@/lib/cart-context";
 import { useAuth } from "@/lib/auth-context";
@@ -28,6 +30,7 @@ import {
   verifyRazorpayPayment,
   fetchMyAddresses,
   createAddress,
+  validateCoupon,
   type SavedAddress,
 } from "@/lib/api";
 import { CityStateFields } from "@/components/CityStateFields";
@@ -110,6 +113,36 @@ function CheckoutPage() {
   // Set once the underlying Order document is created, so a retry after a
   // cancelled/failed payment reuses it instead of creating a duplicate order.
   const [pendingOrderId, setPendingOrderId] = useState<string | null>(null);
+
+  // Coupon — the percentage is what we keep; the rupee amount is recomputed
+  // from the live subtotal so it stays correct. The server re-validates on
+  // order placement and is the authority on what is actually discounted.
+  const [couponInput, setCouponInput] = useState("");
+  const [couponChecking, setCouponChecking] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discountPercent: number } | null>(null);
+
+  const handleApplyCoupon = async () => {
+    const code = couponInput.trim().toUpperCase();
+    if (!code) return;
+    setCouponChecking(true);
+    try {
+      const res = await validateCoupon(code, subtotal);
+      if (res.valid && res.code && typeof res.discountPercent === "number") {
+        setAppliedCoupon({ code: res.code, discountPercent: res.discountPercent });
+        toast.success(`Coupon ${res.code} applied — ${res.discountPercent}% off`);
+      } else {
+        setAppliedCoupon(null);
+        toast.error(res.message || "That coupon code isn't valid.");
+      }
+    } finally {
+      setCouponChecking(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponInput("");
+  };
 
   // COD surcharge, set by the admin in Merchandising. Falls back to the same
   // default the server uses; the server stays the authority on what is charged.
@@ -340,12 +373,20 @@ function CheckoutPage() {
       : (quotedDelivery ?? (quoteFailed ? FALLBACK_DELIVERY_CHARGE : 0));
   const amountToFreeDelivery = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const deliveryProgress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
-  const taxPrice = Math.round(subtotal * 0.05);
+  // Coupon discount comes off the items subtotal; recomputed from the live
+  // subtotal so it can't drift. Free delivery (above) is judged on the
+  // pre-discount subtotal, so a coupon never removes earned free shipping.
+  const discountAmount = appliedCoupon
+    ? Math.round((subtotal * appliedCoupon.discountPercent) / 100)
+    : 0;
+  const discountedSubtotal = Math.max(0, subtotal - discountAmount);
+  // GST is charged on the discounted subtotal. Mirrors the server.
+  const taxPrice = Math.round(discountedSubtotal * 0.05);
   // COD surcharge is its own line, not part of delivery, so it still applies
   // once delivery becomes free. Mirrors the server's codFee calculation. Never
   // applied to a pickup order — "pay on pickup" is not Cash on Delivery.
   const codFee = !isPickup && paymentMethod === "cod" ? codHandlingFee : 0;
-  const totalPrice = subtotal + shippingPrice + taxPrice + codFee;
+  const totalPrice = discountedSubtotal + shippingPrice + taxPrice + codFee;
 
   // Validate Address. The full address is always collected — its PIN/city is
   // also what decides pickup eligibility — so the same checks apply either way.
@@ -409,6 +450,7 @@ function CheckoutPage() {
           shippingAddress: addressForm,
           guestEmail: user?.email || "",
           fulfillmentMethod: fulfillment,
+          couponCode: appliedCoupon?.code,
           paymentMethod:
             paymentMethod === "razorpay"
               ? "Razorpay"
@@ -418,6 +460,11 @@ function CheckoutPage() {
         });
 
         if (!res.success || !res.data?._id) {
+          // The coupon can turn invalid between "Apply" and "Place order"
+          // (expiry, usage cap). Drop it so a retry goes through at full price.
+          if (appliedCoupon && /coupon/i.test(res.message || "")) {
+            setAppliedCoupon(null);
+          }
           toast.error(res.message || "Order placement failed");
           setSubmittingOrder(false);
           return;
@@ -1165,11 +1212,61 @@ function CheckoutPage() {
                   })}
                 </ul>
 
+                {/* Coupon code */}
+                <div className="border-t border-border pt-4">
+                  {appliedCoupon ? (
+                    <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded px-3 py-2">
+                      <span className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-800">
+                        <Tag size={12} />
+                        {appliedCoupon.code} · {appliedCoupon.discountPercent}% off
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleRemoveCoupon}
+                        className="text-emerald-700 hover:text-emerald-900"
+                        aria-label="Remove coupon"
+                      >
+                        <X size={13} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={couponInput}
+                        onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            handleApplyCoupon();
+                          }
+                        }}
+                        placeholder="Coupon code"
+                        className="flex-1 px-3 py-2 text-xs border border-border outline-none focus:border-clay bg-transparent uppercase tracking-wide"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleApplyCoupon}
+                        disabled={couponChecking || !couponInput.trim()}
+                        className="px-4 py-2 text-[11px] font-semibold tracked uppercase border border-ink text-ink hover:bg-ink hover:text-white transition-colors disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-ink flex items-center gap-1.5"
+                      >
+                        {couponChecking ? <Loader2 size={12} className="animate-spin" /> : "Apply"}
+                      </button>
+                    </div>
+                  )}
+                </div>
+
                 <div className="border-t border-border pt-4 space-y-2 text-xs">
                   <div className="flex justify-between text-muted-foreground">
                     <span>Subtotal</span>
                     <span className="tabular-nums text-ink font-medium">{formatPrice(subtotal)}</span>
                   </div>
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between text-emerald-700">
+                      <span>Discount ({appliedCoupon?.code})</span>
+                      <span className="tabular-nums font-medium">−{formatPrice(discountAmount)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-muted-foreground">
                     <span>{isPickup ? "Pickup" : "Delivery"}</span>
                     <span className="tabular-nums font-medium">
