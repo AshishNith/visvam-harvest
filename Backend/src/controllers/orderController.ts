@@ -351,13 +351,29 @@ export const getAllOrders = async (req: Request, res: Response): Promise<void> =
   }
 };
 
-// @desc    Update order status (Admin)
+const ORDER_STATUSES = ["Pending", "Processing", "Shipped", "Completed", "Cancelled"] as const;
+
+// @desc    Update order status and/or payment state (Admin)
 // @route   PUT /api/v1/orders/:id/status
 // @access  Admin
+//
+// Fulfilment status and payment are two independent facts and this endpoint
+// keeps them that way. Moving a COD order to "Shipped" says the parcel left the
+// warehouse, NOT that the customer has paid — the cash arrives on delivery.
+// Callers that only want to move the status simply omit `isPaid`, and the
+// stored payment record is left exactly as it was.
 export const updateOrderStatus = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const { status, isPaid } = req.body;
+
+    if (status !== undefined && !ORDER_STATUSES.includes(status)) {
+      res.status(400).json({
+        success: false,
+        message: `Invalid status "${status}". Expected one of: ${ORDER_STATUSES.join(", ")}.`,
+      });
+      return;
+    }
 
     const order = await Order.findById(id);
 
@@ -367,9 +383,23 @@ export const updateOrderStatus = async (req: Request, res: Response): Promise<vo
     }
 
     if (status) order.status = status;
-    if (typeof isPaid === "boolean") {
+
+    if (typeof isPaid === "boolean" && isPaid !== order.isPaid) {
+      // A payment settled by Razorpay is the gateway's record, not a flag to be
+      // flipped by hand. Reversing it here would leave the books disagreeing
+      // with Razorpay while the customer's money is still captured — a refund
+      // has to be issued in the Razorpay dashboard instead.
+      if (!isPaid && order.paymentResult?.razorpayPaymentId) {
+        res.status(400).json({
+          success: false,
+          message:
+            "This order was paid online through Razorpay and can't be marked unpaid here. Issue a refund from the Razorpay dashboard instead.",
+        });
+        return;
+      }
+
       order.isPaid = isPaid;
-      if (isPaid) order.paidAt = new Date();
+      order.paidAt = isPaid ? new Date() : undefined;
     }
 
     const updatedOrder = await order.save();

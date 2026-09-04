@@ -324,11 +324,75 @@ export const getShippingLabel = async (req: Request, res: Response): Promise<voi
   }
 };
 
+/**
+ * Maps a Shiprocket `current_status` string onto our own order status, and says
+ * whether it represents cash actually reaching us.
+ *
+ * The ordering of these checks is load-bearing. Several Shiprocket statuses
+ * contain "DELIVERED" as a substring while meaning the opposite of a successful
+ * delivery — "UNDELIVERED" (a failed attempt) and "RTO DELIVERED" (the parcel
+ * came back to us). A naive `includes("DELIVERED")` marks those Completed and,
+ * for COD, Paid — booking money that was never collected. Match the negatives
+ * first.
+ */
+function mapShiprocketStatus(rawStatus: string): {
+  status?: "Pending" | "Processing" | "Shipped" | "Completed" | "Cancelled";
+  codCollected?: boolean;
+} {
+  const s = String(rawStatus || "").toUpperCase();
+
+  // Returned to origin, at any stage of the return journey. The customer never
+  // took delivery and no cash changed hands.
+  if (s.includes("RTO") || s.includes("RETURN")) return { status: "Cancelled" };
+
+  // A failed delivery attempt / NDR. The parcel is still out with the courier,
+  // so leave the order sitting at "Shipped" and let the team work the NDR.
+  if (s.includes("UNDELIVERED") || s.includes("NDR")) return {};
+
+  if (s.includes("CANCEL") || s.includes("LOST") || s.includes("DAMAGED")) {
+    return { status: "Cancelled" };
+  }
+
+  // Genuine delivery to the customer. This is the only branch where a COD
+  // order's money has actually been handed over.
+  if (s.includes("DELIVERED")) return { status: "Completed", codCollected: true };
+
+  if (
+    s.includes("OUT FOR DELIVERY") ||
+    s.includes("IN TRANSIT") ||
+    s.includes("PICKED UP") ||
+    s.includes("SHIPPED")
+  ) {
+    return { status: "Shipped" };
+  }
+
+  return {};
+}
+
 // @desc    Shiprocket Webhook Listener
 // @route   POST /api/v1/shipping/webhook
-// @access  Public (Shiprocket Webhook Callback)
+// @access  Public endpoint, authenticated by the shared token configured as the
+//          webhook's `x-api-key` in the Shiprocket dashboard.
 export const handleShiprocketWebhook = async (req: Request, res: Response): Promise<void> => {
   try {
+    // Without this check anyone on the internet could POST a fabricated
+    // "Delivered" event and mark orders Completed and Paid.
+    const expectedToken = process.env.SHIPROCKET_WEBHOOK_TOKEN;
+    if (expectedToken) {
+      const presented = String(
+        req.headers["x-api-key"] || req.headers["x-shiprocket-token"] || ""
+      );
+      if (presented !== expectedToken) {
+        console.warn("Rejected Shiprocket webhook with a bad or missing x-api-key.");
+        res.status(401).json({ success: false, message: "Unauthorized" });
+        return;
+      }
+    } else {
+      console.warn(
+        "SHIPROCKET_WEBHOOK_TOKEN is not set — the Shiprocket webhook is accepting unauthenticated calls."
+      );
+    }
+
     const { awb, current_status, order_id } = req.body;
 
     console.log("Shiprocket Webhook received:", { awb, current_status, order_id });
@@ -337,14 +401,16 @@ export const handleShiprocketWebhook = async (req: Request, res: Response): Prom
       const order = await Order.findOne({ "shiprocket.awbCode": awb });
       if (order) {
         const normalizedStatus = String(current_status).toUpperCase();
+        const { status, codCollected } = mapShiprocketStatus(normalizedStatus);
 
-        if (normalizedStatus.includes("DELIVERED")) {
-          order.status = "Completed";
+        if (status) order.status = status;
+
+        // COD cash is collected by the courier on handover, so a real delivery
+        // is the moment the order becomes paid. Prepaid orders are already
+        // paid, and nothing here can ever flip an order back to unpaid.
+        if (codCollected && !order.isPaid) {
           order.isPaid = true;
-        } else if (normalizedStatus.includes("OUT FOR DELIVERY") || normalizedStatus.includes("IN TRANSIT") || normalizedStatus.includes("PICKED UP")) {
-          order.status = "Shipped";
-        } else if (normalizedStatus.includes("CANCEL")) {
-          order.status = "Cancelled";
+          order.paidAt = new Date();
         }
 
         if (order.shiprocket) {
