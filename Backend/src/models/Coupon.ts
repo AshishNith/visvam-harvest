@@ -20,20 +20,27 @@ export interface ICoupon extends Document {
   minOrderValue: number;
   /** Coupon auto-stops once this many orders have used it. 0 = unlimited. */
   maxRedemptions: number;
-  /** When true, each customer email can redeem the coupon only once. */
+  /** How many times ONE customer may redeem this coupon. 0 = unlimited. */
+  usesPerCustomer: number;
+  /**
+   * @deprecated Superseded by the numeric `usesPerCustomer`. Still read as a
+   * fallback so coupons created before that field existed keep behaving as
+   * "once per customer"; writes keep it in step (true exactly when the limit
+   * is 1) so anything still reading it doesn't disagree.
+   */
   oncePerCustomer: boolean;
   /** How many orders have successfully used the coupon. */
   timesRedeemed: number;
   /**
-   * Stable per-customer keys that have already redeemed this coupon, for the
-   * `oncePerCustomer` rule. A key is the customer's User id when the order was
-   * placed signed-in (the normal case — checkout requires a login), falling
-   * back to their lowercased email for any order without one. `redeemedEmails`
-   * is the older email-only list, still checked so redemptions recorded before
-   * this field existed keep counting.
+   * How many times each individual customer has redeemed this coupon — the
+   * counter behind `usesPerCustomer`. `key` is the customer's User id when the
+   * order was placed signed-in (the normal case, since checkout requires a
+   * login), falling back to their lowercased email.
    */
+  redemptions: { key: string; count: number }[];
+  /** @deprecated Legacy per-customer set (no counts). Read as "used once". */
   redeemedBy: string[];
-  /** Legacy: lowercased customer emails that have redeemed it. Still honoured. */
+  /** @deprecated Legacy email-only set (no counts). Read as "used once". */
   redeemedEmails: string[];
   createdAt: Date;
   updatedAt: Date;
@@ -54,8 +61,21 @@ const CouponSchema = new Schema<ICoupon>(
     expiresAt: { type: Date, default: null },
     minOrderValue: { type: Number, required: true, default: 0, min: 0 },
     maxRedemptions: { type: Number, required: true, default: 0, min: 0 },
+    usesPerCustomer: { type: Number, required: true, default: 0, min: 0 },
     oncePerCustomer: { type: Boolean, required: true, default: false },
     timesRedeemed: { type: Number, required: true, default: 0, min: 0 },
+    redemptions: {
+      type: [
+        new Schema(
+          {
+            key: { type: String, required: true },
+            count: { type: Number, required: true, default: 1, min: 0 },
+          },
+          { _id: false }
+        ),
+      ],
+      default: [],
+    },
     redeemedBy: { type: [String], default: [] },
     redeemedEmails: { type: [String], default: [] },
   },

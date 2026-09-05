@@ -22,6 +22,33 @@ function customerIdentifiers(ctx: { customerKey?: string; email?: string }): {
 }
 
 /**
+ * How many times a single customer may redeem this coupon. 0 = unlimited.
+ * Falls back to the old boolean for coupons saved before `usesPerCustomer`.
+ */
+function perCustomerLimit(coupon: ICoupon): number {
+  const n = Number(coupon.usesPerCustomer) || 0;
+  if (n > 0) return n;
+  return coupon.oncePerCustomer ? 1 : 0;
+}
+
+/**
+ * How many times this customer has already redeemed the coupon. Checks each
+ * identifier we have (User id, email) and takes the highest, so someone who
+ * ordered once as a guest and once signed in can't get two separate budgets.
+ * A hit in the legacy set-only fields counts as a single use.
+ */
+function redemptionsUsed(coupon: ICoupon, key: string, email: string): number {
+  let used = 0;
+  for (const id of [key, email].filter(Boolean)) {
+    const entry = (coupon.redemptions || []).find((r) => r.key === id);
+    if (entry) used = Math.max(used, Number(entry.count) || 0);
+    else if ((coupon.redeemedBy || []).includes(id) || (coupon.redeemedEmails || []).includes(id))
+      used = Math.max(used, 1);
+  }
+  return used;
+}
+
+/**
  * The single source of truth for whether a coupon can be used and how much it
  * takes off. Called both by the checkout preview endpoint and, authoritatively,
  * by orderController when the order is actually created.
@@ -53,20 +80,24 @@ export async function evaluateCoupon(
   if (coupon.maxRedemptions > 0 && coupon.timesRedeemed >= coupon.maxRedemptions)
     return { valid: false, reason: "This coupon has reached its usage limit." };
 
-  if (coupon.oncePerCustomer) {
+  const limit = perCustomerLimit(coupon);
+  if (limit > 0) {
     const { key, email } = customerIdentifiers(ctx);
-    // If we can't identify the customer at all, a once-per-customer coupon is
-    // unenforceable — so deny rather than hand out an unlimited discount. This
-    // was the actual bug: the old check was `oncePerCustomer && email && …`,
-    // and an order with no email (a phone-only account, the common case) fell
-    // straight through it and could redeem again and again.
+    // With no way to identify the customer, a per-customer limit is
+    // unenforceable — deny rather than hand out an unlimited discount.
     if (!key && !email) {
       return { valid: false, reason: "Please sign in to use this coupon." };
     }
-    const alreadyUsed =
-      (key && (coupon.redeemedBy || []).includes(key)) ||
-      (email && coupon.redeemedEmails.includes(email));
-    if (alreadyUsed) return { valid: false, reason: "You've already used this coupon." };
+    const used = redemptionsUsed(coupon, key, email);
+    if (used >= limit) {
+      return {
+        valid: false,
+        reason:
+          limit === 1
+            ? "You've already used this coupon."
+            : `You've already used this coupon ${limit} times.`,
+      };
+    }
   }
 
   const discountAmount = Math.round((subtotal * coupon.discountPercent) / 100);
@@ -74,15 +105,15 @@ export async function evaluateCoupon(
 }
 
 /**
- * Records that a coupon was used on an order. Best-effort from the caller — a
- * failure here must never fail an order that has already been created — but the
- * caller should `await` it so a customer's next order sees the redemption.
+ * Records that a coupon was used on an order, bumping both the global counter
+ * and this customer's own count. Best-effort from the caller — a failure here
+ * must never fail an order that has already been created — but the caller
+ * should `await` it so the customer's next order sees the redemption.
  *
- * The write is a single atomic `$inc` + `$addToSet`, so re-recording the same
- * customer is a no-op on the set (they can't be double-counted for the
- * once-per-customer rule). A genuinely simultaneous double-submit can still
- * slip past the read-check in `evaluateCoupon`; that is a far narrower window
- * than the old "no identifier means no check at all".
+ * Each write is atomic: bump the existing entry if there is one, otherwise push
+ * a new one guarded by `$ne` so two concurrent first-redemptions can't create
+ * duplicate entries for the same customer. A genuinely simultaneous
+ * double-submit can still slip past the read-check in `evaluateCoupon`.
  */
 export async function redeemCoupon(
   code: string,
@@ -90,15 +121,27 @@ export async function redeemCoupon(
 ): Promise<void> {
   const normalized = String(code || "").trim().toUpperCase();
   if (!normalized) return;
+
   const { key, email } = customerIdentifiers(ctx);
+  const id = key || email;
 
-  const update: Record<string, unknown> = { $inc: { timesRedeemed: 1 } };
-  const addToSet: Record<string, unknown> = {};
-  if (key) addToSet.redeemedBy = key;
-  if (email) addToSet.redeemedEmails = email;
-  if (Object.keys(addToSet).length) update.$addToSet = addToSet;
+  // No identifier at all: only a coupon with no per-customer limit can reach
+  // here (evaluateCoupon denies the rest), so just move the global counter.
+  if (!id) {
+    await Coupon.updateOne({ code: normalized }, { $inc: { timesRedeemed: 1 } });
+    return;
+  }
 
-  await Coupon.updateOne({ code: normalized }, update);
+  const bumped = await Coupon.updateOne(
+    { code: normalized, "redemptions.key": id },
+    { $inc: { timesRedeemed: 1, "redemptions.$.count": 1 } }
+  );
+  if (bumped.matchedCount === 0) {
+    await Coupon.updateOne(
+      { code: normalized, "redemptions.key": { $ne: id } },
+      { $inc: { timesRedeemed: 1 }, $push: { redemptions: { key: id, count: 1 } } }
+    );
+  }
 }
 
 // @desc    Check a coupon for the checkout (advisory preview — the order
@@ -167,7 +210,19 @@ function sanitizeCouponInput(body: any, forCreate: boolean): Record<string, unkn
   }
 
   if (body.active !== undefined) out.active = Boolean(body.active);
-  if (body.oncePerCustomer !== undefined) out.oncePerCustomer = Boolean(body.oncePerCustomer);
+
+  // `usesPerCustomer` is the real setting; `oncePerCustomer` is the retired
+  // boolean, still accepted from any older caller and always written in step
+  // with the number so the two can never disagree.
+  if (body.usesPerCustomer !== undefined) {
+    const n = Math.max(0, Math.round(Number(body.usesPerCustomer) || 0));
+    out.usesPerCustomer = n;
+    out.oncePerCustomer = n === 1;
+  } else if (body.oncePerCustomer !== undefined) {
+    const once = Boolean(body.oncePerCustomer);
+    out.oncePerCustomer = once;
+    out.usesPerCustomer = once ? 1 : 0;
+  }
 
   if (body.minOrderValue !== undefined) {
     const n = Math.max(0, Math.round(Number(body.minOrderValue) || 0));
