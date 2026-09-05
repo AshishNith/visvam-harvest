@@ -108,11 +108,15 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     // sees it before paying rather than being silently overcharged.
     const customerEmail =
       authReq.user?.email || guestEmail || shippingAddress?.email || "";
+    // The signed-in User id is the stable per-customer key for the
+    // once-per-customer rule; email is only a fallback for a guest order.
+    const customerKey = authReq.user?._id ? String(authReq.user._id) : "";
     let couponCode = "";
     let discountAmount = 0;
     if (rawCouponCode && String(rawCouponCode).trim()) {
       const evald = await evaluateCoupon(String(rawCouponCode), {
         itemsSubtotal: itemsPrice,
+        customerKey,
         email: customerEmail,
       });
       if (!evald.valid) {
@@ -198,10 +202,11 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       status: "Pending",
     });
 
-    // Record the redemption now that the order exists. Fire-and-forget — a
-    // failure here must never fail an order that has already been placed.
+    // Record the redemption now that the order exists. Awaited so the
+    // customer's *next* order sees it, but its failure must never fail an
+    // order that has already been placed — hence the swallowed catch.
     if (couponCode) {
-      redeemCoupon(couponCode, customerEmail).catch((err) =>
+      await redeemCoupon(couponCode, { customerKey, email: customerEmail }).catch((err) =>
         console.error(`Coupon redemption update failed for ${couponCode}:`, err)
       );
     }

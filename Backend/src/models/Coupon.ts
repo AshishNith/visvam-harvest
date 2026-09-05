@@ -24,7 +24,16 @@ export interface ICoupon extends Document {
   oncePerCustomer: boolean;
   /** How many orders have successfully used the coupon. */
   timesRedeemed: number;
-  /** Lowercased customer emails that have redeemed it (for oncePerCustomer). */
+  /**
+   * Stable per-customer keys that have already redeemed this coupon, for the
+   * `oncePerCustomer` rule. A key is the customer's User id when the order was
+   * placed signed-in (the normal case — checkout requires a login), falling
+   * back to their lowercased email for any order without one. `redeemedEmails`
+   * is the older email-only list, still checked so redemptions recorded before
+   * this field existed keep counting.
+   */
+  redeemedBy: string[];
+  /** Legacy: lowercased customer emails that have redeemed it. Still honoured. */
   redeemedEmails: string[];
   createdAt: Date;
   updatedAt: Date;
@@ -47,6 +56,7 @@ const CouponSchema = new Schema<ICoupon>(
     maxRedemptions: { type: Number, required: true, default: 0, min: 0 },
     oncePerCustomer: { type: Boolean, required: true, default: false },
     timesRedeemed: { type: Number, required: true, default: 0, min: 0 },
+    redeemedBy: { type: [String], default: [] },
     redeemedEmails: { type: [String], default: [] },
   },
   { timestamps: true }

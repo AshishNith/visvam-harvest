@@ -7,17 +7,32 @@ export type CouponEval =
   | { valid: false; reason: string };
 
 /**
+ * Normalises the identifiers used for the once-per-customer rule. `customerKey`
+ * is the primary one — the signed-in User id — and `email` is the fallback for
+ * any order placed without one.
+ */
+function customerIdentifiers(ctx: { customerKey?: string; email?: string }): {
+  key: string;
+  email: string;
+} {
+  return {
+    key: String(ctx.customerKey || "").trim().toLowerCase(),
+    email: String(ctx.email || "").trim().toLowerCase(),
+  };
+}
+
+/**
  * The single source of truth for whether a coupon can be used and how much it
  * takes off. Called both by the checkout preview endpoint and, authoritatively,
  * by orderController when the order is actually created.
  *
  * The discount is a whole-rupee amount off `itemsSubtotal` (the pre-discount
- * cart items total). `email` is the customer's lowercased email, used only for
- * the once-per-customer rule; pass it whenever it is known.
+ * cart items total). For the once-per-customer rule, pass `customerKey` (the
+ * signed-in User id) and/or `email`.
  */
 export async function evaluateCoupon(
   codeRaw: string,
-  ctx: { itemsSubtotal: number; email?: string }
+  ctx: { itemsSubtotal: number; customerKey?: string; email?: string }
 ): Promise<CouponEval> {
   const code = String(codeRaw || "").trim().toUpperCase();
   if (!code) return { valid: false, reason: "Enter a coupon code." };
@@ -38,24 +53,51 @@ export async function evaluateCoupon(
   if (coupon.maxRedemptions > 0 && coupon.timesRedeemed >= coupon.maxRedemptions)
     return { valid: false, reason: "This coupon has reached its usage limit." };
 
-  const email = String(ctx.email || "").trim().toLowerCase();
-  if (coupon.oncePerCustomer && email && coupon.redeemedEmails.includes(email))
-    return { valid: false, reason: "You've already used this coupon." };
+  if (coupon.oncePerCustomer) {
+    const { key, email } = customerIdentifiers(ctx);
+    // If we can't identify the customer at all, a once-per-customer coupon is
+    // unenforceable — so deny rather than hand out an unlimited discount. This
+    // was the actual bug: the old check was `oncePerCustomer && email && …`,
+    // and an order with no email (a phone-only account, the common case) fell
+    // straight through it and could redeem again and again.
+    if (!key && !email) {
+      return { valid: false, reason: "Please sign in to use this coupon." };
+    }
+    const alreadyUsed =
+      (key && (coupon.redeemedBy || []).includes(key)) ||
+      (email && coupon.redeemedEmails.includes(email));
+    if (alreadyUsed) return { valid: false, reason: "You've already used this coupon." };
+  }
 
   const discountAmount = Math.round((subtotal * coupon.discountPercent) / 100);
   return { valid: true, coupon, discountPercent: coupon.discountPercent, discountAmount };
 }
 
 /**
- * Records that a coupon was used on an order. Fire-and-forget from the caller —
- * a failure here must never fail an order that has already been created.
+ * Records that a coupon was used on an order. Best-effort from the caller — a
+ * failure here must never fail an order that has already been created — but the
+ * caller should `await` it so a customer's next order sees the redemption.
+ *
+ * The write is a single atomic `$inc` + `$addToSet`, so re-recording the same
+ * customer is a no-op on the set (they can't be double-counted for the
+ * once-per-customer rule). A genuinely simultaneous double-submit can still
+ * slip past the read-check in `evaluateCoupon`; that is a far narrower window
+ * than the old "no identifier means no check at all".
  */
-export async function redeemCoupon(code: string, email?: string): Promise<void> {
+export async function redeemCoupon(
+  code: string,
+  ctx: { customerKey?: string; email?: string }
+): Promise<void> {
   const normalized = String(code || "").trim().toUpperCase();
   if (!normalized) return;
-  const cleanEmail = String(email || "").trim().toLowerCase();
+  const { key, email } = customerIdentifiers(ctx);
+
   const update: Record<string, unknown> = { $inc: { timesRedeemed: 1 } };
-  if (cleanEmail) update.$addToSet = { redeemedEmails: cleanEmail };
+  const addToSet: Record<string, unknown> = {};
+  if (key) addToSet.redeemedBy = key;
+  if (email) addToSet.redeemedEmails = email;
+  if (Object.keys(addToSet).length) update.$addToSet = addToSet;
+
   await Coupon.updateOne({ code: normalized }, update);
 }
 
@@ -69,6 +111,7 @@ export const validateCoupon = async (req: Request, res: Response): Promise<void>
     const { code, subtotal } = req.body;
     const result = await evaluateCoupon(String(code || ""), {
       itemsSubtotal: Number(subtotal) || 0,
+      customerKey: authReq.user?._id ? String(authReq.user._id) : undefined,
       email: authReq.user?.email,
     });
 
