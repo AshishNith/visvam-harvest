@@ -223,9 +223,19 @@ export const getUserProfile = async (req: Request, res: Response): Promise<void>
   }
 };
 
+const EMAIL_FORMAT = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 // @desc    Update user profile
 // @route   PUT /api/v1/auth/profile
 // @access  Protected
+//
+// `email` is only accepted here to let a phone-only account (signed up via
+// Phone OTP, no email on file) ADD one — for order confirmations and the
+// newsletter, which both need an address to send to. An account that already
+// has an email is left alone: that address is also the Firebase sign-in
+// identity for email-link accounts, and silently changing it here would
+// desync it from what Firebase actually authenticates against, locking the
+// customer out of their own sign-in method.
 export const updateUserProfile = async (req: Request, res: Response): Promise<void> => {
   try {
     const authReq = req as AuthenticatedRequest;
@@ -234,10 +244,26 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
       return;
     }
 
-    const { name, phone, address } = authReq.body;
+    const { name, phone, address, email } = authReq.body;
     if (name) authReq.user.name = name;
     if (phone) authReq.user.phone = phone;
     if (address) authReq.user.address = { ...authReq.user.address, ...address };
+
+    if (email !== undefined && !authReq.user.email) {
+      const normalized = String(email).trim().toLowerCase();
+      if (normalized) {
+        if (!EMAIL_FORMAT.test(normalized)) {
+          res.status(400).json({ success: false, message: "Enter a valid email address" });
+          return;
+        }
+        const taken = await User.findOne({ email: normalized, _id: { $ne: authReq.user._id } });
+        if (taken) {
+          res.status(409).json({ success: false, message: "That email address is already in use" });
+          return;
+        }
+        authReq.user.email = normalized;
+      }
+    }
 
     const updatedUser = await authReq.user.save();
     res.status(200).json({
@@ -245,6 +271,10 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
       data: updatedUser,
     });
   } catch (error: any) {
+    if (error.code === 11000) {
+      res.status(409).json({ success: false, message: "That email address is already in use" });
+      return;
+    }
     res.status(500).json({ success: false, message: error.message });
   }
 };

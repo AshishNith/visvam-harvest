@@ -135,6 +135,7 @@ function ProfilePage() {
   // Profile form
   const [profileName, setProfileName] = useState("");
   const [profilePhone, setProfilePhone] = useState("");
+  const [profileEmail, setProfileEmail] = useState("");
   const [profileSaving, setProfileSaving] = useState(false);
 
   // Addresses
@@ -166,6 +167,7 @@ function ProfilePage() {
     if (user) {
       setProfileName(prefillableName(user.name));
       setProfilePhone(user.phone || "");
+      setProfileEmail(user.email || "");
     }
   }, [user]);
 
@@ -214,11 +216,21 @@ function ProfilePage() {
   };
 
   /* ── Profile ─────────────────────────────────────────────── */
+  const EMAIL_FORMAT = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   const handleProfileSave = async () => {
     if (!profileName.trim()) return toast.error("Name is required");
+    // Only accounts with no email on file can add one here — see the backend
+    // comment on updateUserProfile for why an existing email is locked.
+    const addingEmail = !user?.email;
+    if (addingEmail && profileEmail.trim() && !EMAIL_FORMAT.test(profileEmail.trim())) {
+      return toast.error("Enter a valid email address");
+    }
     setProfileSaving(true);
     try {
-      const res = await updateProfile({ name: profileName, phone: profilePhone } as any);
+      const payload: any = { name: profileName, phone: profilePhone };
+      if (addingEmail && profileEmail.trim()) payload.email = profileEmail.trim();
+      const res = await updateProfile(payload);
       if (res.success) {
         toast.success("Profile updated");
       } else {
@@ -729,13 +741,30 @@ function ProfilePage() {
               </div>
               <div>
                 <label className={labelClass}>Email Address</label>
-                <input
-                  type="email"
-                  value={user.email || "Not linked"}
-                  disabled
-                  className="w-full px-3 py-2.5 text-xs border border-border bg-cream/40 text-muted-foreground cursor-not-allowed"
-                />
-                <p className="text-[9px] text-muted-foreground mt-1">Email cannot be changed.</p>
+                {user.email ? (
+                  <>
+                    <input
+                      type="email"
+                      value={user.email}
+                      disabled
+                      className="w-full px-3 py-2.5 text-xs border border-border bg-cream/40 text-muted-foreground cursor-not-allowed"
+                    />
+                    <p className="text-[9px] text-muted-foreground mt-1">Email cannot be changed.</p>
+                  </>
+                ) : (
+                  <>
+                    <input
+                      type="email"
+                      value={profileEmail}
+                      onChange={(e) => setProfileEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      className={inputClass}
+                    />
+                    <p className="text-[9px] text-muted-foreground mt-1">
+                      Add an email to receive order confirmations and our newsletter.
+                    </p>
+                  </>
+                )}
               </div>
               <div>
                 <label className={labelClass}>Phone Number</label>
