@@ -88,7 +88,7 @@ export function Header() {
             : "bg-background/90 backdrop-blur-md border-b border-border/40 shadow-xs py-0"
         }`}
       >
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 flex items-center justify-between lg:grid lg:grid-cols-[1fr_auto_1fr] h-20 gap-4 lg:gap-6">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 flex items-center justify-between sm:grid sm:grid-cols-[1fr_auto_1fr] h-20 gap-4 lg:gap-6">
           
           {/* Left Mobile Menu Toggle + Mobile Logo + Desktop Left Nav */}
           <div className="flex items-center gap-3 sm:gap-4">
@@ -100,8 +100,8 @@ export function Header() {
               {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
 
-            {/* Mobile Logo (Left-aligned) */}
-            <Link to="/" className="lg:hidden flex items-center py-2 rounded-none">
+            {/* Mobile Logo (Left-aligned) — phones only; sm and up centers it instead */}
+            <Link to="/" className="sm:hidden flex items-center py-2 rounded-none">
               {isScrolled ? (
                 <img
                   src={logoEmblem}
@@ -201,8 +201,10 @@ export function Header() {
             </nav>
           </div>
 
-          {/* Desktop Center Brand Logo */}
-          <Link to="/" className="hidden lg:flex flex-col items-center justify-center group py-2 text-center rounded-none">
+          {/* Center Brand Logo — shown from tablet width up (sm+); phones get the
+             left-aligned logo above instead, since they still need the hamburger
+             menu button that this centered layout otherwise leaves no room for. */}
+          <Link to="/" className="hidden sm:flex flex-col items-center justify-center group py-2 text-center rounded-none">
             {isScrolled ? (
               <img
                 src={logoEmblem}
