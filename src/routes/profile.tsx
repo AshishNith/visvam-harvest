@@ -685,15 +685,17 @@ function ProfilePage() {
               </button>
             </div>
             <div className="flex-1 min-w-0">
-              <h2 className="font-medium text-ink text-lg">{user.name}</h2>
+              <h2 className="font-medium text-ink text-lg truncate">{user.name}</h2>
               {user.email && (
-                <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-                  <Mail size={12} /> {user.email}
+                <p className="text-xs text-muted-foreground flex items-center gap-1.5 min-w-0">
+                  <Mail size={12} className="shrink-0" />
+                  <span className="truncate">{user.email}</span>
                 </p>
               )}
               {user.phone && (
-                <p className="text-xs text-muted-foreground flex items-center gap-1.5 mt-0.5">
-                  <Phone size={12} /> {user.phone}
+                <p className="text-xs text-muted-foreground flex items-center gap-1.5 mt-0.5 min-w-0">
+                  <Phone size={12} className="shrink-0" />
+                  <span className="truncate">{user.phone}</span>
                 </p>
               )}
             </div>
