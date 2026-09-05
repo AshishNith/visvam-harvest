@@ -42,7 +42,7 @@ function ShippingPolicy() {
             <section className="space-y-4">
               <h2 className="font-display italic text-2xl text-ink">1. Packaging & Presentation</h2>
               <p className="text-muted-foreground">
-                Every order dispatched from Viśvam is packaged in food-grade pouches and presentation boxes to protect product quality throughout transit.
+                Every order dispatched from Viśvam is sealed in food-grade packaging and presentation boxes to protect product quality throughout transit.
               </p>
             </section>
 

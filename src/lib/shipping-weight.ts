@@ -3,7 +3,7 @@
  *
  * Products carry no weight field — the only weight we have is the text in a
  * variant title ("250g", "Extra Bold · 500g") with the `serving` string
- * ("500g Pouch") as a fallback. Mirrored on the server in
+ * ("500g Pack") as a fallback. Mirrored on the server in
  * Backend/src/utils/shippingWeight.ts; the two MUST stay in step, because a
  * different weight means Shiprocket quotes a different rate and the price shown
  * here stops matching the price the server charges.
@@ -33,7 +33,7 @@ export function parseWeightKg(text?: string | null): number | undefined {
 /**
  * Total shipped weight for the cart.
  *
- * A pack's label ("500g") is its gross packed weight — the paper pouch itself
+ * A pack's label ("500g") is its gross packed weight — the packaging itself
  * weighs next to nothing — so no packaging allowance is added on top.
  */
 export function cartWeightKg(items: CartItem[]): number {

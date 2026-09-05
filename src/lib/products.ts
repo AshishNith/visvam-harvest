@@ -104,7 +104,7 @@ export const products: Product[] = [
     ],
     description:
       "Hand-selected jumbo whole almonds selected at peak oil maturity. Gently air-dried and carefully packaged to retain natural crunch, vitamin E, and sweet buttery flavor.",
-    serving: "500g Pouch",
+    serving: "500g Pack",
     benefits: ["Rich in Vitamin E", "Heart Healthy", "High Plant Protein"],
     bestseller: true,
     hasVariants: true,
@@ -239,7 +239,7 @@ export const products: Product[] = [
     ],
     description:
       "Naturally opened jumbo pistachios slow-roasted over wood embers and lightly dusted with unrefined pink salt crystals. Easy to shell and intensely flavorful.",
-    serving: "500g Pouch",
+    serving: "500g Pack",
     benefits: ["High Fiber", "Potassium Rich", "Low Calorie Snack"],
     bestseller: true,
   },
@@ -257,7 +257,7 @@ export const products: Product[] = [
     ],
     description:
       "The undisputed king of almonds. Cultivated in mineral-rich mountain soil, Mamra almonds possess over 50% natural almond oil content for unmatched brain & wellness benefits.",
-    serving: "500g Tin",
+    serving: "500g Box",
     benefits: ["50%+ Natural Oil", "Brain Boost", "Rich Antioxidants"],
   },
   {
@@ -310,7 +310,7 @@ export const products: Product[] = [
     ],
     description:
       "Slender long green raisins shade-dried in traditional earthen Kishmish Khana rooms to preserve their vivid green hue, tart acidity, and high antioxidant profile.",
-    serving: "500g Pouch",
+    serving: "500g Pack",
     benefits: ["High Iron", "Blood Health", "Natural Energy"],
   },
   {
@@ -362,7 +362,7 @@ export const products: Product[] = [
     ],
     description:
       "A nutrient-dense blend of 7 super seeds lightly dry-roasted with Himalayan pink salt. Packed with plant protein, magnesium, zinc, and dietary fiber for effortless health.",
-    serving: "500g Pouch",
+    serving: "500g Pack",
     benefits: ["Plant Protein", "Zinc & Magnesium", "Zero Oil Roasted"],
     bestseller: true,
   },
@@ -397,9 +397,9 @@ export const products: Product[] = [
       cImg("08_Assorted_Mix_and_Gift_Platters/DSC00762.jpg"),
     ],
     description:
-      "The ultimate celebratory dry fruit collection. Includes Iranian Mamra Almonds, Royal Medjool King Dates, Dried Kandahar Figs, and Wild Berry Mix housed in an embossed metallic tin.",
-    serving: "1.2kg Gold Tin",
-    benefits: ["Gold Embossed Tin", "Refined Presentation", "Curated Grade"],
+      "The ultimate celebratory dry fruit collection. Includes Iranian Mamra Almonds, Royal Medjool King Dates, Dried Kandahar Figs, and Wild Berry Mix housed in an embossed presentation box.",
+    serving: "1.2kg Gold Gift Box",
+    benefits: ["Gold Embossed Finish", "Refined Presentation", "Curated Grade"],
     isNew: true,
   },
 ];

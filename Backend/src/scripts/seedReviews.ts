@@ -54,20 +54,20 @@ const reviewsByProduct: Record<string, ReviewTemplate[]> = {
       userName: "Siddharth Varma",
       rating: 5,
       title: "Airtight seal makes a huge difference",
-      comment: "Arrived with the seal intact. Zero broken pieces in the 500g pouch. Highly recommended for daily wellness.",
+      comment: "Arrived with the seal intact. Zero broken pieces in the 500g pack. Highly recommended for daily wellness.",
       daysAgo: 31,
     },
     {
       userName: "Pooja Singhania",
       rating: 5,
       title: "Crisp and nutty aroma",
-      comment: "You open the pouch and immediately smell fresh orchard almonds. Very satisfied with Viśvam's standard.",
+      comment: "You open it and immediately smell fresh orchard almonds. Very satisfied with Viśvam's standard.",
       daysAgo: 39,
     },
     {
       userName: "Aditya Deshmukh",
       rating: 5,
-      title: "Consistent size in every pouch",
+      title: "Consistent size every time",
       comment: "Second order already. Every kernel is uniform, large, and golden brown. Great craftsmanship.",
       daysAgo: 45,
     },
@@ -308,7 +308,7 @@ const reviewsByProduct: Record<string, ReviewTemplate[]> = {
       userName: "Sangeeta Pai",
       rating: 4,
       title: "Crisp, flavorful and wholesome",
-      comment: "Great quality pouch packaging with moisture barrier. Pistachios stayed crisp throughout monsoon.",
+      comment: "Great quality packaging with moisture barrier. Pistachios stayed crisp throughout monsoon.",
       daysAgo: 48,
     },
     {
@@ -374,7 +374,7 @@ const reviewsByProduct: Record<string, ReviewTemplate[]> = {
       userName: "Viren Merchant",
       rating: 5,
       title: "Worth the premium price tag",
-      comment: "The tin packaging keeps the moisture and oil locked. 100% authentic Mamra almonds.",
+      comment: "The packaging keeps the moisture and oil locked. 100% authentic Mamra almonds.",
       daysAgo: 38,
     },
     {
@@ -388,7 +388,7 @@ const reviewsByProduct: Record<string, ReviewTemplate[]> = {
       userName: "Manish Malhotra",
       rating: 5,
       title: "Royal presentation & purity",
-      comment: "The gold foil sealed tin makes it feel like an heirloom gift. Superb quality.",
+      comment: "The gold foil sealed box makes it feel like an heirloom gift. Superb quality.",
       daysAgo: 54,
     },
     {
@@ -614,7 +614,7 @@ const reviewsByProduct: Record<string, ReviewTemplate[]> = {
       userName: "Sunil Gavaskar",
       rating: 5,
       title: "Energy booster on the go",
-      comment: "Carry a small pouch during golf rounds. Instant clean glucose and hydration.",
+      comment: "Carry a small pack during golf rounds. Instant clean glucose and hydration.",
       daysAgo: 47,
     },
     {
@@ -642,7 +642,7 @@ const reviewsByProduct: Record<string, ReviewTemplate[]> = {
       userName: "Pankaj Udhas",
       rating: 5,
       title: "Delightful natural snack",
-      comment: "Great quality zip lock pouch ensures zero drying out. 5 stars.",
+      comment: "Great quality resealable pack ensures zero drying out. 5 stars.",
       daysAgo: 84,
     },
     {
@@ -840,7 +840,7 @@ const reviewsByProduct: Record<string, ReviewTemplate[]> = {
       userName: "Sunil Grover",
       rating: 4,
       title: "Crispy and guilt-free",
-      comment: "Keep a pouch on my work desk. Whenever I want to munch, this is healthy and satisfying.",
+      comment: "Keep a pack on my work desk. Whenever I want to munch, this is healthy and satisfying.",
       daysAgo: 22,
     },
     {
@@ -874,7 +874,7 @@ const reviewsByProduct: Record<string, ReviewTemplate[]> = {
     {
       userName: "Sania Mirza",
       rating: 5,
-      title: "Freshness locked pouch",
+      title: "Freshness locked in",
       comment: "No stale seed oil odor. Remains fragrant and crisp for weeks.",
       daysAgo: 72,
     },

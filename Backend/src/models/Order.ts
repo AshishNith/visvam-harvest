@@ -10,7 +10,7 @@ export interface IOrderItem {
   variantTitle?: string;
   variantSku?: string;
   selectedOptions?: Record<string, string>;
-  /** Pack size text ("500g Pouch") — the weight fallback for variant-less items. */
+  /** Pack size text ("500g Pack") — the weight fallback for variant-less items. */
   serving?: string;
   /**
    * Gross packed weight per unit in kg, captured at order time. Preferred over
