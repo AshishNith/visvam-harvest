@@ -19,6 +19,7 @@ import {
   Navigation,
   Tag,
   X,
+  AlertCircle,
 } from "lucide-react";
 import { useCart, formatPrice, type ShippingAddress } from "@/lib/cart-context";
 import { useAuth } from "@/lib/auth-context";
@@ -120,19 +121,25 @@ function CheckoutPage() {
   const [couponInput, setCouponInput] = useState("");
   const [couponChecking, setCouponChecking] = useState(false);
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discountPercent: number } | null>(null);
+  // Why a coupon was rejected, shown under the input. A toast alone was too
+  // easy to miss: it appears bottom-centre while the customer is looking at
+  // the coupon field itself, so a rejected code read as "nothing happened".
+  const [couponError, setCouponError] = useState<string | null>(null);
 
   const handleApplyCoupon = async () => {
     const code = couponInput.trim().toUpperCase();
     if (!code) return;
     setCouponChecking(true);
+    setCouponError(null);
     try {
       const res = await validateCoupon(code, subtotal);
       if (res.valid && res.code && typeof res.discountPercent === "number") {
         setAppliedCoupon({ code: res.code, discountPercent: res.discountPercent });
+        setCouponError(null);
         toast.success(`Coupon ${res.code} applied — ${res.discountPercent}% off`);
       } else {
         setAppliedCoupon(null);
-        toast.error(res.message || "That coupon code isn't valid.");
+        setCouponError(res.message || "That coupon code isn't valid.");
       }
     } finally {
       setCouponChecking(false);
@@ -142,6 +149,7 @@ function CheckoutPage() {
   const handleRemoveCoupon = () => {
     setAppliedCoupon(null);
     setCouponInput("");
+    setCouponError(null);
   };
 
   // COD surcharge, set by the admin in Merchandising. Falls back to the same
@@ -461,9 +469,12 @@ function CheckoutPage() {
 
         if (!res.success || !res.data?._id) {
           // The coupon can turn invalid between "Apply" and "Place order"
-          // (expiry, usage cap). Drop it so a retry goes through at full price.
+          // (expiry, usage cap). Drop it so a retry goes through at full price,
+          // and surface the server's reason at the coupon field rather than
+          // only in a toast the customer may not be looking at.
           if (appliedCoupon && /coupon/i.test(res.message || "")) {
             setAppliedCoupon(null);
+            setCouponError(res.message || "That coupon can no longer be used.");
           }
           toast.error(res.message || "Order placement failed");
           setSubmittingOrder(false);
@@ -1235,7 +1246,10 @@ function CheckoutPage() {
                       <input
                         type="text"
                         value={couponInput}
-                        onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                        onChange={(e) => {
+                          setCouponInput(e.target.value.toUpperCase());
+                          if (couponError) setCouponError(null);
+                        }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
                             e.preventDefault();
@@ -1254,6 +1268,16 @@ function CheckoutPage() {
                         {couponChecking ? <Loader2 size={12} className="animate-spin" /> : "Apply"}
                       </button>
                     </div>
+                  )}
+
+                  {couponError && !appliedCoupon && (
+                    <p
+                      role="alert"
+                      className="mt-2 flex items-start gap-1.5 text-[11px] leading-relaxed text-red-700"
+                    >
+                      <AlertCircle size={12} className="mt-px shrink-0" />
+                      <span>{couponError}</span>
+                    </p>
                   )}
                 </div>
 
