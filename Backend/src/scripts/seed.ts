@@ -411,18 +411,30 @@ export async function seedDatabase(customUri?: string) {
     const insertedProducts = await Product.insertMany(productsData);
     console.log(`[Seed] Seeded ${insertedProducts.length} products successfully.`);
 
-    // Seed Default Admin User
-    const adminEmail = "admin@visvam.com";
-    const existingAdmin = await User.findOne({ email: adminEmail });
-    if (!existingAdmin) {
-      const hashedPassword = await bcrypt.hash("admin123", 12);
-      await User.create({
-        name: "Viśvam Admin",
-        email: adminEmail,
-        password: hashedPassword,
-        role: "admin",
-      });
-      console.log(`[Seed] Created default admin account: ${adminEmail}`);
+    // Seed the admin user from the environment. Deliberately has no default
+    // credentials: a known email/password pair committed here would be a
+    // backdoor into every environment seeded from this script, and this repo
+    // is public. Set ADMIN_SEED_EMAIL and ADMIN_SEED_PASSWORD to create one.
+    const adminEmail = String(process.env.ADMIN_SEED_EMAIL || "").toLowerCase().trim();
+    const adminPassword = String(process.env.ADMIN_SEED_PASSWORD || "");
+    if (!adminEmail || !adminPassword) {
+      console.log(
+        "[Seed] ADMIN_SEED_EMAIL / ADMIN_SEED_PASSWORD not set — skipping admin account creation."
+      );
+    } else if (adminPassword.length < 12) {
+      console.log("[Seed] ADMIN_SEED_PASSWORD is shorter than 12 characters — refusing to seed an admin.");
+    } else {
+      const existingAdmin = await User.findOne({ email: adminEmail });
+      if (!existingAdmin) {
+        const hashedPassword = await bcrypt.hash(adminPassword, 12);
+        await User.create({
+          name: "Viśvam Admin",
+          email: adminEmail,
+          password: hashedPassword,
+          role: "admin",
+        });
+        console.log(`[Seed] Created admin account: ${adminEmail}`);
+      }
     }
 
     // Seed 10-11 Customer Reviews for each product

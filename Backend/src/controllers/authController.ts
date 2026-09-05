@@ -29,21 +29,15 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     }
 
     const cleanEmail = email.toLowerCase().trim();
-    let user = await User.findOne({ email: cleanEmail }).select("+password");
+    const user = await User.findOne({ email: cleanEmail }).select("+password");
 
-    // Auto-create default admin account if admin@visvam.com logs in for the first time
-    if (!user && cleanEmail === "admin@visvam.com" && password === "admin123") {
-      console.log("[Auth] Auto-creating default admin account for admin@visvam.com...");
-      const hashedPassword = await bcrypt.hash("admin123", 12);
-      const newAdmin = await User.create({
-        name: "Viśvam Admin",
-        email: "admin@visvam.com",
-        password: hashedPassword,
-        role: "admin",
-        profileCompleted: true,
-      });
-      user = (await User.findById(newAdmin._id).select("+password")) as any;
-    }
+    // NOTE: this used to auto-provision an admin account for a hardcoded
+    // email/password pair on first login. That is a backdoor — the credentials
+    // sat in a public repository, so anyone could read them and mint themselves
+    // an admin account. Admin accounts are now created deliberately (see the
+    // seed script, which takes them from the environment) and authenticate
+    // through the same password check as everyone else. Do not reintroduce a
+    // default credential here.
 
     if (!user || !user.password) {
       res.status(401).json({ success: false, message: "Invalid email or password" });
