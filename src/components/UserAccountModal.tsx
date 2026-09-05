@@ -267,6 +267,7 @@ export function UserAccountModal({ isOpen, onClose }: UserAccountModalProps) {
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <Link
                   to="/profile"
+                  search={{ tab: "info" }}
                   onClick={onClose}
                   className="p-3 border border-border hover:border-clay bg-background text-left flex items-center justify-between transition-colors group"
                 >
@@ -277,6 +278,7 @@ export function UserAccountModal({ isOpen, onClose }: UserAccountModalProps) {
                 </Link>
                 <Link
                   to="/profile"
+                  search={{ tab: "orders" }}
                   onClick={onClose}
                   className="p-3 border border-border hover:border-clay bg-background text-left flex items-center justify-between transition-colors group"
                 >

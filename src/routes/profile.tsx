@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import {
   User,
   Package,
@@ -49,7 +49,18 @@ import { CityStateFields } from "@/components/CityStateFields";
 import { PincodeField } from "@/components/PincodeField";
 import { toast } from "sonner";
 
+type ProfileTab = "info" | "addresses" | "orders" | "settings";
+const VALID_TABS: ProfileTab[] = ["info", "addresses", "orders", "settings"];
+
 export const Route = createFileRoute("/profile")({
+  // Lets a link land directly on a specific tab (e.g. "My Orders" from the
+  // account menu on every other page) instead of always opening on Profile
+  // Info — the tab state used to be `useState("info")` with nothing reading
+  // the URL, so every entry point landed on the same tab regardless of intent.
+  validateSearch: (search: Record<string, unknown>): { tab?: ProfileTab } => {
+    const tab = search.tab as string | undefined;
+    return VALID_TABS.includes(tab as ProfileTab) ? { tab: tab as ProfileTab } : {};
+  },
   head: () => ({
     meta: [
       { title: "My Account — Viśvam" },
@@ -58,8 +69,6 @@ export const Route = createFileRoute("/profile")({
   }),
   component: ProfilePage,
 });
-
-type ProfileTab = "info" | "addresses" | "orders" | "settings";
 
 /**
  * Seller details printed on customer invoices.
@@ -110,10 +119,18 @@ const labelClass = "block text-[10px] tracked text-muted-foreground uppercase mb
 
 function ProfilePage() {
   const navigate = useNavigate();
+  const { tab: requestedTab } = useSearch({ from: "/profile" });
   const { user, isAuthenticated, isLoading, updateProfile, refreshUser, logout } = useAuth();
   const { add: addToCart } = useCart();
 
-  const [tab, setTab] = useState<ProfileTab>("info");
+  const [tab, setTab] = useState<ProfileTab>(requestedTab || "info");
+
+  // A link can also open the page after it's already mounted (e.g. the account
+  // modal navigating from an already-open /profile in another interaction) —
+  // keep the tab in sync with the URL whenever it names one explicitly.
+  useEffect(() => {
+    if (requestedTab) setTab(requestedTab);
+  }, [requestedTab]);
 
   // Profile form
   const [profileName, setProfileName] = useState("");
@@ -351,13 +368,16 @@ function ProfilePage() {
     }
   };
 
+  // Renders the invoice into a hidden iframe and prints it in place, rather
+  // than window.open()-ing a blank tab and document.write()-ing into it. The
+  // old approach opened a brand-new browsing context with no history of its
+  // own — on mobile browsers, pressing "back" from that tab doesn't return to
+  // the site because there's nothing in that tab's history to go back to, and
+  // on some mobile browsers `window.open("", "_blank")` doesn't even open a
+  // new tab, it silently navigates the current one, replacing the app itself.
+  // A hidden iframe never navigates anything: the customer's page and history
+  // are completely untouched, and only the browser's print dialog appears.
   const handleDownloadInvoice = (order: any) => {
-    const invoiceWindow = window.open("", "_blank");
-    if (!invoiceWindow) {
-      toast.error("Allow pop-ups to download your invoice");
-      return;
-    }
-
     const orderNumber = String(order._id || "").slice(-8).toUpperCase();
     const orderDate = new Date(order.createdAt).toLocaleDateString("en-IN", {
       day: "numeric",
@@ -386,7 +406,7 @@ function ProfilePage() {
       .filter(Boolean)
       .join(" &nbsp;·&nbsp; ");
 
-    invoiceWindow.document.write(`
+    const invoiceHtml = `
       <!doctype html>
       <html>
       <head>
@@ -469,11 +489,46 @@ function ProfilePage() {
           Thank you for shopping with ${SELLER.brand}.<br />
           This is a computer-generated invoice and does not require a signature.
         </div>
-        <script>window.onload = function () { window.print(); };<\/script>
       </body>
       </html>
-    `);
-    invoiceWindow.document.close();
+    `;
+
+    const iframe = document.createElement("iframe");
+    iframe.style.position = "fixed";
+    iframe.style.right = "0";
+    iframe.style.bottom = "0";
+    iframe.style.width = "0";
+    iframe.style.height = "0";
+    iframe.style.border = "0";
+    iframe.setAttribute("aria-hidden", "true");
+    document.body.appendChild(iframe);
+
+    const cleanup = () => {
+      if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+    };
+
+    const frameDoc = iframe.contentWindow?.document;
+    if (!frameDoc) {
+      toast.error("Could not open the invoice. Please try again.");
+      cleanup();
+      return;
+    }
+
+    frameDoc.open();
+    frameDoc.write(invoiceHtml);
+    frameDoc.close();
+
+    iframe.onload = () => {
+      const win = iframe.contentWindow;
+      if (!win) return cleanup();
+      win.focus();
+      win.print();
+      // `onafterprint` doesn't fire on every mobile browser, so also clean up
+      // on a delay as a fallback — long enough that a slow print dialog isn't
+      // torn down while still open.
+      win.onafterprint = cleanup;
+      setTimeout(cleanup, 60000);
+    };
   };
 
   /* ── Settings ────────────────────────────────────────────── */
@@ -577,20 +632,46 @@ function ProfilePage() {
             </div>
           </div>
 
+          {/* Avatar upload input — mounted once at page level so both the
+             summary card's camera badge and the Settings tab's "Change
+             Picture" button can trigger the same file picker. */}
+          <input
+            ref={avatarInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleAvatarChange}
+            className="hidden"
+          />
+
           {/* Profile Card */}
           <div className="p-5 bg-cream/50 border border-border flex items-center gap-4 mb-8">
-            {user.avatar ? (
-              <img
-                src={user.avatar}
-                alt={user.name}
-                referrerPolicy="no-referrer"
-                className="w-14 h-14 rounded-full object-cover border-2 border-clay/30 shrink-0"
-              />
-            ) : (
-              <div className="w-14 h-14 rounded-full bg-clay text-white flex items-center justify-center font-display italic text-2xl shrink-0">
-                {user.name.charAt(0).toUpperCase()}
-              </div>
-            )}
+            <div className="relative shrink-0">
+              {user.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  referrerPolicy="no-referrer"
+                  className="w-14 h-14 rounded-full object-cover border-2 border-clay/30"
+                />
+              ) : (
+                <div className="w-14 h-14 rounded-full bg-clay text-white flex items-center justify-center font-display italic text-2xl">
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+              )}
+              <button
+                onClick={() => avatarInputRef.current?.click()}
+                disabled={avatarUploading}
+                aria-label="Change profile picture"
+                title="Change profile picture"
+                className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-ink text-white border-2 border-cream flex items-center justify-center hover:bg-clay transition-colors disabled:opacity-50"
+              >
+                {avatarUploading ? (
+                  <Loader2 size={11} className="animate-spin" />
+                ) : (
+                  <Camera size={11} />
+                )}
+              </button>
+            </div>
             <div className="flex-1 min-w-0">
               <h2 className="font-medium text-ink text-lg">{user.name}</h2>
               {user.email && (
@@ -604,9 +685,17 @@ function ProfilePage() {
                 </p>
               )}
             </div>
-            <span className="text-[9px] tracked text-clay border border-clay/30 px-2.5 py-1 uppercase bg-background font-semibold shrink-0">
-              Member
-            </span>
+            <div className="flex flex-col items-end gap-2 shrink-0">
+              <span className="text-[9px] tracked text-clay border border-clay/30 px-2.5 py-1 uppercase bg-background font-semibold">
+                Member
+              </span>
+              <button
+                onClick={() => setTab("info")}
+                className="inline-flex items-center gap-1 text-[10px] tracked uppercase font-semibold text-clay hover:text-ink transition-colors"
+              >
+                <Pencil size={11} /> Edit
+              </button>
+            </div>
           </div>
 
           {/* Tabs */}
@@ -1152,13 +1241,6 @@ function ProfilePage() {
                     </div>
                   )}
                   <div>
-                    <input
-                      ref={avatarInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleAvatarChange}
-                      className="hidden"
-                    />
                     <button
                       onClick={() => avatarInputRef.current?.click()}
                       disabled={avatarUploading}

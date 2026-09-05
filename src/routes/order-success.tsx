@@ -136,6 +136,7 @@ function OrderSuccessPage() {
 
               <Link
                 to="/profile"
+                search={{ tab: "orders" }}
                 className="group inline-flex items-center gap-2 text-ink text-[11px] font-semibold uppercase tracking-widest py-3 px-6 border border-ink hover:bg-ink hover:text-white transition-all duration-300 w-full sm:w-auto justify-center"
               >
                 <Package size={14} />

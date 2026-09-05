@@ -587,6 +587,7 @@ function CheckoutPage() {
           </Link>
           <Link
             to="/profile"
+            search={{ tab: "orders" }}
             className="px-6 py-3 border border-ink text-ink text-xs tracked font-medium uppercase hover:bg-ink hover:text-white transition-colors"
           >
             View My Orders
