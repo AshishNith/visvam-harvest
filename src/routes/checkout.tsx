@@ -100,8 +100,10 @@ function CheckoutPage() {
   const [addressesLoading, setAddressesLoading] = useState(false);
   const [submittingOrder, setSubmittingOrder] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState<string | null>(null);
-  // Online payment is temporarily disabled — COD is the only method for now.
-  const ONLINE_PAYMENT_ENABLED = false;
+  // Razorpay went live on 2026-09-06 (live keys set on the API). Kept as a
+  // single constant so online payment can be switched off again in one edit
+  // if the gateway needs to be pulled, without unpicking the checkout flow.
+  const ONLINE_PAYMENT_ENABLED = true;
   const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "cod">(
     ONLINE_PAYMENT_ENABLED ? "razorpay" : "cod"
   );
