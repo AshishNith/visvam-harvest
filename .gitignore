@@ -42,3 +42,7 @@ design-assets/
 # Credential exports and audit deliverables — never commit (public repo)
 api-keys-*.csv
 *.docx
+
+# Razorpay / gateway key exports handed over for deployment — never commit
+*-key.csv
+*-keys.csv
