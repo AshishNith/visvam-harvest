@@ -43,6 +43,29 @@ export type Product = {
   relatedProducts?: Product[];
 };
 
+/** Default pack size shown when a product has no variant chosen yet. */
+export const DEFAULT_PACK_SIZE = "250g";
+
+/**
+ * The pack-size label to show for a product in the cart / suggestions.
+ * Uses the chosen variant, then the product's default variant, then its
+ * serving text only when that names a real weight — otherwise falls back to
+ * "250g" so a cart line never shows a bare "Pack" / "Pouch".
+ */
+export function packSizeLabel(product?: Product | null, selectedVariant?: IProductVariant | null): string {
+  if (selectedVariant?.title) return selectedVariant.title;
+  const variants = product?.variants;
+  if (product?.hasVariants && variants && variants.length > 0) {
+    const def = variants.find((v) => v.isDefault) || variants[0];
+    if (def?.title) return def.title;
+  }
+  const serving = product?.serving?.trim();
+  if (serving && /\d\s*(?:kg|kgs|g|gm|gms|gram|grams|ml|l|ltr|litre|liter)\b/i.test(serving)) {
+    return serving;
+  }
+  return DEFAULT_PACK_SIZE;
+}
+
 const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "dvwpxb2oa";
 
 // Tiny 1×1 transparent placeholder — used only when Cloudinary is unavailable

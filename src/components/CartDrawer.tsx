@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { X, Minus, Plus, ShoppingBag, Truck, ArrowRight, ArrowLeft, Loader2, MapPin, CheckCircle2 } from "lucide-react";
 import { useCart, formatPrice, type ShippingAddress } from "@/lib/cart-context";
-import type { Product } from "@/lib/products";
+import { packSizeLabel, type Product } from "@/lib/products";
 import { fetchProductBySlugFromBackend, submitOrderToBackend } from "@/lib/api";
 import { sanitizeNameInput } from "@/lib/name";
 import { CityStateFields } from "@/components/CityStateFields";
@@ -318,11 +318,9 @@ export function CartDrawer() {
                             <div className="flex-1 min-w-0">
                               <h4 className="text-sm font-medium leading-snug">{product.name}</h4>
                               <p className="text-[10.5px] tracked text-muted-foreground mt-1">
-                                {selectedVariant ? (
-                                  <span className="font-mono text-clay font-medium">{selectedVariant.title}</span>
-                                ) : (
-                                  product.serving
-                                )}
+                                <span className="font-mono text-clay font-medium">
+                                  {packSizeLabel(product, selectedVariant)}
+                                </span>
                               </p>
                               <div className="flex justify-between items-end mt-4">
                                 <div className="flex items-center border border-border">
@@ -377,7 +375,7 @@ export function CartDrawer() {
                             />
                             <div className="flex-1 min-w-0">
                               <p className="text-[11px] font-medium truncate">{p.name}</p>
-                              <p className="text-[10px] text-muted-foreground">{formatPrice(p.price)} · {p.serving}</p>
+                              <p className="text-[10px] text-muted-foreground">{formatPrice(p.price)} · {packSizeLabel(p)}</p>
                             </div>
                             <button
                               onClick={() => add(p)}
