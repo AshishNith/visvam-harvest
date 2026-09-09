@@ -360,8 +360,26 @@ function ProfilePage() {
           continue;
         }
 
+        // Re-attach the size the customer originally ordered (250g / 500g …),
+        // matched to a live variant by SKU or by the saved options. Without
+        // this the reordered line loses its weight and checkout can't record
+        // a pack size. Falls back to the default variant so a variant product
+        // never re-enters the cart size-less.
+        const savedOptions: Record<string, string> = item.selectedOptions || {};
+        const variant =
+          product.variants?.find((v: any) => item.variantSku && v.sku === item.variantSku) ||
+          product.variants?.find(
+            (v: any) =>
+              v.options &&
+              Object.keys(savedOptions).length > 0 &&
+              Object.entries(savedOptions).every(([k, val]) => v.options[k] === val)
+          ) ||
+          (product.hasVariants
+            ? product.variants?.find((v: any) => v.isDefault) || product.variants?.[0]
+            : undefined);
+
         for (let i = 0; i < (item.qty || 1); i += 1) {
-          addToCart(product);
+          addToCart(product, false, variant || undefined);
         }
         added += 1;
       }

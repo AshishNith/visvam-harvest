@@ -171,6 +171,9 @@ export function CartDrawer() {
         variantTitle: selectedVariant?.title,
         variantSku: selectedVariant?.sku,
         selectedOptions: selectedVariant?.options,
+        // Pack-size fallback for variant-less items, matching the checkout flow.
+        serving: product.serving,
+        weightKg: selectedVariant?.weightKg ?? product?.weightKg,
       }));
 
       const res = await submitOrderToBackend({
