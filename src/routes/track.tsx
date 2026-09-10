@@ -110,7 +110,7 @@ function TrackOrderPage() {
               <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="Enter 24-character Order ID or AWB Tracking Code (e.g. BLUEDART...)"
+                placeholder="Enter your Order Number (e.g. VSV-W-260910-007) or AWB Tracking Code"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 text-xs bg-background border border-border/80 outline-none focus:border-clay font-mono"

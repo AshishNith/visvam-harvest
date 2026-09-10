@@ -233,6 +233,30 @@ export interface SubmitOrderData {
   fulfillmentMethod?: "ship" | "pickup";
   /** Coupon code the customer applied at checkout. The server re-validates it. */
   couponCode?: string;
+  /**
+   * Per-attempt token that makes placement idempotent — a double-clicked
+   * "Place Order" gets back the first order instead of creating a second.
+   */
+  idempotencyKey?: string;
+}
+
+/**
+ * The order number to show the customer — `VSV-W-260910-007`.
+ *
+ * Issued by the server once the order is confirmed (immediately for COD and
+ * pickup, on payment capture for prepaid). Orders placed before this scheme
+ * have none, so they fall back to the short Mongo id they were quoted at
+ * the time.
+ */
+export function displayOrderNumber(order?: { orderNumber?: string; _id?: string } | null): string {
+  if (!order) return "";
+  return order.orderNumber || String(order._id || "").slice(-8).toUpperCase();
+}
+
+/** The reference for a `/track?orderId=` link. The API accepts either form. */
+export function orderTrackingRef(order?: { orderNumber?: string; _id?: string } | null): string {
+  if (!order) return "";
+  return order.orderNumber || String(order._id || "");
 }
 
 const LOCAL_ORDERS_KEY = "visvam_local_user_orders";

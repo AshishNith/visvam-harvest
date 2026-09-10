@@ -25,7 +25,10 @@ export const Route = createFileRoute("/order-success")({
 
 function OrderSuccessPage() {
   const { orderId, amount, pickup } = useSearch({ from: "/order-success" });
-  const displayId = orderId || `VIS-${Math.floor(100000 + Math.random() * 900000)}`;
+  // The VSV order number the server issued (`VSV-W-260910-007`). Never invent
+  // one to fill the gap — a made-up reference is worse than none, because the
+  // customer will quote it back to support for an order that doesn't have it.
+  const displayId = orderId;
   const isPickup = Boolean(pickup);
 
   const today = new Date();
@@ -53,9 +56,11 @@ function OrderSuccessPage() {
               <h1 className="font-display italic text-3xl sm:text-4xl text-ink">
                 Thank you for your order!
               </h1>
-              <p className="text-xs text-muted-foreground mt-2">
-                Order Reference: <strong className="text-ink font-mono">{displayId}</strong>
-              </p>
+              {displayId && (
+                <p className="text-xs text-muted-foreground mt-2">
+                  Order Reference: <strong className="text-ink font-mono">{displayId}</strong>
+                </p>
+              )}
             </div>
 
             {isPickup ? (

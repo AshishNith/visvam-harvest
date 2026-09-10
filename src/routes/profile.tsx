@@ -41,6 +41,8 @@ import {
   trackOrderShipment,
   fetchProductBySlugFromBackend,
   type SavedAddress,
+  displayOrderNumber,
+  orderTrackingRef,
 } from "@/lib/api";
 import { useCart, formatPrice } from "@/lib/cart-context";
 import { prefillableName, sanitizeNameInput } from "@/lib/name";
@@ -325,7 +327,7 @@ function ProfilePage() {
 
   /* ── Orders: tracking, reorder, invoice ──────────────────── */
   const handleTrack = async (order: any) => {
-    const reference = order.shiprocket?.awbCode || order._id;
+    const reference = order.shiprocket?.awbCode || orderTrackingRef(order);
     setTrackingLoadingId(order._id);
     try {
       const res = await trackOrderShipment(reference);
@@ -408,7 +410,7 @@ function ProfilePage() {
   // A hidden iframe never navigates anything: the customer's page and history
   // are completely untouched, and only the browser's print dialog appears.
   const handleDownloadInvoice = (order: any) => {
-    const orderNumber = String(order._id || "").slice(-8).toUpperCase();
+    const orderNumber = displayOrderNumber(order);
     const orderDate = new Date(order.createdAt).toLocaleDateString("en-IN", {
       day: "numeric",
       month: "long",
@@ -1065,7 +1067,7 @@ function ProfilePage() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
                             <p className="text-xs font-medium text-ink font-mono truncate">
-                              #{order._id?.slice(-8).toUpperCase()}
+                              {displayOrderNumber(order)}
                             </p>
                             <span
                               className={`inline-flex items-center gap-1 text-[9px] tracked font-semibold uppercase px-2 py-0.5 border ${statusClass}`}

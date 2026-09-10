@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import {
   ShoppingBag,
@@ -116,6 +116,10 @@ function CheckoutPage() {
   // Set once the underlying Order document is created, so a retry after a
   // cancelled/failed payment reuses it instead of creating a duplicate order.
   const [pendingOrderId, setPendingOrderId] = useState<string | null>(null);
+  // Stable for this checkout attempt so a double-clicked "Place Order" — or a
+  // retry after a response that never arrived — reuses the first order rather
+  // than creating (and charging for) a second. Cleared once an order is placed.
+  const idempotencyKeyRef = useRef<string | null>(null);
 
   // Coupon — the percentage is what we keep; the rupee amount is recomputed
   // from the live subtotal so it stays correct. The server re-validates on
@@ -438,6 +442,10 @@ function CheckoutPage() {
       }
 
       let orderId: string | null = pendingOrderId;
+      // The VSV master order number, once the server has issued one. COD and
+      // pickup orders get it back from placement; a prepaid order only earns
+      // one after Razorpay captures, so it arrives with the verify response.
+      let orderNumber = "";
 
       if (!orderId) {
         const orderItems = items.map(({ product, qty, selectedVariant }) => ({
@@ -455,12 +463,20 @@ function CheckoutPage() {
           selectedOptions: selectedVariant?.options,
         }));
 
+        if (!idempotencyKeyRef.current) {
+          idempotencyKeyRef.current =
+            typeof crypto !== "undefined" && "randomUUID" in crypto
+              ? crypto.randomUUID()
+              : `ck-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        }
+
         const res = await submitOrderToBackend({
           orderItems,
           shippingAddress: addressForm,
           guestEmail: user?.email || "",
           fulfillmentMethod: fulfillment,
           couponCode: appliedCoupon?.code,
+          idempotencyKey: idempotencyKeyRef.current,
           paymentMethod:
             paymentMethod === "razorpay"
               ? "Razorpay"
@@ -484,6 +500,7 @@ function CheckoutPage() {
         }
 
         orderId = String(res.data._id);
+        orderNumber = res.data.orderNumber || "";
         setPendingOrderId(orderId);
       }
 
@@ -495,9 +512,14 @@ function CheckoutPage() {
         clearCart();
         setPendingOrderId(null);
         toast.success(isPickup ? "Pickup order placed!" : "Order submitted successfully!");
+        idempotencyKeyRef.current = null;
         navigate({
           to: "/order-success",
-          search: { orderId: confirmedOrderId, amount: totalPrice, pickup: isPickup ? 1 : undefined },
+          search: {
+            orderId: orderNumber || confirmedOrderId,
+            amount: totalPrice,
+            pickup: isPickup ? 1 : undefined,
+          },
         });
         return;
       }
@@ -549,9 +571,14 @@ function CheckoutPage() {
             clearCart();
             setPendingOrderId(null);
             toast.success("Payment successful! Order confirmed.");
+            idempotencyKeyRef.current = null;
             navigate({
               to: "/order-success",
-              search: { orderId: confirmedOrderId, amount: totalPrice, pickup: isPickup ? 1 : undefined },
+              search: {
+                orderId: verifyRes.data?.orderNumber || orderNumber || confirmedOrderId,
+                amount: totalPrice,
+                pickup: isPickup ? 1 : undefined,
+              },
             });
           } else {
             toast.error(verifyRes.message || "Payment could not be verified. Contact us if the amount was deducted.");
