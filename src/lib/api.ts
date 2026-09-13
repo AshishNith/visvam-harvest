@@ -709,7 +709,15 @@ export async function checkPincodeServiceability(
   courierName?: string;
   courierRate?: number;
   region?: string;
-  availableCouriers?: Array<{ id: number; name: string; rate: number; etd: string; estimatedDays: number }>;
+  availableCouriers?: Array<{
+    id: number;
+    name: string;
+    rate: number;
+    freightCharge?: number;
+    codCharges?: number;
+    etd: string;
+    estimatedDays: number;
+  }>;
   message?: string;
 }> {
   try {

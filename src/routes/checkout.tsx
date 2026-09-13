@@ -180,21 +180,29 @@ function CheckoutPage() {
     courierRate?: number;
     region?: string;
   } | null>(null);
+  // The live, distance-aware COD collection fee for this PIN code (Shiprocket's
+  // `codCharges` for the cheapest courier) — undefined until quoted, at which
+  // point it replaces the flat `codHandlingFee` fallback below.
+  const [codFeeQuote, setCodFeeQuote] = useState<number | undefined>(undefined);
 
-  // Auto-check Shiprocket serviceability and pricing when a 6-digit PIN code
-  // is entered. Always quoted at the prepaid rate (isCod = false): Shiprocket's
-  // COD rate bundles a collection fee, which would make the delivery line jump
-  // when the customer picks COD. The flat COD handling fee is a separate line.
+  // Auto-check Shiprocket serviceability and pricing when a 6-digit PIN code is
+  // entered. The delivery line is always quoted at the prepaid rate (isCod =
+  // false) so it never jumps when the customer switches payment method — a
+  // second, COD-mode lookup runs alongside it purely to read off the COD
+  // collection fee (`codCharges`), which is distance- and zone-dependent. Both
+  // land in the same request wave.
   useEffect(() => {
     if (fulfillment === "pickup") {
       setPincodeResult(null);
+      setCodFeeQuote(undefined);
       return;
     }
     const pin = addressForm.pincode ? addressForm.pincode.replace(/\D/g, "") : "";
     if (pin.length === 6) {
       let isCurrent = true;
+      const weightKg = cartWeightKg(items);
       setPincodeChecking(true);
-      checkPincodeServiceability(pin, cartWeightKg(items), false)
+      checkPincodeServiceability(pin, weightKg, false)
         .then((res) => {
           if (isCurrent && res.success) {
             setPincodeResult({
@@ -210,11 +218,21 @@ function CheckoutPage() {
           if (isCurrent) setPincodeChecking(false);
         });
 
+      setCodFeeQuote(undefined);
+      checkPincodeServiceability(pin, weightKg, true).then((res) => {
+        if (!isCurrent) return;
+        const codCharges = res.success ? res.availableCouriers?.[0]?.codCharges : undefined;
+        if (typeof codCharges === "number" && Number.isFinite(codCharges)) {
+          setCodFeeQuote(Math.max(0, Math.ceil(codCharges)));
+        }
+      });
+
       return () => {
         isCurrent = false;
       };
     } else {
       setPincodeResult(null);
+      setCodFeeQuote(undefined);
     }
   }, [addressForm.pincode, items, fulfillment]);
 
@@ -395,9 +413,11 @@ function CheckoutPage() {
     : 0;
   const discountedSubtotal = Math.max(0, subtotal - discountAmount);
   // COD surcharge is its own line, not part of delivery, so it still applies
-  // once delivery becomes free. Mirrors the server's codFee calculation. Never
-  // applied to a pickup order — "pay on pickup" is not Cash on Delivery.
-  const codFee = !isPickup && paymentMethod === "cod" ? codHandlingFee : 0;
+  // once delivery becomes free. Prefers the live, distance-aware quote and
+  // falls back to the flat admin-configured fee only while that quote is
+  // still loading (or failed) — mirrors the server's codFee calculation.
+  // Never applied to a pickup order — "pay on pickup" is not Cash on Delivery.
+  const codFee = !isPickup && paymentMethod === "cod" ? codFeeQuote ?? codHandlingFee : 0;
   const totalPrice = discountedSubtotal + shippingPrice + codFee;
 
   // Validate Address. The full address is always collected — its PIN/city is
@@ -1180,7 +1200,9 @@ function CheckoutPage() {
                           {isPickup
                             ? "Pay by cash or UPI when you collect · no extra fee"
                             : `Pay with cash or UPI upon delivery${
-                                codHandlingFee > 0 ? ` · ${formatPrice(codHandlingFee)} handling fee` : ""
+                                (codFeeQuote ?? codHandlingFee) > 0
+                                  ? ` · ${formatPrice(codFeeQuote ?? codHandlingFee)} handling fee`
+                                  : ""
                               }`}
                         </p>
                       </div>
