@@ -127,8 +127,7 @@ export function CartDrawer() {
   if (!isOpen) return null;
 
   const shippingPrice = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : 79;
-  const taxPrice = Math.round(subtotal * 0.05);
-  const totalPrice = subtotal + shippingPrice + taxPrice;
+  const totalPrice = subtotal + shippingPrice;
   const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const progress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
   const reached = remaining === 0;
@@ -553,10 +552,6 @@ export function CartDrawer() {
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Shipping</span>
                       <span className="tabular-nums">{shippingPrice === 0 ? <span className="text-clay font-semibold">FREE</span> : formatPrice(shippingPrice)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">GST (5%)</span>
-                      <span className="tabular-nums">{formatPrice(taxPrice)}</span>
                     </div>
                     <div className="flex justify-between border-t border-border pt-2 font-semibold text-sm">
                       <span>Total</span>

@@ -394,13 +394,11 @@ function CheckoutPage() {
     ? Math.round((subtotal * appliedCoupon.discountPercent) / 100)
     : 0;
   const discountedSubtotal = Math.max(0, subtotal - discountAmount);
-  // GST is charged on the discounted subtotal. Mirrors the server.
-  const taxPrice = Math.round(discountedSubtotal * 0.05);
   // COD surcharge is its own line, not part of delivery, so it still applies
   // once delivery becomes free. Mirrors the server's codFee calculation. Never
   // applied to a pickup order — "pay on pickup" is not Cash on Delivery.
   const codFee = !isPickup && paymentMethod === "cod" ? codHandlingFee : 0;
-  const totalPrice = discountedSubtotal + shippingPrice + taxPrice + codFee;
+  const totalPrice = discountedSubtotal + shippingPrice + codFee;
 
   // Validate Address. The full address is always collected — its PIN/city is
   // also what decides pickup eligibility — so the same checks apply either way.
@@ -1341,10 +1339,6 @@ function CheckoutPage() {
                       <span className="tabular-nums text-ink font-medium">{formatPrice(codFee)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between text-muted-foreground">
-                    <span>GST (5%)</span>
-                    <span className="tabular-nums text-ink font-medium">{formatPrice(taxPrice)}</span>
-                  </div>
                   <div className="flex justify-between border-t border-border pt-3 font-semibold text-sm">
                     <span>Total Amount</span>
                     <span className="tabular-nums font-display italic text-2xl text-ink">{formatPrice(totalPrice)}</span>
