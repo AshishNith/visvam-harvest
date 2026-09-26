@@ -333,6 +333,9 @@ export async function createRazorpayOrder(orderId: string): Promise<{
   amount?: number;
   currency?: string;
   razorpayOrderId?: string;
+  /** The order turned out to be paid already (e.g. an earlier attempt went through). */
+  alreadyPaid?: boolean;
+  orderNumber?: string;
   message?: string;
 }> {
   try {

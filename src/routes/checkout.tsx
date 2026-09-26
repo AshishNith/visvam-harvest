@@ -554,6 +554,25 @@ function CheckoutPage() {
         return;
       }
 
+      // A retry of an order whose earlier payment actually went through (e.g. a
+      // UPI request approved after the popup closed). The server has recorded
+      // it — treat it as the success it is instead of asking them to pay again.
+      if (rpOrder.alreadyPaid) {
+        clearCart();
+        setPendingOrderId(null);
+        toast.success("Payment received! Order confirmed.");
+        idempotencyKeyRef.current = null;
+        navigate({
+          to: "/order-success",
+          search: {
+            orderId: rpOrder.orderNumber || orderNumber || confirmedOrderId,
+            amount: totalPrice,
+            pickup: isPickup ? 1 : undefined,
+          },
+        });
+        return;
+      }
+
       if (!rpOrder.success || !rpOrder.razorpayOrderId || !rpOrder.keyId) {
         toast.error(rpOrder.message || "Could not start payment. Please try Cash on Delivery instead.");
         setSubmittingOrder(false);
