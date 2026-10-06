@@ -21,3 +21,6 @@ yarn-error.log*
 Thumbs.db
 .vscode/
 .idea/
+
+# Database dumps written by scripts/clearOrders.ts — contains customer PII
+backups/

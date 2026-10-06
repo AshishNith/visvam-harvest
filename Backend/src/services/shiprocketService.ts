@@ -327,8 +327,13 @@ export class ShiprocketService {
   /** Builds the Ad-hoc Order payload Shiprocket expects for a Viśvam order. */
   private static buildAdhocPayload(order: IOrder) {
     const config = this.getConfig();
-    const orderIdStr = String(order._id);
-    const orderNumber = orderIdStr.substring(orderIdStr.length - 8).toUpperCase();
+    // Shiprocket's order reference is the master Viśvam order ID, so the same
+    // number appears in the DB, the courier dashboard and on the customer's
+    // invoice. Orders placed before the VSV scheme keep the old `_id`-derived
+    // reference rather than silently changing what was already manifested.
+    const orderReference =
+      order.orderNumber ||
+      `VISVAM-${String(order._id).slice(-8).toUpperCase()}`;
     const orderDate = new Date(order.createdAt).toISOString().split("T")[0];
 
     // The SAME figure the delivery charge was quoted on. This used to be its
@@ -338,7 +343,7 @@ export class ShiprocketService {
     const totalWeightKg = orderWeightKg(order.orderItems);
 
     return {
-      order_id: `VISVAM-${orderNumber}`,
+      order_id: orderReference,
       order_date: orderDate,
       pickup_location: config.pickupLocation,
       channel_id: "",

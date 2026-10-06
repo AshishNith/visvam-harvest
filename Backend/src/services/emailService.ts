@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import type { IOrder } from "../models/Order.js";
+import { displayOrderNumber, trackingReference } from "../utils/orderId.js";
 import { WAREHOUSE } from "../config/pickup.js";
 
 let resendClient: Resend | null = null;
@@ -77,7 +78,7 @@ function esc(value: unknown): string {
 /** Exported for preview/tests; the send path uses it internally. */
 export function orderConfirmationHtml(order: IOrder): string {
   const year = new Date().getFullYear();
-  const orderNo = String(order._id).slice(-8).toUpperCase();
+  const orderNo = displayOrderNumber(order);
   const placedOn = new Date(order.createdAt).toLocaleDateString("en-IN", {
     day: "numeric",
     month: "long",
@@ -134,7 +135,7 @@ export function orderConfirmationHtml(order: IOrder): string {
                   }
                 </p>
                 <p style="font-size:13px; color:#9c8c7c; margin:16px 0 0;">
-                  Order <strong style="color:#241a12;">#${orderNo}</strong> &nbsp;·&nbsp; ${placedOn}
+                  Order <strong style="color:#241a12;">${orderNo}</strong> &nbsp;·&nbsp; ${placedOn}
                 </p>
               </td>
             </tr>
@@ -161,7 +162,7 @@ export function orderConfirmationHtml(order: IOrder): string {
                     isPickup ? "Collection" : "Delivery",
                     isPickup ? "Store pickup" : order.shippingPrice > 0 ? inr(order.shippingPrice) : "Free"
                   )}
-                  ${totalRow("GST (5%)", inr(order.taxPrice))}
+                  ${order.taxPrice > 0 ? totalRow("GST (5%)", inr(order.taxPrice)) : ""}
                   ${order.codFee > 0 ? totalRow("COD handling fee", inr(order.codFee)) : ""}
                   <tr><td colspan="2" style="border-top:1px solid rgba(36,26,18,0.15); padding-top:6px;"></td></tr>
                   ${totalRow(
@@ -202,7 +203,7 @@ export function orderConfirmationHtml(order: IOrder): string {
                   Phone: ${esc(WAREHOUSE.phone)}
                 </p>
                 <p style="font-size:13px; line-height:1.6; color:#9c8c7c; margin:10px 0 0;">
-                  ${esc(WAREHOUSE.readyNote)} Bring your order number <strong style="color:#241a12;">#${orderNo}</strong>.
+                  ${esc(WAREHOUSE.readyNote)} Bring your order number <strong style="color:#241a12;">${orderNo}</strong>.
                   <a href="${esc(WAREHOUSE.mapsUrl)}" style="color:#8a4f27;">Get directions</a>
                 </p>`
                     : `<p style="font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:#9c8c7c; margin:0 0 8px;">Delivering to</p>
@@ -217,7 +218,7 @@ export function orderConfirmationHtml(order: IOrder): string {
             </tr>
             <tr>
               <td style="padding:24px 40px 32px; text-align:center;">
-                <a href="${STORE_URL}/track?orderId=${esc(order._id)}" style="display:inline-block; font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:#241a12; text-decoration:none; border-bottom:2px solid #8a4f27; padding-bottom:4px;">Track this order</a>
+                <a href="${STORE_URL}/track?orderId=${esc(trackingReference(order))}" style="display:inline-block; font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:#241a12; text-decoration:none; border-bottom:2px solid #8a4f27; padding-bottom:4px;">Track this order</a>
               </td>
             </tr>
             <tr>
@@ -238,7 +239,7 @@ export function orderConfirmationHtml(order: IOrder): string {
 }
 
 function orderConfirmationText(order: IOrder): string {
-  const orderNo = String(order._id).slice(-8).toUpperCase();
+  const orderNo = displayOrderNumber(order);
   const isPickup = order.fulfillmentMethod === "pickup";
   const isCod = !order.isPaid;
   const lines = (order.orderItems || [])
@@ -247,7 +248,7 @@ function orderConfirmationText(order: IOrder): string {
   return [
     `Thank you for your order with Viśvam.`,
     ``,
-    `Order #${orderNo}`,
+    `Order ${orderNo}`,
     ``,
     lines,
     ``,
@@ -258,7 +259,7 @@ function orderConfirmationText(order: IOrder): string {
     isPickup
       ? `Collection: Store pickup`
       : `Delivery: ${order.shippingPrice > 0 ? inr(order.shippingPrice) : "Free"}`,
-    `GST (5%): ${inr(order.taxPrice)}`,
+    order.taxPrice > 0 ? `GST (5%): ${inr(order.taxPrice)}` : ``,
     order.codFee > 0 ? `COD handling fee: ${inr(order.codFee)}` : ``,
     `${isCod ? (isPickup ? "Amount due on collection" : "Amount due on delivery") : "Total paid"}: ${inr(order.totalPrice)}`,
     ``,
@@ -275,12 +276,12 @@ function orderConfirmationText(order: IOrder): string {
           `  ${WAREHOUSE.addressLine}`,
           `  ${WAREHOUSE.hours}`,
           `  Phone: ${WAREHOUSE.phone}`,
-          `  ${WAREHOUSE.readyNote} Bring your order number #${orderNo}.`,
+          `  ${WAREHOUSE.readyNote} Bring your order number ${orderNo}.`,
           `  Directions: ${WAREHOUSE.mapsUrl}`,
         ].join("\n")
       : undefined,
     isPickup ? `` : undefined,
-    `Track your order: ${STORE_URL}/track?orderId=${order._id}`,
+    `Track your order: ${STORE_URL}/track?orderId=${trackingReference(order)}`,
     ``,
     `Questions? Write to care@visvam.in`,
   ]
@@ -310,11 +311,11 @@ export async function sendOrderConfirmationEmail(
   }
 
   try {
-    const orderNo = String(order._id).slice(-8).toUpperCase();
+    const orderNo = displayOrderNumber(order);
     const { error } = await client.emails.send({
       from: getFromAddress(),
       to: toEmail,
-      subject: `Your Viśvam order #${orderNo} is confirmed`,
+      subject: `Your Viśvam order ${orderNo} is confirmed`,
       html: orderConfirmationHtml(order),
       text: orderConfirmationText(order),
     });

@@ -11,6 +11,7 @@ import { getNumericSetting } from "./settingsController.js";
 import { evaluateCoupon, redeemCoupon } from "./couponController.js";
 import { orderWeightKg } from "../utils/shippingWeight.js";
 import { isPickupEligible } from "../config/pickup.js";
+import { assignOrderNumber, isOrderNumber, normalizeChannel } from "../utils/orderId.js";
 
 // Delivery is quoted live per PIN code by Shiprocket, then waived once the
 // order clears the threshold the storefront advertises ("Free delivery on
@@ -47,6 +48,28 @@ async function quoteDeliveryCharge(pincode: string, weightKg: number): Promise<n
   return FALLBACK_DELIVERY_CHARGE;
 }
 
+/**
+ * The live COD collection-fee component Shiprocket quotes for a destination —
+ * from the same cheapest-serviceable-courier lookup `quoteDeliveryCharge` uses,
+ * just with `isCod=true` so the response splits out `codCharges`. This is the
+ * distance-dependent figure the Admin Panel courier picker already shows
+ * ("₹X freight + ₹Y COD"); quoting it live here means the handling fee tracks
+ * real cost by zone instead of one flat rupee figure that undercharges far
+ * zones and overcharges near ones. Falls back to the flat admin-configured
+ * `codHandlingFee` setting when Shiprocket can't be reached or reports nothing
+ * usable, so a lookup failure never blocks checkout.
+ */
+async function quoteCodHandlingFee(pincode: string, weightKg: number): Promise<number> {
+  try {
+    const quote = await ShiprocketService.checkServiceability(pincode, weightKg, true);
+    const codCharges = Number((quote as any)?.availableCouriers?.[0]?.codCharges);
+    if (quote?.success && Number.isFinite(codCharges)) return Math.max(0, Math.ceil(codCharges));
+  } catch (error) {
+    console.error("Shiprocket COD-fee lookup failed, using fallback handling fee:", error);
+  }
+  return getNumericSetting("codHandlingFee");
+}
+
 // @desc    Create new order
 // @route   POST /api/v1/orders
 // @access  Public / Protected
@@ -62,6 +85,8 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       paymentMethod,
       guestEmail,
       couponCode: rawCouponCode,
+      idempotencyKey: rawIdempotencyKey,
+      channel: rawChannel,
     } = authReq.body;
 
     if (!orderItems || !Array.isArray(orderItems) || orderItems.length === 0) {
@@ -69,34 +94,105 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
+    const channel = normalizeChannel(rawChannel);
+    const idempotencyKey =
+      typeof rawIdempotencyKey === "string" && rawIdempotencyKey.trim()
+        ? rawIdempotencyKey.trim().slice(0, 100)
+        : undefined;
+
+    // A double-clicked "Place Order" (or a retry after a flaky response) must
+    // return the order already created, never a second one billed twice.
+    if (idempotencyKey) {
+      const existing = await Order.findOne({ idempotencyKey });
+      if (existing) {
+        res.status(200).json({
+          success: true,
+          message: "Order already placed",
+          data: existing,
+        });
+        return;
+      }
+    }
+
     // Sanitize order items and resolve Mongoose ObjectId for product field safely
     const sanitizedOrderItems = [];
     for (const item of orderItems) {
-      let productObjId: mongoose.Types.ObjectId | undefined = undefined;
+      // Always resolve the catalogue product: it gives us the ObjectId AND lets
+      // us guarantee a pack size is stored on every line, whatever the client
+      // sent. A reorder from history or an older cart can arrive with no
+      // variant and no serving, and the order must not be left size-less.
+      let dbProd: any = null;
+      if (item.slug) {
+        dbProd = await Product.findOne({ slug: item.slug });
+      }
+      if (!dbProd && item.product && mongoose.Types.ObjectId.isValid(String(item.product))) {
+        dbProd = await Product.findById(String(item.product));
+      }
 
-      if (item.product && mongoose.Types.ObjectId.isValid(String(item.product))) {
-        productObjId = new mongoose.Types.ObjectId(String(item.product));
-      } else if (item.slug) {
-        const dbProd = await Product.findOne({ slug: item.slug });
-        if (dbProd) {
-          productObjId = dbProd._id as mongoose.Types.ObjectId;
+      const productObjId: mongoose.Types.ObjectId | undefined = dbProd?._id
+        ? (dbProd._id as mongoose.Types.ObjectId)
+        : item.product && mongoose.Types.ObjectId.isValid(String(item.product))
+          ? new mongoose.Types.ObjectId(String(item.product))
+          : undefined;
+
+      // Whatever the client provided, kept as-is when present.
+      let variantTitle = typeof item.variantTitle === "string" ? item.variantTitle : undefined;
+      let variantSku = typeof item.variantSku === "string" ? item.variantSku : undefined;
+      let selectedOptions =
+        item.selectedOptions && typeof item.selectedOptions === "object"
+          ? (item.selectedOptions as Record<string, string>)
+          : undefined;
+      let serving = typeof item.serving === "string" ? item.serving : undefined;
+      // Trusted only as a weight hint for the courier quote, never for price.
+      let weightKg = Number(item.weightKg) > 0 ? Number(item.weightKg) : undefined;
+
+      // Backfill the pack size from the catalogue when the client omitted it.
+      if (dbProd) {
+        const optVal = (opts: any, k: string): string | undefined =>
+          opts instanceof Map ? opts.get(k) : opts?.[k];
+        const variants: any[] = Array.isArray(dbProd.variants) ? dbProd.variants : [];
+        let matched: any =
+          (variantSku && variants.find((v) => v.sku && v.sku === variantSku)) ||
+          (selectedOptions &&
+            Object.keys(selectedOptions).length > 0 &&
+            variants.find(
+              (v) =>
+                v.options &&
+                Object.entries(selectedOptions as Record<string, string>).every(
+                  ([k, val]) => optVal(v.options, k) === val
+                )
+            )) ||
+          null;
+        if (!matched && dbProd.hasVariants && variants.length) {
+          matched = variants.find((v) => v.isDefault) || variants[0];
         }
+        if (matched) {
+          if (!variantTitle && typeof matched.title === "string") variantTitle = matched.title;
+          if (!variantSku && typeof matched.sku === "string") variantSku = matched.sku;
+          if (!selectedOptions && matched.options) {
+            selectedOptions =
+              matched.options instanceof Map
+                ? Object.fromEntries(matched.options)
+                : { ...matched.options };
+          }
+          if (weightKg == null && Number(matched.weightKg) > 0) weightKg = Number(matched.weightKg);
+        }
+        if (!serving && typeof dbProd.serving === "string") serving = dbProd.serving;
+        if (weightKg == null && Number(dbProd.weightKg) > 0) weightKg = Number(dbProd.weightKg);
       }
 
       sanitizedOrderItems.push({
         product: productObjId,
         slug: item.slug || item.product || "product",
-        name: item.name || "Viśvam Item",
+        name: item.name || dbProd?.name || "Viśvam Item",
         qty: Math.max(1, Number(item.qty) || 1),
         price: Number(item.price) || 0,
         image: typeof item.image === "string" ? item.image : (Array.isArray(item.images) ? item.images[0] : "") || "",
-        variantTitle: typeof item.variantTitle === "string" ? item.variantTitle : undefined,
-        variantSku: typeof item.variantSku === "string" ? item.variantSku : undefined,
-        selectedOptions:
-          item.selectedOptions && typeof item.selectedOptions === "object" ? item.selectedOptions : undefined,
-        serving: typeof item.serving === "string" ? item.serving : undefined,
-        // Trusted only as a weight hint for the courier quote, never for price.
-        weightKg: Number(item.weightKg) > 0 ? Number(item.weightKg) : undefined,
+        variantTitle,
+        variantSku,
+        selectedOptions,
+        serving,
+        weightKg,
       });
     }
 
@@ -130,10 +226,9 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       discountAmount = evald.discountAmount;
     }
 
-    // GST is charged on the discounted subtotal; free delivery below is still
-    // judged on the pre-discount `itemsPrice`.
+    // Free delivery below is judged on the pre-discount `itemsPrice`.
     const discountedItems = Math.max(0, itemsPrice - discountAmount);
-    const taxPrice = Number((discountedItems * 0.05).toFixed(2));
+    const taxPrice = 0;
 
     const wantsPickup = String(fulfillmentMethod || "").toLowerCase() === "pickup";
     const deliveryPincode = String(
@@ -157,17 +252,24 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     const isCod =
       !wantsPickup && String(paymentMethod || "").toLowerCase().includes("cash");
 
+    const orderWeight = orderWeightKg(sanitizedOrderItems);
+
     const shippingPrice = wantsPickup
       ? 0
       : itemsPrice >= FREE_DELIVERY_THRESHOLD
         ? 0
         : deliveryPincode.length === 6
-          ? await quoteDeliveryCharge(deliveryPincode, orderWeightKg(sanitizedOrderItems))
+          ? await quoteDeliveryCharge(deliveryPincode, orderWeight)
           : FALLBACK_DELIVERY_CHARGE;
 
-    // COD costs more to service, so it carries a surcharge. Deliberately NOT
+    // COD costs more to service, so it carries a surcharge, quoted live per
+    // destination so it tracks the real zone-based cost. Deliberately NOT
     // folded into shippingPrice: a free-delivery order still owes this fee.
-    const codFee = isCod ? await getNumericSetting("codHandlingFee") : 0;
+    const codFee = isCod
+      ? deliveryPincode.length === 6
+        ? await quoteCodHandlingFee(deliveryPincode, orderWeight)
+        : await getNumericSetting("codHandlingFee")
+      : 0;
 
     const totalPrice = Number((discountedItems + taxPrice + shippingPrice + codFee).toFixed(2));
 
@@ -200,6 +302,8 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       codFee,
       totalPrice,
       status: "Pending",
+      channel,
+      idempotencyKey,
     });
 
     // Record the redemption now that the order exists. Awaited so the
@@ -236,6 +340,19 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     // prepaid (Razorpay) order is still unpaid here, so its confirmation is
     // sent from paymentController once payment verifies.
     const isPrepaidPending = String(paymentMethod || "").toLowerCase().includes("razorpay");
+
+    // Mint the master order number now for anything that is already confirmed —
+    // COD and pay-on-pickup have no later payment step. A prepaid order stays
+    // unnumbered until Razorpay captures the payment (paymentController), so an
+    // abandoned checkout never burns a number. Must happen before the Shiprocket
+    // push below, which quotes this number as its order reference.
+    if (!isPrepaidPending) {
+      try {
+        await assignOrderNumber(order, channel);
+      } catch (err) {
+        console.error(`Order number assignment failed for ${String(order._id)}:`, err);
+      }
+    }
 
     if (wantsPickup) {
       // Pickup orders never touch Shiprocket — the customer collects in person.
@@ -409,6 +526,26 @@ export const updateOrderStatus = async (req: Request, res: Response): Promise<vo
 
     const updatedOrder = await order.save();
 
+    // A prepaid order only earns its VSV number once payment is confirmed. If
+    // that confirmation never arrived from Razorpay and an admin is marking it
+    // paid by hand, this is that confirmation — give it its number now rather
+    // than leaving it on the short Mongo id. Idempotent for orders that already
+    // have one.
+    if (updatedOrder.isPaid && !updatedOrder.orderNumber) {
+      await assignOrderNumber(updatedOrder, normalizeChannel(updatedOrder.channel)).catch((err) =>
+        console.error(`Order number assignment failed for ${String(updatedOrder._id)}:`, err)
+      );
+
+      // Such a stuck online order also never got its confirmation email or its
+      // Shiprocket push (COD / pay-on-pickup orders got both at placement).
+      if (String(updatedOrder.paymentMethod).toLowerCase().includes("razorpay")) {
+        sendOrderConfirmationEmail(updatedOrder).catch((err) =>
+          console.error(`Order confirmation email failed for ${String(updatedOrder._id)}:`, err)
+        );
+        await ensureShiprocketOrder(updatedOrder);
+      }
+    }
+
     res.status(200).json({
       success: true,
       data: updatedOrder,
@@ -424,12 +561,16 @@ export const updateOrderStatus = async (req: Request, res: Response): Promise<vo
 export const trackOrderById = async (req: Request, res: Response): Promise<void> => {
   try {
     const { orderId } = req.params;
+    const fields = "orderNumber status pickupLane pickupSlot totalPrice createdAt orderItems isPaid";
     let order = null;
 
-    if (orderId && orderId.length === 24) {
-      order = await Order.findById(orderId).select("status pickupLane pickupSlot totalPrice createdAt orderItems isPaid").lean();
-    } else if (orderId) {
-      order = await Order.findOne({ _id: orderId }).select("status pickupLane pickupSlot totalPrice createdAt orderItems isPaid").lean();
+    // Customers quote the VSV number from their confirmation; older orders (and
+    // internal links) still use the Mongo id, so accept either.
+    const query = String(orderId || "").trim();
+    if (isOrderNumber(query)) {
+      order = await Order.findOne({ orderNumber: query.toUpperCase() }).select(fields).lean();
+    } else if (mongoose.Types.ObjectId.isValid(query)) {
+      order = await Order.findById(query).select(fields).lean();
     }
 
     if (!order) {

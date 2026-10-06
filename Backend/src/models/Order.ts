@@ -44,6 +44,24 @@ export interface IPaymentResult {
 
 export interface IOrder extends Document {
   user?: mongoose.Types.ObjectId;
+  /**
+   * Master order ID — `VSV-<CH>-<YYMMDD>-<NNN>`. This is the number quoted to
+   * the customer, sent to Shiprocket and printed on the invoice.
+   *
+   * Absent until the order is *confirmed*: COD and pickup orders get one the
+   * moment they are placed, prepaid orders only once Razorpay captures the
+   * payment, so no number is ever burned on an abandoned checkout. Orders
+   * predating this scheme have none — fall back to `_id` when displaying.
+   */
+  orderNumber?: string;
+  /** Sales channel the order arrived through. See utils/orderId.ts. */
+  channel?: string;
+  /**
+   * Client-supplied token that makes order creation idempotent, so a
+   * double-clicked "Place Order" returns the first order instead of creating a
+   * second one.
+   */
+  idempotencyKey?: string;
   guestEmail?: string;
   orderItems: IOrderItem[];
   pickupLane: string;
@@ -93,6 +111,17 @@ const OrderSchema = new Schema<IOrder>(
       ref: "User",
       index: true,
     },
+    // `sparse` so the many orders placed before this scheme — all of which have
+    // no number — don't collide with each other on null under the unique index.
+    orderNumber: {
+      type: String,
+      unique: true,
+      sparse: true,
+      trim: true,
+      uppercase: true,
+    },
+    channel: { type: String, uppercase: true, trim: true, default: "W" },
+    idempotencyKey: { type: String, unique: true, sparse: true, trim: true },
     guestEmail: {
       type: String,
       lowercase: true,

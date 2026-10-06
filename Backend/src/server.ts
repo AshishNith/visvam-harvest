@@ -41,6 +41,11 @@ const startServer = async () => {
     const server = app.listen(PORT, () => {
       console.log(`[Viśvam Worker PID ${process.pid}] Server running on http://localhost:${PORT}`);
       console.log(`[Viśvam Worker PID ${process.pid}] Optimized to support up to 5,000 active users.`);
+      if (process.env.RAZORPAY_KEY_ID && !process.env.RAZORPAY_WEBHOOK_SECRET) {
+        console.warn(
+          `[Viśvam Worker PID ${process.pid}] RAZORPAY_WEBHOOK_SECRET is not set — Razorpay webhooks will be rejected, so a paid order stays "Unpaid" whenever the customer's browser doesn't return after paying.`
+        );
+      }
     });
 
     // Graceful shutdown handling
