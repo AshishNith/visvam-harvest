@@ -4,7 +4,7 @@
 User-agent: *
 Allow: /
 Allow: /nuts
-Allow: /gourmet
+Allow: /kitchen
 Allow: /gifting
 Allow: /combos
 Allow: /dried-fruits

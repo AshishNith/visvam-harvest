@@ -17,7 +17,7 @@ dotenv.config();
 const CDN = "https://res.cloudinary.com/dvwpxb2oa/image/upload/f_auto,q_auto/visvam_harvest";
 
 export const categoriesData = [
-  { slug: "gourmet", label: "Gourmet Selection", index: "01", description: "Organic Figs, Medjool Dates, Kishmish, Berries & Superseeds" },
+  { slug: "gourmet", label: "Kitchen Selection", index: "01", description: "Organic Figs, Medjool Dates, Kishmish, Berries & Superseeds" },
   { slug: "nuts", label: "Nuts & Dried Fruits", index: "02", description: "California Jumbo Almonds, W240 Cashews, Kashmiri Walnuts & Pistachios" },
   { slug: "gifting", label: "Gifting & Hampers", index: "03", description: "Handcrafted Luxury Gift Boxes & Festive Collections" },
 ];

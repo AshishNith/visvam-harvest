@@ -20,7 +20,7 @@ import { Route as DomainGuideRouteImport } from './routes/domain-guide'
 import { Route as DriedFruitsRouteImport } from './routes/dried-fruits'
 import { Route as ExoticSeedsRouteImport } from './routes/exotic-seeds'
 import { Route as GiftingRouteImport } from './routes/gifting'
-import { Route as GourmetRouteImport } from './routes/gourmet'
+import { Route as KitchenRouteImport } from './routes/kitchen'
 import { Route as NutsRouteImport } from './routes/nuts'
 import { Route as OrderSuccessRouteImport } from './routes/order-success'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -89,9 +89,9 @@ const GiftingRoute = GiftingRouteImport.update({
   path: '/gifting',
   getParentRoute: () => rootRouteImport,
 } as any)
-const GourmetRoute = GourmetRouteImport.update({
-  id: '/gourmet',
-  path: '/gourmet',
+const KitchenRoute = KitchenRouteImport.update({
+  id: '/kitchen',
+  path: '/kitchen',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NutsRoute = NutsRouteImport.update({
@@ -167,7 +167,7 @@ export interface FileRoutesByFullPath {
   '/dried-fruits': typeof DriedFruitsRoute
   '/exotic-seeds': typeof ExoticSeedsRoute
   '/gifting': typeof GiftingRoute
-  '/gourmet': typeof GourmetRoute
+  '/kitchen': typeof KitchenRoute
   '/nuts': typeof NutsRoute
   '/order-success': typeof OrderSuccessRoute
   '/privacy': typeof PrivacyRoute
@@ -193,7 +193,7 @@ export interface FileRoutesByTo {
   '/dried-fruits': typeof DriedFruitsRoute
   '/exotic-seeds': typeof ExoticSeedsRoute
   '/gifting': typeof GiftingRoute
-  '/gourmet': typeof GourmetRoute
+  '/kitchen': typeof KitchenRoute
   '/nuts': typeof NutsRoute
   '/order-success': typeof OrderSuccessRoute
   '/privacy': typeof PrivacyRoute
@@ -220,7 +220,7 @@ export interface FileRoutesById {
   '/dried-fruits': typeof DriedFruitsRoute
   '/exotic-seeds': typeof ExoticSeedsRoute
   '/gifting': typeof GiftingRoute
-  '/gourmet': typeof GourmetRoute
+  '/kitchen': typeof KitchenRoute
   '/nuts': typeof NutsRoute
   '/order-success': typeof OrderSuccessRoute
   '/privacy': typeof PrivacyRoute
@@ -248,7 +248,7 @@ export interface FileRouteTypes {
     | '/dried-fruits'
     | '/exotic-seeds'
     | '/gifting'
-    | '/gourmet'
+    | '/kitchen'
     | '/nuts'
     | '/order-success'
     | '/privacy'
@@ -274,7 +274,7 @@ export interface FileRouteTypes {
     | '/dried-fruits'
     | '/exotic-seeds'
     | '/gifting'
-    | '/gourmet'
+    | '/kitchen'
     | '/nuts'
     | '/order-success'
     | '/privacy'
@@ -300,7 +300,7 @@ export interface FileRouteTypes {
     | '/dried-fruits'
     | '/exotic-seeds'
     | '/gifting'
-    | '/gourmet'
+    | '/kitchen'
     | '/nuts'
     | '/order-success'
     | '/privacy'
@@ -327,7 +327,7 @@ export interface RootRouteChildren {
   DriedFruitsRoute: typeof DriedFruitsRoute
   ExoticSeedsRoute: typeof ExoticSeedsRoute
   GiftingRoute: typeof GiftingRoute
-  GourmetRoute: typeof GourmetRoute
+  KitchenRoute: typeof KitchenRoute
   NutsRoute: typeof NutsRoute
   OrderSuccessRoute: typeof OrderSuccessRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -421,11 +421,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GiftingRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/gourmet': {
-      id: '/gourmet'
-      path: '/gourmet'
-      fullPath: '/gourmet'
-      preLoaderRoute: typeof GourmetRouteImport
+    '/kitchen': {
+      id: '/kitchen'
+      path: '/kitchen'
+      fullPath: '/kitchen'
+      preLoaderRoute: typeof KitchenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/nuts': {
@@ -527,7 +527,7 @@ const rootRouteChildren: RootRouteChildren = {
   DriedFruitsRoute: DriedFruitsRoute,
   ExoticSeedsRoute: ExoticSeedsRoute,
   GiftingRoute: GiftingRoute,
-  GourmetRoute: GourmetRoute,
+  KitchenRoute: KitchenRoute,
   NutsRoute: NutsRoute,
   OrderSuccessRoute: OrderSuccessRoute,
   PrivacyRoute: PrivacyRoute,

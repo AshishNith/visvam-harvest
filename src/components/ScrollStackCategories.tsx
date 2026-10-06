@@ -23,7 +23,7 @@ const CATEGORIES: CategoryItem[] = [
   {
     id: "gourmet",
     slug: "gourmet",
-    title: "Gourmet",
+    title: "Kitchen",
     subtitle: "Curated for everyday indulgence. A little sweet, a little savoury, made for togetherness.",
     image: gourmetHeroBg,
   },
@@ -50,7 +50,7 @@ export function ScrollStackCategories() {
           {CATEGORIES.map((cat) => (
             <Link
               key={cat.id}
-              to={`/${cat.slug}`}
+              to={cat.slug === "gourmet" ? "/kitchen" : `/${cat.slug}`}
               className="relative min-h-[170px] sm:min-h-[220px] lg:min-h-[260px] aspect-[16/10] sm:aspect-[28/9] lg:aspect-[32/9] overflow-hidden group rounded-2xl sm:rounded-3xl shadow-sm block"
             >
               <img

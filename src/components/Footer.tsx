@@ -70,7 +70,7 @@ export function Footer() {
               <h6 className="text-[10px] tracked font-semibold uppercase">Shop Now</h6>
               <ul className="space-y-2.5 text-[11px]">
                 <li><Link to="/nuts" className="hover:text-clay transition">Nuts & Dried Fruits</Link></li>
-                <li><Link to="/gourmet" className="hover:text-clay transition">Gourmet</Link></li>
+                <li><Link to="/kitchen" className="hover:text-clay transition">Kitchen</Link></li>
                 <li><Link to="/gifting" className="hover:text-clay transition">Gifting</Link></li>
               </ul>
             </div>

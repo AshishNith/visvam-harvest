@@ -10,7 +10,7 @@ import gourmetHeroBg from "@/assets/gourmet-hero-bg.jpg";
 const META: Record<Category, { index: string; title: string; intro: string; image: string; blurBg?: boolean }> = {
   gourmet: {
     index: "01",
-    title: "Gourmet",
+    title: "Kitchen",
     intro:
       "A little sweetness, a little savoury, and plenty of reasons to indulge. Carefully curated for you to discover, savour and share.",
     image: gourmetHeroBg,
@@ -28,7 +28,7 @@ const META: Record<Category, { index: string; title: string; intro: string; imag
     index: "03",
     title: "Gifting",
     intro:
-      "Celebratory dry fruit hampers featuring our finest nuts, dried fruits and gourmet selections.",
+      "Celebratory dry fruit hampers featuring our finest nuts, dried fruits and kitchen selections.",
     image: cImg("08_Assorted_Mix_and_Gift_Platters/DSC00762.jpg"),
   },
 };

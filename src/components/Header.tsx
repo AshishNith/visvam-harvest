@@ -12,7 +12,7 @@ import { fetchMerchandising, getCachedMerchandising } from "@/lib/api";
 
 const leftLinks = [
   { to: "/nuts", label: "Nuts & Dried Fruits", category: "nuts" },
-  { to: "/gourmet", label: "Gourmet", category: "gourmet" },
+  { to: "/kitchen", label: "Kitchen", category: "gourmet" },
   { to: "/gifting", label: "Gifting", category: "gifting" },
 ] as const;
 
@@ -357,11 +357,11 @@ export function Header() {
 
                   <div>
                     <Link
-                      to="/gourmet"
+                      to="/kitchen"
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="text-xs font-medium tracked uppercase py-3 hover:text-clay flex items-center justify-between"
                     >
-                      <span>Gourmet</span>
+                      <span>Kitchen</span>
                       <ArrowRight size={14} className="text-clay" />
                     </Link>
                     {getDropdownProducts("gourmet").length > 0 && (
