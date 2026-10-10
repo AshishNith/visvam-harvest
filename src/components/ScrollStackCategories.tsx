@@ -1,12 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import nutsCategoriesBg from "@/assets/Nuts-Dried-Homepage-BG.png";
-import gourmetHeroBg from "@/assets/Gourmets-Homepage-BG.png";
+import kitchenHeroBg from "@/assets/Gourmets-Homepage-BG.png";
 import giftingCategoriesBg from "@/assets/Gifting-Homepage-BG.png";
 
 type CategoryItem = {
   id: string;
-  slug: "gourmet" | "nuts" | "gifting";
+  slug: "kitchen" | "nuts" | "gifting";
   title: string;
   subtitle: string;
   image: string;
@@ -21,11 +21,11 @@ const CATEGORIES: CategoryItem[] = [
     image: nutsCategoriesBg,
   },
   {
-    id: "gourmet",
-    slug: "gourmet",
+    id: "kitchen",
+    slug: "kitchen",
     title: "Kitchen",
     subtitle: "Curated for everyday indulgence. A little sweet, a little savoury, made for togetherness.",
-    image: gourmetHeroBg,
+    image: kitchenHeroBg,
   },
   {
     id: "gifting",
@@ -50,7 +50,7 @@ export function ScrollStackCategories() {
           {CATEGORIES.map((cat) => (
             <Link
               key={cat.id}
-              to={cat.slug === "gourmet" ? "/kitchen" : `/${cat.slug}`}
+              to={`/${cat.slug}`}
               className="relative min-h-[170px] sm:min-h-[220px] lg:min-h-[260px] aspect-[16/10] sm:aspect-[28/9] lg:aspect-[32/9] overflow-hidden group rounded-2xl sm:rounded-3xl shadow-sm block"
             >
               <img

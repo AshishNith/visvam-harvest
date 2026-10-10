@@ -46,5 +46,5 @@ export const Route = createFileRoute("/dried-fruits")({
       ],
     };
   },
-  component: () => <CategoryPage category="gourmet" />,
+  component: () => <CategoryPage category="kitchen" />,
 });

@@ -9,7 +9,7 @@ import { clearProductCache } from "./productController.js";
 // curated spot is introduced on the frontend.
 const SLOT_LIMITS: Record<string, number> = {
   "nav-nuts": 2,
-  "nav-gourmet": 2,
+  "nav-kitchen": 2,
   "nav-gifting": 2,
   "homepage-bestsellers": 3,
 };

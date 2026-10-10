@@ -12,7 +12,7 @@ import { fetchMerchandising, getCachedMerchandising } from "@/lib/api";
 
 const leftLinks = [
   { to: "/nuts", label: "Nuts & Dried Fruits", category: "nuts" },
-  { to: "/kitchen", label: "Kitchen", category: "gourmet" },
+  { to: "/kitchen", label: "Kitchen", category: "kitchen" },
   { to: "/gifting", label: "Gifting", category: "gifting" },
 ] as const;
 
@@ -146,7 +146,7 @@ export function Header() {
                     }`}>
                       {dropdownProducts.length === 0 ? (
                         <p className="text-xs text-muted-foreground text-center py-2.5 font-sans font-medium whitespace-nowrap px-3">
-                          {l.category === "gifting" ? "Unwrapping Soon" : l.category === "gourmet" ? "Curating for you." : "More arriving soon."}
+                          {l.category === "gifting" ? "Unwrapping Soon" : l.category === "kitchen" ? "Curating for you." : "More arriving soon."}
                         </p>
                       ) : (
                         <>
@@ -364,9 +364,9 @@ export function Header() {
                       <span>Kitchen</span>
                       <ArrowRight size={14} className="text-clay" />
                     </Link>
-                    {getDropdownProducts("gourmet").length > 0 && (
+                    {getDropdownProducts("kitchen").length > 0 && (
                       <div className="flex items-center gap-2 pb-2 pl-2">
-                        {getDropdownProducts("gourmet").map((p) => (
+                        {getDropdownProducts("kitchen").map((p) => (
                           <Link
                             key={p.slug}
                             to="/menu/$slug"

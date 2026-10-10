@@ -17,7 +17,7 @@ dotenv.config();
 const CDN = "https://res.cloudinary.com/dvwpxb2oa/image/upload/f_auto,q_auto/visvam_harvest";
 
 export const categoriesData = [
-  { slug: "gourmet", label: "Kitchen Selection", index: "01", description: "Organic Figs, Medjool Dates, Kishmish, Berries & Superseeds" },
+  { slug: "kitchen", label: "Kitchen Selection", index: "01", description: "Organic Figs, Medjool Dates, Kishmish, Berries & Superseeds" },
   { slug: "nuts", label: "Nuts & Dried Fruits", index: "02", description: "California Jumbo Almonds, W240 Cashews, Kashmiri Walnuts & Pistachios" },
   { slug: "gifting", label: "Gifting & Hampers", index: "03", description: "Handcrafted Luxury Gift Boxes & Festive Collections" },
 ];
@@ -218,7 +218,7 @@ export const productsData = [
     name: "Afghani Organic Dried Figs (Anjeer)",
     tagline: "Sun-Dried Garlands · Soft Honey Core · Zero Sugar Added",
     price: 1599,
-    category: "gourmet",
+    category: "kitchen",
     badge: "High Fiber",
     images: [
       `${CDN}/05_Dates_Khajoor/DSC00565.jpg`,
@@ -240,7 +240,7 @@ export const productsData = [
     name: "Royal Medjool King Dates (Khajoor)",
     tagline: "Large Soft Medjool · Rich Caramel Bite · Mineral Rich",
     price: 1449,
-    category: "gourmet",
+    category: "kitchen",
     badge: "Organic",
     images: [
       `${CDN}/05_Dates_Khajoor/DSC00525.jpg`,
@@ -262,7 +262,7 @@ export const productsData = [
     name: "Long Green Seedless Kishmish",
     tagline: "Shade-Dried Long Berries · Sweet & Tangy · Iron Rich",
     price: 949,
-    category: "gourmet",
+    category: "kitchen",
     badge: "Juicy",
     images: [
       `${CDN}/06_Raisins_Kishmish/DSC00540.jpg`,
@@ -284,7 +284,7 @@ export const productsData = [
     name: "Wild Cranberry & Blueberry Mix",
     tagline: "Whole Ruby Cranberries · Wild Blueberries · Low Sugar",
     price: 1329,
-    category: "gourmet",
+    category: "kitchen",
     badge: "Immunity",
     images: [
       `${CDN}/06_Raisins_Kishmish/DSC00545.jpg`,
@@ -306,7 +306,7 @@ export const productsData = [
     name: "Raw Queensland Macadamia Nuts",
     tagline: "Whole Creamy Style 1 · Cold-Shelled · Keto Friendly",
     price: 2049,
-    category: "gourmet",
+    category: "kitchen",
     badge: "Exotic",
     images: [
       `${CDN}/07_Peanuts_and_Other_Nuts/DSC00430.jpg`,
@@ -328,7 +328,7 @@ export const productsData = [
     name: "7-in-1 Roasted Superseeds Wellness Mix",
     tagline: "Pumpkin, Sunflower, Flax, Chia, Sesame, Watermelon & Hemp",
     price: 1049,
-    category: "gourmet",
+    category: "kitchen",
     badge: "Daily Wellness",
     images: [
       `${CDN}/07_Peanuts_and_Other_Nuts/DSC00430.jpg`,

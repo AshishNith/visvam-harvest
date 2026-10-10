@@ -46,5 +46,5 @@ export const Route = createFileRoute("/exotic-seeds")({
       ],
     };
   },
-  component: () => <CategoryPage category="gourmet" />,
+  component: () => <CategoryPage category="kitchen" />,
 });

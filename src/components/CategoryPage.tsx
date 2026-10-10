@@ -4,16 +4,16 @@ import { ProductCard } from "./ProductCard";
 import { getProductsByCategory, type Category, type Product, cImg } from "@/lib/products";
 import { fetchProductsFromBackend } from "@/lib/api";
 import nutsHeroBg from "@/assets/nuts-hero-bg.jpg";
-import gourmetHeroBg from "@/assets/gourmet-hero-bg.jpg";
+import kitchenHeroBg from "@/assets/gourmet-hero-bg.jpg";
 
 // Use Cloudinary CDN with auto-format & quality instead of raw 57 MB local files
 const META: Record<Category, { index: string; title: string; intro: string; image: string; blurBg?: boolean }> = {
-  gourmet: {
+  kitchen: {
     index: "01",
     title: "Kitchen",
     intro:
       "A little sweetness, a little savoury, and plenty of reasons to indulge. Carefully curated for you to discover, savour and share.",
-    image: gourmetHeroBg,
+    image: kitchenHeroBg,
     blurBg: true,
   },
   nuts: {
@@ -51,7 +51,7 @@ export function CategoryPage({ category }: { category: Category }) {
     };
   }, [category]);
 
-  const meta = META[category] ?? META.gourmet;
+  const meta = META[category] ?? META.kitchen;
   return (
     <SiteLayout>
       <section className="relative overflow-hidden min-h-[380px] sm:min-h-[440px] lg:min-h-[480px] flex items-center justify-center pt-32 pb-20 sm:pt-40 sm:pb-28 border-b border-border/40">

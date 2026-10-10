@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-export type ProductCategory = "gourmet" | "nuts" | "gifting" | "dried-fruits" | "exotic-seeds" | "combos";
+export type ProductCategory = "kitchen" | "nuts" | "gifting" | "dried-fruits" | "exotic-seeds" | "combos";
 
 export interface IVariantAttribute {
   name: string;
@@ -80,7 +80,7 @@ const ProductSchema = new Schema<IProduct>(
     category: {
       type: String,
       required: true,
-      enum: ["gourmet", "nuts", "gifting", "dried-fruits", "exotic-seeds", "combos"],
+      enum: ["kitchen", "nuts", "gifting", "dried-fruits", "exotic-seeds", "combos"],
       index: true,
     },
     badge: {

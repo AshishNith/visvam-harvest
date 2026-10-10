@@ -46,5 +46,5 @@ export const Route = createFileRoute("/kitchen")({
       ],
     };
   },
-  component: () => <CategoryPage category="gourmet" />,
+  component: () => <CategoryPage category="kitchen" />,
 });
