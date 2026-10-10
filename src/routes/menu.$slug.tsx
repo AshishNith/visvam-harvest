@@ -491,7 +491,7 @@ function MenuItemPage() {
             </div>
           )}
 
-          <p className="text-xs text-muted-foreground leading-relaxed mb-5">
+          <p className="text-xs text-muted-foreground leading-relaxed mb-5 whitespace-pre-line">
             {product.description}
           </p>
 
