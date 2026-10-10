@@ -491,19 +491,6 @@ function MenuItemPage() {
             </div>
           )}
 
-          {!product.hasVariants && (
-            <div className="flex items-center gap-6 border-y border-border/70 py-3 mb-5 text-[10.5px] tracked text-muted-foreground flex-wrap">
-              <div className="flex items-center gap-1.5">
-                <ShieldCheck size={13} className="text-clay" />
-                <span>Single Origin</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Check size={13} className="text-clay" />
-                <span>Hand-Selected</span>
-              </div>
-            </div>
-          )}
-
           <p className="text-xs text-muted-foreground leading-relaxed mb-5">
             {product.description}
           </p>
