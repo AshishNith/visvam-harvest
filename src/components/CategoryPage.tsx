@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { SiteLayout } from "./SiteLayout";
 import { ProductCard } from "./ProductCard";
-import { getProductsByCategory, type Category, type Product, cImg } from "@/lib/products";
+import { getProductsByCategory, type Category, type Product } from "@/lib/products";
 import { fetchProductsFromBackend } from "@/lib/api";
 import nutsHeroBg from "@/assets/nuts-hero-bg.jpg";
 import kitchenHeroBg from "@/assets/gourmet-hero-bg.jpg";
+import giftingHeroBg from "@/assets/gifting-hero-bg.jpg";
 
 // Use Cloudinary CDN with auto-format & quality instead of raw 57 MB local files
 const META: Record<Category, { index: string; title: string; intro: string; image: string; blurBg?: boolean }> = {
@@ -29,7 +30,8 @@ const META: Record<Category, { index: string; title: string; intro: string; imag
     title: "Gifting",
     intro:
       "Celebratory dry fruit hampers featuring our finest nuts, dried fruits and kitchen selections.",
-    image: cImg("08_Assorted_Mix_and_Gift_Platters/DSC00762.jpg"),
+    image: giftingHeroBg,
+    blurBg: true,
   },
 };
 
