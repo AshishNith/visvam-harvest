@@ -182,6 +182,33 @@ export async function fetchMerchandising(): Promise<Record<string, Product[]> | 
   return merchandisingInflight;
 }
 
+// Stand-in for a nav dropdown whose merchandising slot has no admin picks: the
+// category's own first products, so a category that has products never shows an
+// empty menu. Cached per category for the page load, like merchandising above;
+// an empty or failed fetch isn't cached, so the next caller retries.
+const categoryPicksCache: Record<string, Product[]> = {};
+const categoryPicksInflight: Record<string, Promise<Product[]>> = {};
+
+export function getCachedCategoryPicks(category: string): Product[] | undefined {
+  return categoryPicksCache[category];
+}
+
+export function fetchCategoryPicks(category: string, limit = 2): Promise<Product[]> {
+  if (categoryPicksCache[category]) return Promise.resolve(categoryPicksCache[category]);
+  if (!categoryPicksInflight[category]) {
+    categoryPicksInflight[category] = fetchProductsFromBackend({ category, limit })
+      .then((products) => {
+        const picks = products ?? [];
+        if (picks.length > 0) categoryPicksCache[category] = picks;
+        return picks;
+      })
+      .finally(() => {
+        delete categoryPicksInflight[category];
+      });
+  }
+  return categoryPicksInflight[category];
+}
+
 export async function fetchProductBySlugFromBackend(slug: string): Promise<Product | null> {
   try {
     const res = await fetch(`${API_BASE_URL}/products/${slug}`);

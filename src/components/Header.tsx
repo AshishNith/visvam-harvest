@@ -8,7 +8,12 @@ import { UserAccountModal } from "./UserAccountModal";
 import logoWordmark from "@/assets/Visvam Logo_Wordmark.png";
 import logoEmblem from "@/assets/Visvam Logo.png";
 import type { Product } from "@/lib/products";
-import { fetchMerchandising, getCachedMerchandising } from "@/lib/api";
+import {
+  fetchMerchandising,
+  getCachedMerchandising,
+  fetchCategoryPicks,
+  getCachedCategoryPicks,
+} from "@/lib/api";
 
 const leftLinks = [
   { to: "/nuts", label: "Nuts & Dried Fruits", category: "nuts" },
@@ -44,9 +49,33 @@ export function Header() {
     fetchMerchandising().then(setMerchandising);
   }, []);
 
+  // A dropdown with no admin picks falls back to the category's own products
+  // (e.g. Gifting, which nobody has curated a slot for), so it lists whatever
+  // is in the database for that category instead of a "coming soon" note.
+  const [categoryPicks, setCategoryPicks] = useState<Record<string, Product[]>>(() =>
+    Object.fromEntries(
+      leftLinks.flatMap(({ category }) => {
+        const cached = getCachedCategoryPicks(category);
+        return cached ? [[category, cached]] : [];
+      })
+    )
+  );
+
+  useEffect(() => {
+    if (!merchandising) return;
+    for (const { category } of leftLinks) {
+      if ((merchandising[`nav-${category}`]?.length ?? 0) > 0) continue;
+      if (getCachedCategoryPicks(category)) continue;
+      fetchCategoryPicks(category).then((picks) => {
+        if (picks.length > 0) setCategoryPicks((prev) => ({ ...prev, [category]: picks }));
+      });
+    }
+  }, [merchandising]);
+
   const getDropdownProducts = (category: string): Product[] => {
     const picked = merchandising?.[`nav-${category}`];
-    return picked && picked.length > 0 ? picked.slice(0, 2) : [];
+    if (picked && picked.length > 0) return picked.slice(0, 2);
+    return categoryPicks[category] ?? [];
   };
 
   // Close mobile menu on route change
@@ -146,7 +175,7 @@ export function Header() {
                     }`}>
                       {dropdownProducts.length === 0 ? (
                         <p className="text-xs text-muted-foreground text-center py-2.5 font-sans font-medium whitespace-nowrap px-3">
-                          {l.category === "gifting" ? "Unwrapping Soon" : l.category === "kitchen" ? "Curating for you." : "More arriving soon."}
+                          {l.category === "nuts" ? "More arriving soon." : "Curating for you."}
                         </p>
                       ) : (
                         <>
